@@ -1,0 +1,111 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="一页简历 · AI 应用产品经理" description="AI 应用产品经理一页简历" current="resume">
+  <div class="resume-wrap">
+    <div class="container">
+      <div class="no-print" style="margin-bottom: 24px; display: flex; justify-content: flex-end;">
+        <button class="btn btn--outline" id="printBtn" type="button">打印 / 导出 PDF</button>
+      </div>
+    </div>
+
+    <div class="resume-page">
+      <!-- Header -->
+      <header>
+        <h1 class="resume-name">你的姓名</h1>
+        <p class="resume-role">AI Application Product Manager</p>
+        <p class="resume-meta">
+          youremail@example.com · github.com/yourname · 计算机科学与技术 · 城市（待补充）
+        </p>
+      </header>
+
+      <!-- 个人定位 -->
+      <div class="resume-summary">
+        计算机科学本科背景的 AI 应用产品经理。具备 Java / Python / SQL
+        工程基础与真实企业 AI 应用落地经验（Agent / RAG / MCP），擅长把大模型能力转化为可评估、可交付的产品方案。
+      </div>
+
+      <!-- Experience -->
+      <section class="resume-block">
+        <h2 class="resume-block-title">Experience</h2>
+
+        <div class="resume-entry">
+          <div class="resume-entry-head">
+            <span class="resume-entry-role">AI 产品实习</span>
+            <span class="resume-entry-date">2025（待补充）</span>
+          </div>
+          <p class="resume-entry-org">TopOn · 技术支持部门</p>
+
+          <p class="resume-entry-sub">SDK Developer AI Support Agent</p>
+          <ul>
+            <li>参与搭建 SDK 开发者 AI 智能客服（Dify + RAGFlow），用 AI 解答开发者 SDK 问题，降低重复问题与人工回复成本。</li>
+            <li>设计多 Agent 分流流程：按 SDK 版本进入对应 Agent 与知识库，明确平台后定向检索；通过文档重命名加平台前缀 + Prompt 约束，避免跨版本 / 跨平台检索与回答。</li>
+            <li>主导 FAQ 清洗：600+ 条 → 100+ 条高质量 FAQ。</li>
+            <li>使用 Python 构建 SDK 文档关联知识图谱，解决文档间超链接 / 关联关系导致的检索失联问题。</li>
+            <li>调整检索参数（top_k 0.4 → 0.8），观察到 AI 回答幻觉问题减少。</li>
+            <li>依据历史 FAQ 设计测试用例（含具体问题、模糊问题），持续测试、分析失败案例、迭代 Prompt 并回归验证。</li>
+          </ul>
+          <p class="small muted">Status: Internal Testing（离职后未参与对外上线）</p>
+
+          <p class="resume-entry-sub">MCP SDK Integration Agent</p>
+          <ul>
+            <li>参与 Remote MCP + Local CLI + IDE Agent 方案验证（支持 HyperBid / TopOn 的 Android / iOS）。</li>
+            <li>使用 MCP 将 SDK 注入 Demo，验证接入链路可编译、可运行。</li>
+            <li>负责设计和迭代 Agent Prompt（任务目标 / SDK 认证 / 功能 / 代码修改范围 / 生命周期 / 异常处理 / 内存泄漏防护 / 编译验证），研究如何让 Agent 尽量一次完成 SDK 注入。</li>
+          </ul>
+
+          <p class="resume-entry-sub">SDK Package Size Automation</p>
+          <ul>
+            <li>设计 Python 自动化脚本，将「编译原 Demo → 记录包体 → 下载 SDK → 导入重编译 → 差值计算」的多步骤人工流程简化为单命令执行。</li>
+            <li>实现环境检测（JAVA_HOME / ANDROID_HOME 复用或建沙箱）、临时项目沙箱、Baseline 空包对比编译、APK 分析，输出 Markdown / JSON 报告。</li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- Other Projects -->
+      <section class="resume-block">
+        <h2 class="resume-block-title">Other Projects</h2>
+
+        <div class="resume-entry">
+          <p class="resume-entry-sub">钉钉多维表格 Workflow</p>
+          <ul>
+            <li>设计自动化工作流：每周一 9:00 自动检索待解决问题，按负责人生成 Todo List 并发送给对应同事。</li>
+          </ul>
+        </div>
+        <div class="resume-entry">
+          <p class="resume-entry-sub">Java AI 云图库（工程能力证明）</p>
+          <ul>
+            <li>Java / SpringBoot / MySQL / Redis / WebSocket / AI 技术栈。</li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- Skills -->
+      <section class="resume-block">
+        <h2 class="resume-block-title">Skills</h2>
+        <dl class="resume-skills">
+          <dt>AI Product</dt>
+          <dd>Agent · RAG · Multi-Agent · MCP · Prompt Engineering · AI Evaluation · Workflow Automation · Dify · RAGFlow</dd>
+          <dt>Engineering</dt>
+          <dd>Java · Python · SQL · SpringBoot · MySQL · Redis</dd>
+        </dl>
+      </section>
+
+      <!-- Education -->
+      <section class="resume-block">
+        <h2 class="resume-block-title">Education</h2>
+        <div class="resume-entry">
+          <div class="resume-entry-head">
+            <span class="resume-entry-org">计算机科学与技术 · 本科</span>
+            <span class="resume-entry-date">年份待补充</span>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <script>
+    document.getElementById('printBtn')?.addEventListener('click', () => window.print());
+  </script>
+</BaseLayout>

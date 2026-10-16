@@ -1,0 +1,33 @@
+---
+interface Props {
+  current?: 'home' | 'resume' | 'work' | 'about' | 'case';
+}
+const { current = 'home' } = Astro.props;
+
+const links = [
+  { href: '/resume', label: 'Resume', key: 'resume' },
+  { href: '/work', label: 'Work', key: 'work' },
+  { href: '/about', label: 'About', key: 'about' },
+];
+const activeKey = current === 'case' ? 'work' : current;
+---
+
+<header class="site-header">
+  <div class="container header-inner">
+    <a class="brand" href="/">AI&nbsp;PM<em>_</em>Portfolio</a>
+    <ul class="nav-links">
+      {
+        links.map((l) => (
+          <li>
+            <a
+              href={l.href}
+              aria-current={activeKey === l.key ? 'page' : undefined}
+            >
+              {l.label}
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</header>

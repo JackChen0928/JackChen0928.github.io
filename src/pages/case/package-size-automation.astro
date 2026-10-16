@@ -1,0 +1,209 @@
+---
+import CaseStudyLayout, { type CaseSection } from '../../layouts/CaseStudyLayout.astro';
+
+const sections: CaseSection[] = [
+  {
+    id: 's01',
+    num: '01',
+    title: 'Overview',
+    blocks: [
+      {
+        type: 'p',
+        text: '用 Python 自动化脚本将 SDK 包体大小检测从多步骤人工流程简化为单命令执行：环境检测、沙箱准备、编译对比、APK 分析、结构化报告输出。',
+      },
+      {
+        type: 'info',
+        rows: [
+          ['角色', 'AI 产品实习'],
+          ['状态', '已交付'],
+          ['工具', 'Python · Android · Gradle'],
+        ],
+      },
+      { type: 'tags', accent: true, items: ['Python', 'Automation', 'Android'] },
+    ],
+  },
+  {
+    id: 's02',
+    num: '02',
+    title: 'Background',
+    blocks: [
+      {
+        type: 'p',
+        text: '团队经常需要检测 SDK 包体大小——即 SDK 对 App 体积的增量，这是 SDK 产品与运营评估的关键指标之一。',
+      },
+      {
+        type: 'p',
+        text: '传统流程依赖多步骤人工操作，重复且易出错。',
+      },
+    ],
+  },
+  {
+    id: 's03',
+    num: '03',
+    title: 'Problem',
+    blocks: [
+      {
+        type: 'p',
+        text: '人工检测流程步骤多、耗时长、口径易不一致：',
+      },
+      {
+        type: 'list',
+        items: [
+          '编译原 Demo 并记录包体大小',
+          '去官网下载 SDK，下载 AAR / JAR 或配置 Gradle 依赖',
+          '导入 Demo',
+          '重新编译',
+          '两者相减得到 SDK 增量',
+        ],
+      },
+    ],
+  },
+  {
+    id: 's04',
+    num: '04',
+    title: 'User',
+    blocks: [
+      {
+        type: 'p',
+        text: '需要评估 SDK 包体增量的技术支持 / 研发 / 运营同学。',
+      },
+    ],
+  },
+  {
+    id: 's05',
+    num: '05',
+    title: 'Goal',
+    blocks: [
+      {
+        type: 'p',
+        text: '把多步骤人工检测流程变为一条命令，自动得到 SDK 增量并输出结构化报告，保证结果可复现、口径一致。',
+      },
+    ],
+  },
+  {
+    id: 's06',
+    num: '06',
+    title: 'Product Solution',
+    blocks: [
+      {
+        type: 'flow',
+        lines: [
+          '输入',
+          '↓ 环境检测（JAVA_HOME / ANDROID_HOME）',
+          '├─ 已存在 → 复用',
+          '└─ 不存在 → 创建沙箱',
+          '↓ 准备沙箱（临时 Android 项目）',
+          '↓ 编译对比（Baseline 空包 → 加入 SDK → 再次编译）',
+          '↓ APK 分析（SDK 增量 = 含 SDK APK − 空包 APK）',
+          '↓',
+          '输出报告（Markdown / JSON）',
+        ],
+      },
+      {
+        type: 'note',
+        bold: '说明',
+        text: '本项目为工程自动化工具（非 AI 模型项目），用于补充工程能力证明，不夸大为 AI 项目。',
+      },
+    ],
+  },
+  {
+    id: 's07',
+    num: '07',
+    title: 'AI Architecture',
+    blocks: [
+      {
+        type: 'p',
+        text: '无 AI 模型组件，为确定性工程流程。核心是环境检测、编译对比与 APK 分析的可复现设计。',
+      },
+    ],
+  },
+  {
+    id: 's08',
+    num: '08',
+    title: 'Key Product Decisions',
+    blocks: [
+      {
+        type: 'decisions',
+        itemsDecisions: [
+          {
+            label: 'D1',
+            title: '沙箱隔离',
+            text: '创建临时 Android 项目作为编译沙箱，避免污染本地开发环境。',
+          },
+          {
+            label: 'D2',
+            title: '环境复用优先',
+            text: '检测到 JAVA_HOME / ANDROID_HOME 则复用，否则创建沙箱，兼顾速度与可复现性。',
+          },
+          {
+            label: 'D3',
+            title: 'Baseline 对比口径',
+            text: '空包与含 SDK 包在同一条件下编译，差值即 SDK 增量，保证口径一致。',
+          },
+          {
+            label: 'D4',
+            title: '双格式报告',
+            text: '同时输出 Markdown（人读）与 JSON（可集成），兼顾可读性与机器消费。',
+          },
+        ],
+      },
+    ],
+  },
+  {
+    id: 's09',
+    num: '09',
+    title: 'Evaluation',
+    blocks: [
+      {
+        type: 'p',
+        text: '以「与人工测量结果一致」为验收标准，输出结果可复现。',
+      },
+    ],
+  },
+  {
+    id: 's10',
+    num: '10',
+    title: 'Iteration',
+    blocks: [
+      {
+        type: 'p',
+        text: '根据团队使用反馈，持续调整环境检测逻辑与报告格式等细节。',
+      },
+    ],
+  },
+  {
+    id: 's11',
+    num: '11',
+    title: 'Result',
+    blocks: [
+      {
+        type: 'p',
+        text: '工具交付团队使用：多步骤人工流程 → 单命令执行。使用规模待补充。',
+      },
+    ],
+  },
+  {
+    id: 's12',
+    num: '12',
+    title: 'Reflection',
+    blocks: [
+      {
+        type: 'p',
+        text: '收获：工程自动化能力是产品落地的放大器——把高频低效的手工流程变成可复用的工具，是技术型产品经理的价值之一。',
+      },
+    ],
+  },
+];
+---
+
+<CaseStudyLayout
+  caseNo="03"
+  title="SDK Package Size Automation"
+  subtitle="把多步骤人工检测，变成一条命令。"
+  description="SDK Package Size Automation Case Study"
+  tags={['Python', 'Automation', 'Android']}
+  sections={sections}
+  neighbors={{
+    prev: { href: '/case/mcp-integration-agent', label: 'Case 02 · MCP SDK Integration Agent' },
+  }}
+/>

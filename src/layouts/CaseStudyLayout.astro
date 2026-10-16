@@ -1,0 +1,178 @@
+---
+import BaseLayout from './BaseLayout.astro';
+
+interface Block {
+  type: 'p' | 'list' | 'flow' | 'info' | 'decisions' | 'note' | 'tags';
+  text?: string;
+  items?: string[];
+  lines?: string[];
+  rows?: [string, string][];
+  itemsDecisions?: { label: string; title: string; text: string }[];
+  bold?: string;
+  accent?: boolean;
+}
+
+export interface CaseSection {
+  id: string;
+  num: string;
+  title: string;
+  blocks: Block[];
+}
+
+interface Props {
+  caseNo: string;
+  title: string;
+  subtitle?: string;
+  description?: string;
+  tags?: string[];
+  sections: CaseSection[];
+  neighbors?: {
+    prev?: { href: string; label: string };
+    next?: { href: string; label: string };
+  };
+}
+
+const { caseNo, title, subtitle, description, tags = [], sections, neighbors } = Astro.props;
+---
+
+<BaseLayout title={`Case Study ${caseNo} · ${title}`} description={description} current="case">
+  <!-- Case Header -->
+  <header class="case-header">
+    <div class="container">
+      <p class="kicker">Case Study {caseNo}</p>
+      <h1 class="case-title">{title}</h1>
+      {subtitle && <p class="lead" style="max-width: 680px;">{subtitle}</p>}
+      {
+        tags.length > 0 && (
+          <div class="case-meta" style="margin-top: 24px;">
+            {tags.map((t) => <span class="tag tag--accent">{t}</span>)}
+          </div>
+        )
+      }
+    </div>
+  </header>
+
+  <!-- 锚点目录 -->
+  <nav class="no-print case-toc" aria-label="Case 目录">
+    <div class="container" style="overflow-x: auto;">
+      <div style="display: flex; gap: 18px; padding: 14px 0; white-space: nowrap; font-family: var(--font-mono); font-size: 12px;">
+        {sections.map((s) => (
+          <a href={`#${s.id}`} style="color: var(--text-4);">
+            {s.num} {s.title}
+          </a>
+        ))}
+      </div>
+    </div>
+  </nav>
+
+  <!-- 正文 -->
+  <div>
+    {
+      sections.map((s) => (
+        <section class="case-section" id={s.id}>
+          <div class="container">
+            <div class="case-section-head">
+              <span class="case-section-num">{s.num}</span>
+              <h2 class="case-section-title">{s.title}</h2>
+            </div>
+            <div class="prose" style="margin-left: 68px; max-width: var(--text-w);">
+              {
+                s.blocks.map((b) => (
+                  <>
+                    {b.type === 'p' && <p>{b.text}</p>}
+                    {
+                      b.type === 'list' && (
+                        <ul style="padding-left: 20px; margin: 8px 0;">
+                          {b.items!.map((i) => (
+                            <li style="margin-bottom: 6px; color: var(--text-2); font-size: 15px;">{i}</li>
+                          ))}
+                        </ul>
+                      )
+                    }
+                    {
+                      b.type === 'flow' && (
+                        <div class="flow">
+                          {b.lines!.map((l) => <div>{l}</div>)}
+                        </div>
+                      )
+                    }
+                    {
+                      b.type === 'info' && (
+                        <dl class="info-grid">
+                          {b.rows!.map(([k, v]) => (
+                            <>
+                              <dt>{k}</dt>
+                              <dd>{v}</dd>
+                            </>
+                          ))}
+                        </dl>
+                      )
+                    }
+                    {
+                      b.type === 'decisions' && (
+                        <div>
+                          {b.itemsDecisions!.map((d) => (
+                            <div class="decision">
+                              <h4>
+                                <em>{d.label}</em>
+                                {d.title}
+                              </h4>
+                              <p>{d.text}</p>
+                            </div>
+                          ))}
+                        </div>
+                      )
+                    }
+                    {
+                      b.type === 'note' && (
+                        <div class="note">
+                          {b.bold && <b>{b.bold}：</b>}
+                          {b.text}
+                        </div>
+                      )
+                    }
+                    {
+                      b.type === 'tags' && (
+                        <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+                          {b.items!.map((t) => (
+                            <span class={b.accent ? 'tag tag--accent' : 'tag'}>{t}</span>
+                          ))}
+                        </div>
+                      )
+                    }
+                  </>
+                ))
+              }
+            </div>
+          </div>
+        </section>
+      ))
+    }
+  </div>
+
+  <!-- 底部导航 -->
+  <nav class="no-print case-nav" aria-label="Case 导航">
+    <div class="container" style="display: flex; justify-content: space-between; align-items: center; padding: 40px 28px; gap: 16px; flex-wrap: wrap;">
+      <a class="btn btn--outline" href="/work">← 返回 Work 总览</a>
+      <div style="display: flex; gap: 12px;">
+        {neighbors?.prev && <a class="btn btn--outline" href={neighbors.prev.href}>← {neighbors.prev.label}</a>}
+        {neighbors?.next && <a class="btn btn--solid" href={neighbors.next.href}>{neighbors.next.label} →</a>}
+      </div>
+    </div>
+  </nav>
+
+  <style>
+    .case-toc {
+      border-bottom: 1px solid var(--line);
+      background: #fafafa;
+    }
+    .case-toc a:hover {
+      color: var(--accent);
+    }
+    @media (max-width: 640px) {
+      .case-section .prose {
+        margin-left: 0;
+      }
+    }
+  </style>
+</BaseLayout>

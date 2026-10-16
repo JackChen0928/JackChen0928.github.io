@@ -1,0 +1,97 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+const capabilities = [
+  {
+    num: '01',
+    title: 'Problem Definition',
+    desc: '从业务场景提炼真实问题与边界。例如：大量重复的 SDK 咨询与高人工成本 → 是否值得用 AI 客服承接，以及承接的边界在哪里。',
+  },
+  {
+    num: '02',
+    title: 'AI Solution Design',
+    desc: '把问题转化为可落地的 AI 方案：Multi-Agent 分流、RAG 知识库治理、MCP 集成链路、Agent Prompt 任务规范。',
+  },
+  {
+    num: '03',
+    title: 'Evaluation',
+    desc: '用历史 FAQ 构建测试用例（具体问题 / 模糊问题），持续测试、分析失败案例、迭代 Prompt，把「感觉好用」变成「可评估」。',
+  },
+  {
+    num: '04',
+    title: 'Delivery',
+    desc: '在真实企业内部环境从 0 到 1 验证与交付，理解工程约束（版本、平台、编译链路），与研发、算法、业务多方协作。',
+  },
+];
+---
+
+<BaseLayout title="关于我 · AI Product Capability" description="懂研发的 AI 应用产品经理" current="about">
+  <section class="hero" style="padding: 88px 0 56px;">
+    <div class="container">
+      <p class="kicker">About / AI Product Capability</p>
+      <h1 class="h-xl" style="margin: 8px 0 20px;">懂研发的<br />AI 应用产品经理</h1>
+      <p class="lead" style="max-width: 680px;">
+        我是计算机科学与技术专业本科生，目标岗位是
+        <strong>AI 应用产品经理 / AI Agent 产品经理 / AI 产品实习生</strong>。
+        与纯产品背景的候选人不同，我的核心优势是：计算机基础 + 真实企业 AI
+        应用落地经验。
+      </p>
+      <div class="hero-meta" style="margin-top: 28px;">
+        <span class="tag tag--accent">目标岗位</span>
+        <span class="tag">AI Application PM</span>
+        <span class="tag">AI Agent PM</span>
+        <span class="tag">AI Product Intern</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--tight">
+    <div class="container">
+      <p class="kicker">Capability Model</p>
+      <h2 class="h-lg" style="margin-bottom: 8px;">我的 AI 产品能力模型</h2>
+      <div class="pillars" style="grid-template-columns: 1fr; gap: 0;">
+        {
+          capabilities.map((c) => (
+            <div
+              class="decision"
+              style="display: grid; grid-template-columns: 72px 240px 1fr; gap: 24px; align-items: baseline; padding: 26px 0;"
+            >
+              <span class="work-item-index" style="font-family: var(--font-mono); font-size: 14px; color: var(--accent);">{c.num}</span>
+              <h3 style="font-size: 17px;">{c.title}</h3>
+              <p style="font-size: 14.5px; color: var(--text-3);">{c.desc}</p>
+            </div>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--tight">
+    <div class="container prose">
+      <p class="kicker">Positioning</p>
+      <h2 class="h-lg" style="margin-bottom: 20px;">一句话定位</h2>
+      <p class="lead">
+        懂研发、懂 AI 技术，同时具备 AI 应用产品设计和落地能力——我能把大模型
+        能力翻译成用户可感知的价值，也能亲手用 Python / Java 验证方案是否可行。
+      </p>
+
+      <h3 class="h-md" style="margin: 40px 0 14px;">核心关键词</h3>
+      <div style="display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 40px;">
+        {
+          ['AI Application', 'Agent', 'RAG', 'Multi-Agent', 'MCP', 'Prompt Engineering', 'AI Evaluation', 'Workflow Automation'].map(
+            (t) => <span class="tag tag--accent">{t}</span>,
+          )
+        }
+      </div>
+
+      <h3 class="h-md" style="margin-bottom: 14px;">工程能力（辅助）</h3>
+      <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+        {
+          ['Java', 'Python', 'SQL', 'SpringBoot', 'MySQL', 'Redis', 'WebSocket'].map(
+            (t) => <span class="tag">{t}</span>,
+          )
+        }
+      </div>
+    </div>
+  </section>
+</BaseLayout>

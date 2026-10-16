@@ -1,0 +1,135 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+const pillars = [
+  {
+    num: '01',
+    title: '技术理解力',
+    desc: '计算机科学本科，掌握 Java / Python / SQL，能读懂工程约束与代码逻辑，与研发团队同频协作。',
+  },
+  {
+    num: '02',
+    title: 'AI 应用设计',
+    desc: 'Agent / RAG / MCP / Prompt Engineering / AI Evaluation，把大模型技术能力翻译成可落地的产品方案。',
+  },
+  {
+    num: '03',
+    title: '落地与交付',
+    desc: '在真实企业内部环境从 0 到 1 完成方案验证与迭代，重视可评估、可复现、可交付。',
+  },
+];
+
+const works = [
+  {
+    index: '01',
+    title: 'SDK Developer AI Support Agent',
+    desc: '多 Agent 分流 · FAQ 600+→100+ · 文档知识图谱',
+    status: 'Internal Testing',
+    href: '/case/sdk-support-agent',
+  },
+  {
+    index: '02',
+    title: 'MCP SDK Integration Agent',
+    desc: '自然语言需求 → Agent 可执行任务规范',
+    status: '方案验证',
+    href: '/case/mcp-integration-agent',
+  },
+  {
+    index: '03',
+    title: 'SDK Package Size Automation',
+    desc: 'Python 自动化 · 多步骤人工检测 → 单命令',
+    status: '已交付',
+    href: '/case/package-size-automation',
+  },
+];
+---
+
+<BaseLayout title="AI 产品经理作品集 · 用技术理解力做能落地的 AI 产品" current="home">
+  <!-- Hero -->
+  <section class="hero">
+    <div class="container">
+      <p class="kicker">AI Application Product Manager</p>
+      <h1 class="hero-title">
+        用技术理解力，<br />做能<span class="accent-line">落地</span>的 AI 产品
+      </h1>
+      <p class="hero-sub">
+        计算机科学本科 · TopOn AI 产品实习 · Agent / RAG / MCP / Prompt 真实落地经验
+      </p>
+      <div class="hero-meta">
+        <span class="tag tag--accent">AI Application</span>
+        <span class="tag">Agent</span>
+        <span class="tag">RAG</span>
+        <span class="tag">MCP</span>
+        <span class="tag">Prompt Engineering</span>
+        <span class="tag">AI Evaluation</span>
+      </div>
+      <div class="hero-actions">
+        <a class="btn btn--solid" href="/work">查看精选作品</a>
+        <a class="btn btn--outline" href="/resume">一页简历</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- 三大能力 -->
+  <section class="section">
+    <div class="container">
+      <p class="kicker">Why Me</p>
+      <h2 class="h-lg" style="margin-bottom: 48px;">我的优势，不是纯产品背景</h2>
+      <div class="pillars">
+        {
+          pillars.map((p) => (
+            <div class="pillar">
+              <p class="kicker">{p.num}</p>
+              <h3>{p.title}</h3>
+              <p>{p.desc}</p>
+            </div>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- 精选 AI 作品 -->
+  <section class="section section--tight" id="works">
+    <div class="container">
+      <p class="kicker">Selected AI Product Work</p>
+      <h2 class="h-lg" style="margin-bottom: 16px;">精选作品</h2>
+      <div class="work-index">
+        {
+          works.map((w) => (
+            <a class="work-item" href={w.href}>
+              <span class="work-item-index">{w.index}</span>
+              <span>
+                <span class="work-item-title">{w.title}</span>
+                <br />
+                <span class="work-item-desc">{w.desc}</span>
+              </span>
+              <span class="work-item-status">{w.status}</span>
+              <span class="work-item-arrow">→</span>
+            </a>
+          ))
+        }
+      </div>
+      <p style="margin-top: 28px;">
+        <a class="link-arrow" href="/work">查看全部精选作品与轻量项目</a>
+      </p>
+    </div>
+  </section>
+
+  <!-- About 引子 -->
+  <section class="section section--tight">
+    <div class="container prose">
+      <p class="kicker">About</p>
+      <h2 class="h-lg" style="margin-bottom: 20px;">
+        目标：AI 应用产品经理
+      </h2>
+      <p class="lead">
+        我懂研发、懂 AI 技术，同时具备 AI 应用产品设计与落地能力。相信好的 AI
+        产品 = 对用户问题的深刻理解 × 对技术边界的清醒认知。
+      </p>
+      <p style="margin-top: 24px;">
+        <a class="link-arrow" href="/about">更多关于我</a>
+      </p>
+    </div>
+  </section>
+</BaseLayout>

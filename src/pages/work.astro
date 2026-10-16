@@ -1,0 +1,109 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+const cases = [
+  {
+    index: '01',
+    title: 'SDK Developer AI Support Agent',
+    tags: ['Dify', 'RAGFlow', 'Multi-Agent', 'RAG', 'Prompt Engineering', 'AI Evaluation'],
+    desc: '面向 SDK 开发者的 AI 智能客服。设计多 Agent 分流解决多版本 × 多平台文档检索问题，主导 FAQ 清洗（600+→100+）与文档知识图谱构建。',
+    status: 'Internal Testing',
+    href: '/case/sdk-support-agent',
+  },
+  {
+    index: '02',
+    title: 'MCP SDK Integration Agent',
+    tags: ['MCP', 'Agent', 'Prompt Engineering', 'SDK'],
+    desc: '把「自然语言需求转化为 Agent 可执行任务规范」。参与 Remote MCP + Local CLI + IDE Agent 方案验证，设计与迭代 Agent Prompt，研究如何让 Agent 一次完成 SDK 注入并可编译运行。',
+    status: '方案验证',
+    href: '/case/mcp-integration-agent',
+  },
+  {
+    index: '03',
+    title: 'SDK Package Size Automation',
+    tags: ['Python', '自动化', 'Android'],
+    desc: '将多步骤人工包体检测流程简化为单命令执行。实现环境检测、沙箱项目、Baseline 对比编译与 APK 分析，输出 Markdown / JSON 报告。',
+    status: '已交付',
+    href: '/case/package-size-automation',
+  },
+];
+
+const light = [
+  {
+    index: '04',
+    title: '钉钉多维表格 Workflow',
+    tags: ['Workflow Automation'],
+    desc: '每周一 9:00 自动检索待解决问题，按负责人生成 Todo List 并发送给对应同事，降低人工提醒成本。',
+  },
+  {
+    index: '05',
+    title: 'Java AI 云图库',
+    tags: ['Java', 'SpringBoot', 'MySQL', 'Redis', 'WebSocket', 'AI'],
+    desc: '工程能力证明项目，体现 Java 服务端与 AI 结合的基础能力。',
+  },
+];
+---
+
+<BaseLayout title="精选作品 · Selected AI Product Work" description="AI 应用产品经理精选作品" current="work">
+  <section class="hero" style="padding: 88px 0 56px;">
+    <div class="container">
+      <p class="kicker">Selected AI Product Work</p>
+      <h1 class="h-xl" style="margin: 8px 0 20px;">精选 AI 产品工作</h1>
+      <p class="lead" style="max-width: 640px;">
+        以下项目均来自真实企业实习经历。每个 Case Study 遵循统一的
+        产品思考链路：Problem → Insight → Product Decision → AI Design →
+        Evaluation → Iteration → Result。所有描述严格基于真实经历，缺失数据以「待补充」或「Internal Testing」标注。
+      </p>
+    </div>
+  </section>
+
+  <section class="section section--tight">
+    <div class="container">
+      <h2 class="h-md" style="margin-bottom: 8px;">Case Studies</h2>
+      <div class="work-index" style="border-top: 1px solid var(--line);">
+        {
+          cases.map((c) => (
+            <a class="work-item" href={c.href}>
+              <span class="work-item-index">{c.index}</span>
+              <span>
+                <span class="work-item-title">{c.title}</span>
+                <br />
+                <span class="work-item-desc">{c.desc}</span>
+                <br />
+                <span style="display: inline-flex; gap: 6px; flex-wrap: wrap; margin-top: 10px;">
+                  {c.tags.map((t) => <span class="tag">{t}</span>)}
+                </span>
+              </span>
+              <span class="work-item-status">{c.status}</span>
+              <span class="work-item-arrow">→</span>
+            </a>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--tight">
+    <div class="container">
+      <h2 class="h-md" style="margin-bottom: 8px;">轻量项目</h2>
+      <div class="work-index" style="border-top: 1px solid var(--line);">
+        {
+          light.map((c) => (
+            <div class="work-item" style="cursor: default;">
+              <span class="work-item-index">{c.index}</span>
+              <span>
+                <span class="work-item-title">{c.title}</span>
+                <br />
+                <span class="work-item-desc">{c.desc}</span>
+                <br />
+                <span style="display: inline-flex; gap: 6px; flex-wrap: wrap; margin-top: 10px;">
+                  {c.tags.map((t) => <span class="tag">{t}</span>)}
+                </span>
+              </span>
+            </div>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+</BaseLayout>
