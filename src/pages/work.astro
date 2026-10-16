@@ -5,41 +5,27 @@ const cases = [
   {
     index: '01',
     title: 'SDK Developer AI Support Agent',
-    tags: ['Dify', 'RAGFlow', 'Multi-Agent', 'RAG', 'Prompt Engineering', 'AI Evaluation'],
-    desc: '面向 SDK 开发者的 AI 智能客服。设计多 Agent 分流解决多版本 × 多平台文档检索问题，主导 FAQ 清洗（600+→100+）与文档知识图谱构建。',
+    tags: ['Dify', 'RAGFlow', 'Multi-Agent', 'RAG', 'Prompt Engineering', 'Python'],
+    desc: '面向 SDK 开发者的 AI 技术支持助手。按 SDK 版本 / 开发平台两级路由限制检索范围，参与 FAQ 清洗（600+→100+）与文档关联知识图谱构建。',
     status: 'Internal Testing',
     href: '/case/sdk-support-agent',
   },
   {
     index: '02',
     title: 'MCP SDK Integration Agent',
-    tags: ['MCP', 'Agent', 'Prompt Engineering', 'SDK'],
-    desc: '把「自然语言需求转化为 Agent 可执行任务规范」。参与 Remote MCP + Local CLI + IDE Agent 方案验证，设计与迭代 Agent Prompt，研究如何让 Agent 一次完成 SDK 注入并可编译运行。',
+    tags: ['MCP', 'Agent', 'Prompt Engineering', 'SDK Integration'],
+    desc: '参与验证 IDE Agent + Remote MCP + Local CLI 的 SDK 自动化集成方案，负责 Agent Prompt 设计与迭代，将自然语言需求转化为可执行的 SDK 接入流程。',
     status: '方案验证',
     href: '/case/mcp-integration-agent',
-  },
-  {
-    index: '03',
-    title: 'SDK Package Size Automation',
-    tags: ['Python', '自动化', 'Android'],
-    desc: '将多步骤人工包体检测流程简化为单命令执行。实现环境检测、沙箱项目、Baseline 对比编译与 APK 分析，输出 Markdown / JSON 报告。',
-    status: '已交付',
-    href: '/case/package-size-automation',
   },
 ];
 
 const light = [
   {
-    index: '04',
+    index: '03',
     title: '钉钉多维表格 Workflow',
     tags: ['Workflow Automation'],
     desc: '每周一 9:00 自动检索待解决问题，按负责人生成 Todo List 并发送给对应同事，降低人工提醒成本。',
-  },
-  {
-    index: '05',
-    title: 'Java AI 云图库',
-    tags: ['Java', 'SpringBoot', 'MySQL', 'Redis', 'WebSocket', 'AI'],
-    desc: '工程能力证明项目，体现 Java 服务端与 AI 结合的基础能力。',
   },
 ];
 ---
@@ -50,9 +36,9 @@ const light = [
       <p class="kicker">Selected AI Product Work</p>
       <h1 class="h-xl" style="margin: 8px 0 20px;">精选 AI 产品工作</h1>
       <p class="lead" style="max-width: 640px;">
-        以下项目均来自真实企业实习经历。每个 Case Study 遵循统一的
-        产品思考链路：Problem → Insight → Product Decision → AI Design →
-        Evaluation → Iteration → Result。所有描述严格基于真实经历，缺失数据以「待补充」或「Internal Testing」标注。
+        以下 Case Study 均基于真实企业实践，重点展示我如何从业务问题出发，
+        完成产品判断、AI 方案设计、效果评估与迭代。对于尚未正式上线的项目，
+        以 Internal Testing / 方案验证标注，不虚构业务指标。
       </p>
     </div>
   </section>
@@ -85,7 +71,7 @@ const light = [
 
   <section class="section section--tight">
     <div class="container">
-      <h2 class="h-md" style="margin-bottom: 8px;">轻量项目</h2>
+      <h2 class="h-md" style="margin-bottom: 8px;">Other Experiments / Automation</h2>
       <div class="work-index" style="border-top: 1px solid var(--line);">
         {
           light.map((c) => (

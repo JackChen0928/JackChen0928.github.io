@@ -8,77 +8,57 @@ const sections: CaseSection[] = [
     title: 'Overview',
     blocks: [
       {
-        type: 'p',
-        text: '用 MCP 把 SDK 接入过程 Agent 化：参与 Remote MCP + Local CLI + IDE Agent 方案验证，重点负责 Agent Prompt 的设计与迭代，研究「如何把自然语言需求转化为 Agent 可执行任务规范」。',
-      },
-      {
         type: 'info',
         rows: [
-          ['角色', 'AI 产品实习（参与方案验证）'],
-          ['状态', '方案验证'],
-          ['工具', 'MCP · IDE Agent · Local CLI · Gradle / xcodebuild'],
-          ['支持范围', 'HyperBid / TopOn · Android / iOS'],
+          ['Role', 'AI Application / Product Intern'],
+          ['Status', '方案验证'],
+          ['Stack', 'MCP · Agent · Prompt Engineering · SDK Integration'],
         ],
       },
-      { type: 'tags', accent: true, items: ['MCP', 'Agent', 'Prompt Engineering', 'SDK'] },
+      {
+        type: 'p',
+        text: '参与验证基于 IDE Agent + Remote MCP + Local CLI 的 SDK 自动化集成方案，将自然语言需求转化为可执行的 SDK 接入流程。',
+      },
+      {
+        type: 'tags',
+        accent: true,
+        items: ['MCP', 'Agent', 'Prompt Engineering', 'SDK Integration'],
+      },
     ],
   },
   {
     id: 's02',
     num: '02',
-    title: 'Background',
+    title: '我的职责',
     blocks: [
       {
         type: 'p',
-        text: '传统 SDK 接入流程需要开发者：查看 SDK 文档、配置依赖、初始化 SDK、调用广告 API、编译验证。步骤多、易出错，对不熟悉广告 SDK 的开发者门槛尤其高。',
+        text: '在本项目中，我负责方案验证环节中与 Agent 行为直接相关的部分：',
       },
       {
-        type: 'p',
-        text: '团队为此设计了一套 Remote MCP + Local CLI + IDE Agent 架构，目标是让开发者用自然语言即可完成 SDK 集成。',
+        type: 'list',
+        items: [
+          '负责 Agent Prompt 的设计与迭代',
+          '在 Android Demo 中验证不同 Prompt 对 SDK 自动集成效果的影响',
+          '针对代码遗漏、配置错误及编译问题进行迭代优化',
+          '协助验证完整 Agent Workflow',
+        ],
+      },
+      {
+        type: 'note',
+        bold: '职责边界',
+        text: '不独立开发整个 MCP 系统，Remote MCP / Local CLI 为团队已有能力，我的工作聚焦于 Agent Prompt 设计与端到端方案验证。',
       },
     ],
   },
   {
     id: 's03',
     num: '03',
-    title: 'Problem',
+    title: 'Architecture',
     blocks: [
       {
         type: 'p',
-        text: '如何把一段自然语言需求（例如「帮我集成 TopOn SDK 并展示广告」）转化为 Agent 可以一步步执行的任务，并最终保证工程可编译、可运行。',
-      },
-    ],
-  },
-  {
-    id: 's04',
-    num: '04',
-    title: 'User',
-    blocks: [
-      {
-        type: 'p',
-        text: '需要集成 HyperBid / TopOn 广告 SDK 的移动开发者（Android / iOS）。',
-      },
-    ],
-  },
-  {
-    id: 's05',
-    num: '05',
-    title: 'Goal',
-    blocks: [
-      {
-        type: 'p',
-        text: '让 Agent 尽可能一次完成 SDK 注入，并确保注入后项目可以编译运行，减少开发者手动操作。量化指标待补充。',
-      },
-    ],
-  },
-  {
-    id: 's06',
-    num: '06',
-    title: 'Product Solution',
-    blocks: [
-      {
-        type: 'p',
-        text: '开发者在 IDE Agent 内用自然语言描述需求，Agent 与 Remote MCP 协作生成接入计划，经确认后调用 Local CLI 完成分析、注入与编译验证。',
+        text: '整体方案将 SDK 接入过程 Agent 化，由 IDE Agent 理解自然语言需求，通过 Remote MCP 生成并确认接入计划，由 Local CLI 执行分析与注入。',
       },
       {
         type: 'flow',
@@ -86,119 +66,109 @@ const sections: CaseSection[] = [
           'IDE Agent',
           '↓',
           'Remote MCP',
-          '↓ build_plan / confirm_plan',
           '↓',
-          'Local CLI（analyze → inject → verify）',
+          'Local CLI',
           '↓',
-          'Gradle / xcodebuild',
-          '↓',
-          '完成 SDK 集成（可编译可运行）',
+          'Developer Android / iOS Project',
         ],
+      },
+      { type: 'h', text: 'Remote MCP' },
+      {
+        type: 'list',
+        items: [
+          'build_plan —— 生成 SDK 接入计划',
+          'confirm_plan —— 供用户确认接入方案',
+          'consume_approval —— 消费用户批准',
+          'get_vocabulary —— 获取 SDK 接入词汇/规范',
+        ],
+      },
+      { type: 'h', text: 'Local CLI' },
+      {
+        type: 'list',
+        items: [
+          'analyze —— 扫描并分析项目工程',
+          'inject —— 注入 SDK 相关代码',
+          'verify —— 校验注入结果',
+        ],
+      },
+    ],
+  },
+  {
+    id: 's04',
+    num: '04',
+    title: 'Agent Workflow',
+    blocks: [
+      {
+        type: 'flow',
+        lines: [
+          '能力预检',
+          '→ 信息收集',
+          '→ 项目扫描',
+          '→ 生成接入方案',
+          '→ 用户确认',
+          '→ SDK 代码注入',
+          '→ 反向校验',
+          '→ 编译验证',
+          '→ 总结',
+        ],
+      },
+      {
+        type: 'note',
+        bold: '核心链路',
+        text: '自然语言需求 → Agent Plan → 用户确认 → SDK 注入 → 校验 → 编译验证',
+      },
+    ],
+  },
+  {
+    id: 's05',
+    num: '05',
+    title: 'Prompt Design & Iteration',
+    blocks: [
+      {
+        type: 'p',
+        text: 'Prompt 是决定 Agent 能否稳定完成 SDK 注入的关键。我在 Android Demo 中反复验证不同 Prompt 结构对自动集成效果的影响：',
+      },
+      {
+        type: 'list',
+        items: [
+          '任务目标与代码修改范围',
+          'SDK 接入所需的认证信息与配置',
+          '需要实现的功能与生命周期要求',
+          '代码遗漏与配置错误的防范约束',
+          '最终编译验证的强制要求',
+        ],
+      },
+      {
+        type: 'note',
+        bold: '迭代方式',
+        text: '以「注入 Demo → 编译验证」为验收标准，针对代码遗漏、配置错误及编译问题分析失败原因，再调整 Prompt 结构进行回归验证。',
+      },
+    ],
+  },
+  {
+    id: 's06',
+    num: '06',
+    title: 'Result',
+    blocks: [
+      {
+        type: 'p',
+        text: '完成 Android Demo SDK 自动化注入及编译验证。',
+      },
+      {
+        type: 'note',
+        bold: 'Status',
+        text: '方案验证。该方案处于验证阶段，未对外正式上线，不虚构业务指标。',
       },
     ],
   },
   {
     id: 's07',
     num: '07',
-    title: 'AI Architecture',
-    blocks: [
-      {
-        type: 'p',
-        text: '核心是 Agent Prompt 的任务规范设计——把自然语言需求翻译成明确、可执行、可验证的任务。Prompt 中明确以下内容：',
-      },
-      {
-        type: 'list',
-        items: [
-          '任务目标',
-          'SDK 认证信息',
-          '需要实现的功能',
-          '代码修改范围',
-          '生命周期要求',
-          '异常处理',
-          '内存泄漏防护',
-          '最终编译验证要求',
-        ],
-      },
-      {
-        type: 'note',
-        bold: '职责边界',
-        text: '不独立设计 MCP 架构、不独立开发 Local CLI、不负责整个 Agent Workflow。本人负责方案验证、使用 MCP 将 SDK 注入 Demo，以及 Agent Prompt 的设计与迭代。',
-      },
-    ],
-  },
-  {
-    id: 's08',
-    num: '08',
-    title: 'Key Product Decisions',
-    blocks: [
-      {
-        type: 'decisions',
-        itemsDecisions: [
-          {
-            label: 'D1',
-            title: '明确任务边界',
-            text: '在 Prompt 中界定代码修改范围与生命周期要求，约束 Agent 行为，减少破坏性改动。',
-          },
-          {
-            label: 'D2',
-            title: '强制最终验证',
-            text: 'Prompt 末尾固定编译验证要求（Gradle / xcodebuild），保证交付物可编译运行。',
-          },
-          {
-            label: 'D3',
-            title: '一次完成优先',
-            text: '持续调优 Prompt 结构，研究如何让 Agent 尽量一次完成注入，减少多轮交互。',
-          },
-          {
-            label: 'D4',
-            title: '认证信息前置',
-            text: 'SDK 认证信息在 Prompt 中明确给出，避免 Agent 猜测与反复试探。',
-          },
-        ],
-      },
-    ],
-  },
-  {
-    id: 's09',
-    num: '09',
-    title: 'Evaluation',
-    blocks: [
-      {
-        type: 'p',
-        text: '以「Agent 注入 Demo → 编译验证」作为可执行验收标准；通过反复试验记录 Agent 一次成功率与失败原因，据此迭代 Prompt。',
-      },
-    ],
-  },
-  {
-    id: 's10',
-    num: '10',
-    title: 'Iteration',
-    blocks: [
-      {
-        type: 'p',
-        text: '以「失败原因分析 → Prompt 结构调整 → 再注入验证」为闭环持续迭代，逐步提高一次注入成功率。',
-      },
-    ],
-  },
-  {
-    id: 's11',
-    num: '11',
-    title: 'Result',
-    blocks: [
-      {
-        type: 'p',
-        text: '完成方案验证：使用 MCP 成功将 SDK 注入 Demo，接入链路可编译、可运行。规模化数据待补充。',
-      },
-    ],
-  },
-  {
-    id: 's12',
-    num: '12',
     title: 'Reflection',
     blocks: [
       {
         type: 'p',
-        text: '核心收获：把自然语言需求转化为 Agent 可执行任务规范，是 AI Agent 类产品最关键的翻译层工作；清晰的任务规范比模型能力更能决定结果稳定性。',
+        text: '把自然语言需求转化为 Agent 可执行的任务规范，是 AI Agent 类产品最关键的翻译层工作。清晰的 Prompt 与可验证的闭环（注入 → 校验 → 编译验证），比单纯依赖模型能力更能决定结果的稳定性。',
       },
     ],
   },
@@ -208,12 +178,11 @@ const sections: CaseSection[] = [
 <CaseStudyLayout
   caseNo="02"
   title="MCP SDK Integration Agent"
-  subtitle="把自然语言需求，转化为 Agent 可执行的任务规范。"
+  subtitle="让自然语言需求驱动 SDK 自动集成"
   description="MCP SDK Integration Agent Case Study"
-  tags={['MCP', 'Agent', 'Prompt Engineering', 'SDK']}
+  tags={['MCP', 'Agent', 'Prompt Engineering', 'SDK Integration']}
   sections={sections}
   neighbors={{
-    prev: { href: '/case/sdk-support-agent', label: 'Case 01' },
-    next: { href: '/case/package-size-automation', label: 'Case 03' },
+    prev: { href: '/case/sdk-support-agent', label: 'Case 01 · SDK Developer AI Support Agent' },
   }}
 />

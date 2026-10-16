@@ -5,241 +5,222 @@ const sections: CaseSection[] = [
   {
     id: 's01',
     num: '01',
-    title: 'Overview',
+    title: 'Problem',
     blocks: [
-      {
-        type: 'p',
-        text: '面向 SDK 开发者的 AI 智能客服：用 Dify + RAGFlow 搭建，通过多 Agent 分流解决「多 SDK 版本 × 多平台」文档检索难题，并用 FAQ 清洗与文档知识图谱提升回答质量。',
-      },
       {
         type: 'info',
         rows: [
-          ['角色', 'AI 产品实习（技术支持部门）'],
-          ['状态', 'Internal Testing'],
-          ['时间', '待补充'],
-          ['团队', 'TopOn 技术支持部门'],
-          ['工具', 'Dify · RAGFlow · Python'],
+          ['Role', 'AI Application / Product Intern'],
+          ['Context', 'Developer Technical Support'],
+          ['Status', 'Internal Testing'],
+          ['Stack', 'Dify · RAGFlow · Multi-Agent · RAG · Prompt Engineering · Python'],
         ],
       },
-      { type: 'tags', accent: true, items: ['Multi-Agent', 'RAG', 'Dify', 'RAGFlow', 'Prompt Engineering', 'AI Evaluation'] },
+      {
+        type: 'p',
+        text: '将依赖人工回复的 SDK 技术支持流程，转化为基于 SDK 版本、开发平台和知识库路由的 AI 问答流程。',
+      },
+      { type: 'h', text: '传统流程' },
+      {
+        type: 'flow',
+        lines: [
+          '开发者提出 SDK 技术问题',
+          '↓ 技术支持人员判断 SDK 版本',
+          '↓ 判断开发平台',
+          '↓ 查询对应开发文档 / FAQ',
+          '↓ 人工组织答案',
+          '↓ 回复开发者',
+        ],
+      },
+      { type: 'h', text: '核心问题' },
+      {
+        type: 'list',
+        items: [
+          '技术问题回复依赖人工，重复咨询消耗大量支持成本。',
+          'SDK 存在多个大版本：TopOn / Taku / 酷盈，需要分别维护。',
+          '每个版本又包含 Android / iOS / Unity / Flutter / Cocos / Harmony 等多个平台。',
+          '文档规模较大，三个版本累计包含数百个 Markdown 文档。',
+          '不同平台之间的 SDK 接入方式存在差异，跨平台检索可能导致错误回答。',
+        ],
+      },
     ],
   },
   {
     id: 's02',
     num: '02',
-    title: 'Background',
+    title: 'Product Decision',
     blocks: [
+      { type: 'h', text: '先路由，再检索' },
       {
         type: 'p',
-        text: 'TopOn 是广告聚合平台，其 SDK（Taku、TopOn、酷盈等）被大量移动开发者集成。开发者遇到 SDK 问题时通过支持渠道反馈，技术支持人员需要人工查阅 SDK 文档后逐条回复。',
+        text: '如果使用单一 Agent + 全量知识库，模型需要同时判断 SDK 版本和开发平台，容易检索到不相关文档。因此设计 Multi-Agent 分流：',
       },
       {
-        type: 'p',
-        text: 'SDK 文档存在多个大版本，每个版本又覆盖多个平台（Android、iOS、Unity、Flutter、Cocos、Harmony 等），知识量大且分散，人工检索成本高。',
+        type: 'flow',
+        lines: [
+          '用户',
+          '→ SDK Version',
+          '→ 对应 Version Agent',
+          '→ Developer Platform',
+          '→ Platform-specific Knowledge Base',
+          '→ RAG Retrieval',
+          '→ LLM Answer',
+        ],
+      },
+      {
+        type: 'note',
+        bold: '产品决策',
+        text: '根据 SDK 版本进行初步分流，并通过平台上下文进一步限制知识检索范围。',
       },
     ],
   },
   {
     id: 's03',
     num: '03',
-    title: 'Problem',
+    title: 'Platform-aware Retrieval',
     blocks: [
+      {
+        type: 'flow',
+        lines: [
+          '用户问题',
+          '↓ 是否已说明开发平台？',
+          '├─ 已说明 → 直接检索对应平台知识',
+          '└─ 未说明 → 先询问 Android / iOS / Unity / Flutter / Cocos / Harmony 等平台',
+          '↓ 只检索对应平台文档',
+          '↓ 生成回答',
+        ],
+      },
+      { type: 'h', text: '实现方式' },
       {
         type: 'list',
         items: [
-          '大量重复问题：开发者在不同渠道反复咨询相似问题，支持人员重复回答，人工成本高。',
-          '检索困难：文档版本多、平台多，且文档之间存在超链接 / 关联关系，人工与普通检索都难以准确命中。',
+          '对文档增加 Android / iOS / Unity 等平台前缀',
+          '在 Agent System Prompt 中增加平台约束',
+          '明确要求根据用户平台检索对应文档',
+          '禁止使用其他平台文档作为回答依据',
+          '如果用户已经提供平台，不重复询问',
+          '如果平台不明确，先澄清再检索',
         ],
+      },
+      {
+        type: 'note',
+        bold: '说明',
+        text: '通过 Agent 路由、文档命名和 Prompt 约束实现平台级检索边界（并非严格意义上的物理知识库隔离）。',
       },
     ],
   },
   {
     id: 's04',
     num: '04',
-    title: 'User',
+    title: 'Knowledge Base Governance',
     blocks: [
       {
+        type: 'flow',
+        lines: [
+          '600+ FAQ',
+          '↓ 清洗 / 治理 / 去重 / 规范化',
+          '↓',
+          '100+ 可用于知识库的 FAQ',
+        ],
+      },
+      {
         type: 'p',
-        text: '集成 TopOn 系列 SDK 的移动开发者（Android / iOS / Unity / Flutter / Cocos / Harmony 等平台）。',
+        text: '参与 600+ 条历史 FAQ 的清洗与治理，整理为 100+ 条可用于知识库的 FAQ。',
+      },
+      { type: 'h', text: '文档关联问题' },
+      {
+        type: 'p',
+        text: '发现 SDK 文档之间存在大量超链接关联，但模型检索过程中无法充分利用这些关系。',
+      },
+      {
+        type: 'p',
+        text: '使用 Python 构建文档关联知识图谱，将存在关联关系的文档进行连接，增强相关文档之间的可发现性。',
+      },
+      {
+        type: 'note',
+        bold: '职责边界',
+        text: '不负责 Chunking、Embedding、Reranker、Vector DB 等检索底层细节。',
       },
     ],
   },
   {
     id: 's05',
     num: '05',
-    title: 'Goal',
+    title: 'AI Evaluation',
     blocks: [
+      { type: 'h', text: '测试集' },
       {
         type: 'p',
-        text: '用 AI 助手自动承接 SDK 使用问题，降低重复咨询与人工回复成本，同时保证回答质量可控。本项目以内部测试为阶段目标（效果量化数据待补充）。',
+        text: '基于历史 FAQ 设计 AI 问答测试用例：',
+      },
+      {
+        type: 'list',
+        items: [
+          '具体问题',
+          '模糊问题',
+          '不同 SDK 版本',
+          '不同开发平台',
+          '跨平台干扰场景',
+        ],
+      },
+      { type: 'h', text: 'Evaluation Loop' },
+      {
+        type: 'flow',
+        lines: [
+          '测试',
+          '→ 问题分析',
+          '→ Prompt 优化',
+          '→ 回归测试',
+          '→ 再次评估',
+        ],
+      },
+      {
+        type: 'p',
+        text: '基于历史 FAQ 设计 AI 问答测试用例，通过测试结果分析问题并持续迭代 Prompt 与知识库。',
       },
     ],
   },
   {
     id: 's06',
     num: '06',
-    title: 'Product Solution',
+    title: 'Retrieval Experiment',
     blocks: [
       {
-        type: 'p',
-        text: '基于 Dify + RAGFlow 搭建 SDK 开发者 AI 智能客服：开发者提问后先明确 SDK 版本，进入对应 Agent 与知识库检索；若用户已明确平台则直接检索对应平台知识，否则先询问平台。',
-      },
-      {
-        type: 'flow',
-        lines: [
-          '开发者提问',
-          '↓ 明确 SDK 版本（Taku / TopOn / 酷盈 ...）',
-          '↓ 进入对应版本 Agent',
-          '↓ 是否已明确平台（Android / iOS / Unity / Flutter / Cocos / Harmony ...）',
-          '├─ 是 → 直接检索对应平台知识 → 回答',
-          '└─ 否 → 先询问平台 → 定向检索 → 回答',
-        ],
+        type: 'note',
+        bold: '小型实验',
+        text: '在内部测试过程中对检索参数进行调整，将 Top-K 从 0.4 调整至 0.8 后，内部测试中的错误回答有所减少。',
       },
       {
         type: 'note',
-        bold: '关键机制',
-        text: '通过文档重命名增加 Android / iOS 等平台前缀，并在 Agent Prompt 中约束：不得跨平台、跨版本检索与回答。',
+        bold: '说明',
+        text: '该调整基于内部测试观察，非正式 A/B Test，不虚构准确率提升百分比。',
       },
     ],
   },
   {
     id: 's07',
     num: '07',
-    title: 'AI Architecture',
+    title: 'Result',
     blocks: [
       {
         type: 'p',
-        text: '每个 SDK 版本一个独立知识库，知识库内包含该版本各平台的 SDK 文档与 FAQ；RAGFlow 负责文档解析、分块与检索；Dify Workflow 承载多 Agent 分流逻辑。',
-      },
-      {
-        type: 'flow',
-        lines: [
-          'SDK 文档 + FAQ（多版本 × 多平台）',
-          '↓ 知识库治理（每版本一库）',
-          'RAGFlow 知识库',
-          '↓ 检索',
-          'Dify Workflow 多 Agent 分流 → Prompt 约束 → 答案',
-          '↓',
-          'Python 文档关联知识图谱（补充检索）',
-        ],
-      },
-      {
-        type: 'p',
-        text: '由于 SDK 文档之间存在超链接 / 关联关系，普通检索可能无法理解文档之间的关系，因此使用 Python 构建文档关联知识图谱，辅助定位关联内容。',
+        text: '完成内部测试，验证 SDK 版本/平台分流、知识库检索及 AI 问答流程，并通过测试用例持续进行 Prompt 与知识库迭代。',
       },
       {
         type: 'note',
-        bold: '职责边界',
-        text: 'Chunk Strategy 与整个 RAGFlow 架构并非本人负责，此处仅描述项目整体设计，不夸大个人职责。',
+        bold: 'Status',
+        text: 'Internal Testing。未对外正式上线，不虚构业务指标与上线数据。',
       },
     ],
   },
   {
     id: 's08',
     num: '08',
-    title: 'Key Product Decisions',
-    blocks: [
-      {
-        type: 'decisions',
-        itemsDecisions: [
-          {
-            label: 'D1',
-            title: '多 Agent 分流',
-            text: '按「版本 → 平台」两级维度分流，避免单个 Agent 在超大知识库中检索失准，也便于按版本独立治理知识。',
-          },
-          {
-            label: 'D2',
-            title: '文档重命名加平台前缀',
-            text: '在文档命名层面显式标注平台，配合 Prompt 约束，强制检索与回答不跨平台。',
-          },
-          {
-            label: 'D3',
-            title: 'Prompt 约束检索边界',
-            text: '在 Agent Prompt 中明确「不得跨平台 / 跨版本检索和回答」，从产品规则层面减少幻觉。',
-          },
-          {
-            label: 'D4',
-            title: 'FAQ 清洗',
-            text: '将 600+ 条原始 FAQ 清洗为 100+ 条高质量条目，提升知识库信噪比与检索精度。',
-          },
-          {
-            label: 'D5',
-            title: '文档知识图谱',
-            text: '针对文档间的关联关系，用 Python 构建知识图谱，补充纯向量检索对关联信息的理解不足。',
-          },
-        ],
-      },
-    ],
-  },
-  {
-    id: 's09',
-    num: '09',
-    title: 'Evaluation',
-    blocks: [
-      {
-        type: 'p',
-        text: '依据历史 FAQ 设计测试用例，覆盖具体问题与模糊问题，建立可持续回归的评测闭环：',
-      },
-      {
-        type: 'list',
-        items: [
-          '设计测试用例（具体问题、模糊问题等）。',
-          '持续测试 AI 回答。',
-          '分析失败案例。',
-          '优化 Prompt。',
-          '再次测试验证。',
-        ],
-      },
-      {
-        type: 'note',
-        bold: '参数调整记录',
-        text: '曾将检索 top_k 参数从 0.4 调整到 0.8（据个人记忆），观察到 AI 回答幻觉问题减少。',
-      },
-    ],
-  },
-  {
-    id: 's10',
-    num: '10',
-    title: 'Iteration',
-    blocks: [
-      {
-        type: 'p',
-        text: '以「失败案例分析 → Prompt 优化 → 回归测试」为闭环持续迭代，并结合检索参数调优改善回答质量。',
-      },
-      {
-        type: 'p',
-        text: '迭代结果停留在内部测试阶段：离职后未参与正式对外上线。',
-      },
-    ],
-  },
-  {
-    id: 's11',
-    num: '11',
-    title: 'Result',
-    blocks: [
-      {
-        type: 'p',
-        text: '项目完成内部测试，效果满足内部评估预期。由于未对外正式上线，暂无公开的用户量与效果数据。',
-      },
-      {
-        type: 'note',
-        bold: 'Status',
-        text: 'Internal Testing。上线规模、用户数量、准确率等数据均不虚构。',
-      },
-    ],
-  },
-  {
-    id: 's12',
-    num: '12',
     title: 'Reflection',
     blocks: [
       {
         type: 'p',
-        text: '收获：学会从业务问题出发定义 AI 方案，而非从技术炫技出发；理解「知识质量 × 检索策略 × Prompt 约束」共同决定 RAG 类产品的效果。',
-      },
-      {
-        type: 'p',
-        text: '局限：未经历大规模线上真实流量验证；Chunk Strategy、完整 RAGFlow 架构等非本人负责，未来需要更全面地掌握此类系统的设计与权衡。',
+        text: 'AI 应用落地并非简单接入 LLM，而是需要围绕知识边界、用户上下文、检索范围和 Evaluation 建立完整闭环。',
       },
     ],
   },
@@ -249,9 +230,9 @@ const sections: CaseSection[] = [
 <CaseStudyLayout
   caseNo="01"
   title="SDK Developer AI Support Agent"
-  subtitle="为 SDK 开发者打造的多 Agent 分流 AI 客服，解决多版本 × 多平台文档检索难题。"
+  subtitle="面向 SDK 开发者的 AI 技术支持助手"
   description="SDK Developer AI Support Agent Case Study"
-  tags={['Multi-Agent', 'RAG', 'Dify', 'RAGFlow', 'Internal Testing']}
+  tags={['Dify', 'RAGFlow', 'Multi-Agent', 'RAG', 'Prompt Engineering', 'Python']}
   sections={sections}
   neighbors={{
     next: { href: '/case/mcp-integration-agent', label: 'Case 02 · MCP SDK Integration Agent' },
