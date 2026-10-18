@@ -59,8 +59,6 @@ const projects: Project[] = [
     truth: '真实项目经历 · 另附作品集交互原型',
     tags: ['Dify', 'RAG', '知识库治理', 'Prompt 迭代'],
     href: '/work/sdk-ai-support',
-    demoHref: '/work/sdk-ai-support#demo',
-    demoLabel: '体验交互原型',
   },
   {
     index: '02',
@@ -79,8 +77,6 @@ const projects: Project[] = [
     truth: '真实项目经历 · 交互原型建设中',
     tags: ['MCP', 'Agent', 'Prompt 设计', 'Android Demo'],
     href: '/work/mcp-sdk-agent',
-    demoHref: '/work/mcp-integration-prototype',
-    demoLabel: '原型占位',
   },
   {
     index: '03',
@@ -98,8 +94,6 @@ const projects: Project[] = [
     truth: '真实项目经历 · 交互原型建设中',
     tags: ['Python', 'Hermes', 'APK 体积差', '钉钉通知'],
     href: '/work/sdk-size-checker',
-    demoHref: '/work/sdk-size-detection-prototype',
-    demoLabel: '原型占位',
   },
 ];
 
@@ -139,6 +133,48 @@ const experienceBullets = [
 ];
 
 const techStack = ['Python', 'Java', 'SQL', 'Spring Boot', 'MySQL', 'Redis'];
+
+const methodAbilities = [
+  {
+    num: '01',
+    title: '问题定义',
+    core: '先理解用户遇到的真实问题，再确定需要解决的目标。',
+    desc: '围绕用户场景、现有流程与问题表现，分析需要改善的环节——信息不足时先澄清 SDK 版本与开发平台，让模型在正确的边界内回答，避免为了使用 AI 而使用 AI。',
+    practice: [
+      { label: 'SDK 智能问答与知识库系统', href: '/work/sdk-ai-support' },
+    ],
+  },
+  {
+    num: '02',
+    title: '方案设计',
+    core: '结合任务特点，设计合适的 AI 工作流与工具协作方式。',
+    desc: '理解 RAG、Prompt、Agent 与工具调用在应用中的作用，关注工作流、输入输出、用户确认与执行边界；先路由、再检索，用版本 / 平台分流划定知识边界。',
+    practice: [
+      { label: 'Dify / RAGFlow 智能问答工作流', href: '/work/sdk-ai-support' },
+      { label: 'MCP SDK 自动化集成助手', href: '/work/mcp-sdk-agent' },
+      { label: 'Hermes 包体增量检测工具', href: '/work/sdk-size-checker' },
+    ],
+  },
+  {
+    num: '03',
+    title: '测试与迭代',
+    core: '把问题转化为可验证的测试案例，通过失败分析推动持续改进。',
+    desc: '围绕具体问题、模糊问题与异常场景设计测试用例，分析失败原因，迭代 Prompt 或工作流，并用回归验证代替「感觉好用」。',
+    practice: [
+      { label: 'SDK 智能问答：测试问题集与 Prompt 迭代', href: '/work/sdk-ai-support' },
+      { label: 'MCP 集成助手：Prompt 测试与 Android Demo 验证', href: '/work/mcp-sdk-agent' },
+    ],
+  },
+  {
+    num: '04',
+    title: '工程落地',
+    core: '关注方案是否真正可执行，并通过工程实践验证结果。',
+    desc: '理解 API、SDK、脚本与构建流程，能与研发协作，把产品方案转化为可运行、可验证的实际流程。用 Python 对比基线 APK 与引入 SDK 后的体积差，接入 Hermes 提取参数并打通钉钉通知。',
+    practice: [
+      { label: 'Hermes 包体增量检测工具（已在小组内使用）', href: '/work/sdk-size-checker' },
+    ],
+  },
+];
 ---
 
 <BaseLayout
@@ -195,9 +231,8 @@ const techStack = ['Python', 'Java', 'SQL', 'Spring Boot', 'MySQL', 'Redis'];
       <div class="section-head">
         <div>
           <p class="kicker">Selected Work</p>
-          <h2 class="h-lg">精选项目案例</h2>
+          <h2 class="h-lg">项目经历</h2>
         </div>
-        <a class="link-arrow" href="/work">查看全部项目</a>
       </div>
       <p class="section-lead">
         三个项目属于同一类 SDK 开发者业务场景，分别对应 AI 知识问答、Agent 自动化集成与 AI 工具落地。
@@ -330,25 +365,66 @@ const techStack = ['Python', 'Java', 'SQL', 'Spring Boot', 'MySQL', 'Redis'];
     </div>
   </section>
 
+  <!-- 我的产品方法与实践（原「关于我 / 为什么 / 能力模型 / 工作原则 / 一句话定位」合并） -->
+  <section class="section section--tight" id="about" style="border-top: 1px solid var(--line);">
+    <div class="container">
+      <p class="kicker">About · Method</p>
+      <h2 class="h-lg" style="margin: 8px 0 12px;">我的产品方法与实践</h2>
+      <p class="lead" style="max-width: 680px;">
+        从真实问题出发，将 AI 能力转化为可设计、可验证、可迭代的产品方案。
+      </p>
+      <p class="about-idea">
+        不止于让 AI 能运行，更关注它能否稳定地解决实际问题。
+      </p>
+      <div class="hero-meta" style="margin-top: 18px;">
+        <span class="tag tag--accent">目标岗位</span>
+        <span class="tag">AI Application PM</span>
+        <span class="tag">AI Agent PM</span>
+        <span class="tag">AI Product Intern</span>
+      </div>
+
+      <div class="about-abilities" style="margin-top: 32px;">
+        {
+          methodAbilities.map((a) => (
+            <div class="about-ability">
+              <span class="about-ability-num">{a.num}</span>
+              <h3 class="about-ability-title">{a.title}</h3>
+              <div class="about-ability-body">
+                <p class="about-ability-core">{a.core}</p>
+                <p class="about-ability-desc">{a.desc}</p>
+                {
+                  a.practice && a.practice.length > 0 && (
+                    <p class="about-ability-practice">
+                      实践关联：
+                      {a.practice.map((p, i) => (
+                        <>
+                          {i > 0 && <span class="about-practice-sep"> · </span>}
+                          <a class="about-practice-link" href={p.href}>{p.label} →</a>
+                        </>
+                      ))}
+                    </p>
+                  )
+                }
+              </div>
+            </div>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
   <!-- 联系 -->
   <section class="section contact-section" id="contact">
     <div class="container contact-inner">
       <p class="kicker">Contact</p>
-      <h2 class="h-lg" style="margin-bottom: 16px;">开放交流</h2>
+      <h2 class="h-lg" style="margin-bottom: 16px;">期待与你交流</h2>
       <p class="lead">
-        欢迎交流 AI 应用、Agent 工作流与开发者效率方向的产品实践。
+        如果你在找一位懂技术、能把 AI 方案亲手验证落地的产品经理，欢迎联系我——
+        无论是岗位机会，还是对 Agent / RAG 落地实践的探讨。
       </p>
       <div class="contact-actions">
-        <span class="btn btn--solid btn--disabled" aria-disabled="true">邮箱 · 待补充</span>
-        <a
-          class="btn btn--outline"
-          href="https://github.com/JackChen0928"
-          target="_blank"
-          rel="noopener"
-        >
-          GitHub
-        </a>
-        <span class="btn btn--outline btn--disabled" aria-disabled="true">简历 PDF · 待补充</span>
+        <a class="btn btn--solid" href="mailto:2499202708@qq.com">邮箱 · 2499202708@qq.com</a>
+        <a class="btn btn--outline" href="tel:13380753367">电话 · 13380753367（微信同号）</a>
       </div>
     </div>
   </section>
@@ -799,6 +875,70 @@ const techStack = ['Python', 'Java', 'SQL', 'Spring Boot', 'MySQL', 'Redis'];
     border-top: 1px solid var(--line);
   }
 
+  /* ---------- 我的产品方法与实践 ---------- */
+  .about-idea {
+    margin-top: 10px;
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--accent);
+  }
+
+  .about-ability {
+    display: grid;
+    grid-template-columns: 72px 210px 1fr;
+    gap: 24px;
+    align-items: baseline;
+    padding: 26px 0;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .about-ability:last-child {
+    border-bottom: 0;
+  }
+
+  .about-ability-num {
+    font-family: var(--font-mono);
+    font-size: 14px;
+    color: var(--accent);
+  }
+
+  .about-ability-title {
+    font-size: 17px;
+  }
+
+  .about-ability-body {
+    min-width: 0;
+  }
+
+  .about-ability-core {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 6px;
+  }
+
+  .about-ability-desc {
+    font-size: 14.5px;
+    color: var(--text-3);
+    line-height: 1.75;
+    margin-bottom: 8px;
+  }
+
+  .about-ability-practice {
+    font-size: 13px;
+    line-height: 1.7;
+    color: var(--text-4);
+  }
+
+  .about-practice-link {
+    color: var(--accent);
+    font-weight: 500;
+  }
+
+  .about-practice-link:hover {
+    text-decoration: underline;
+  }
+
   .contact-inner {
     text-align: center;
   }
@@ -894,11 +1034,26 @@ const techStack = ['Python', 'Java', 'SQL', 'Spring Boot', 'MySQL', 'Redis'];
     .exp-tech {
       grid-template-columns: 1fr;
     }
+
+    .about-ability {
+      grid-template-columns: 56px 160px 1fr;
+      gap: 16px;
+    }
   }
 
   @media (max-width: 560px) {
     .hero-role {
       font-size: 14px;
+    }
+
+    .about-ability {
+      grid-template-columns: 1fr;
+      gap: 6px;
+      padding: 20px 0;
+    }
+
+    .about-ability-num {
+      font-size: 12px;
     }
 
     .project-side {

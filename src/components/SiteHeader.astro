@@ -5,15 +5,16 @@ interface Props {
 const { current = 'home' } = Astro.props;
 
 const links = [
-  { href: '/work', label: '项目经历', key: 'work' },
-  { href: '/about', label: '关于我', key: 'about' },
+  { href: '/#projects', label: '项目经历', key: 'work' },
+  { href: '/#about', label: '关于我', key: 'about' },
+  { href: '/#contact', label: '联系我', key: 'contact' },
 ];
 const activeKey = current === 'case' ? 'work' : current;
 ---
 
 <header class="site-header">
   <div class="container header-inner">
-    <a class="brand" href="/">首页</a>
+    <a class="brand" href="/">陈卓杰|作品集</a>
     <ul class="nav-links">
       {
         links.map((l) => (

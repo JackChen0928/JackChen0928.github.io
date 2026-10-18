@@ -7,6 +7,7 @@
 
 import {
   DEMO_KNOWLEDGE,
+  TEST_CASES,
   type KnowledgeDoc,
 } from '../data/sdk-support-demo';
 import { runAllCases, type CaseResult } from '../lib/sdk-support-evaluation';
@@ -154,11 +155,15 @@ export function initSdkEvaluation(): void {
   if (!bodyEl) return;
 
   const { results, summary } = runAllCases();
+  const meta = new Map(TEST_CASES.map((t) => [t.id, t]));
 
   bodyEl.innerHTML = results
     .map((r: CaseResult) => {
       const statusClass =
         r.status === '通过' ? 'sdkai-status--pass' : r.status === '未通过' ? 'sdkai-status--fail' : 'sdkai-status--pending';
+      const category = meta.get(r.id)?.category ?? '—';
+      const regression = r.status === '未通过' ? '待回归验证' : '—';
+      const action = r.status === '未通过' ? SUGGESTIONS[r.id] ?? '结合失败原因调整 Prompt / 检索规则' : '—';
       return `
         <tr>
           <td class="sdkai-eval-id">${esc(r.id)}</td>
@@ -168,7 +173,9 @@ export function initSdkEvaluation(): void {
           <td>${esc(r.actual)}</td>
           <td><span class="sdkai-status ${statusClass}">${esc(r.status)}</span></td>
           <td>${r.status === '未通过' ? esc(r.note) : '—'}</td>
-          <td class="sdkai-eval-note">${esc(SUGGESTIONS[r.id] ?? '—')}</td>
+          <td>${esc(category)}</td>
+          <td class="sdkai-eval-note">${esc(action)}</td>
+          <td>${esc(regression)}</td>
         </tr>`;
     })
     .join('');

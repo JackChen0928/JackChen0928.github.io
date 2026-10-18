@@ -1,226 +1,1549 @@
 ---
-import CaseStudyLayout, { type CaseSection } from '../../layouts/CaseStudyLayout.astro';
-
-const sections: CaseSection[] = [
-  {
-    id: 'overview',
-    num: '01',
-    title: '项目概览',
-    blocks: [
-      {
-        type: 'info',
-        rows: [
-          ['项目类型', 'SDK 开发者工具 · IDE Agent'],
-          ['项目状态', '方案验证（内部，未正式上线）'],
-          ['我的角色', 'Agent Prompt 设计与测试、Android Demo 验证'],
-          ['技术方向', 'MCP · Agent · Prompt Engineering · SDK 集成'],
-        ],
-      },
-      {
-        type: 'p',
-        text: '面向广告 SDK 接入场景，探索用 IDE Agent + Remote MCP + Local CLI 把自然语言接入需求转化为可执行的 SDK 集成流程：Agent 理解需求、生成接入计划、等待用户确认，再由本地 CLI 完成工程分析、代码注入与编译验证。',
-      },
-      {
-        type: 'p',
-        text: '我在方案验证阶段负责与 Agent 行为直接相关的部分：设计并迭代 Agent Prompt，在 Android Demo 中验证 SDK 依赖配置、初始化与广告功能代码注入，并对照编译结果定位失败原因。',
-      },
-      {
-        type: 'note',
-        bold: '真实性标注',
-        text: '本页「真实项目记录」部分来自我在原项目中的实际参与；方案架构为团队已有能力，非我独立设计。项目处于方案验证阶段，未对外上线，页面不展示虚构的运行日志或业务指标。',
-      },
-      {
-        type: 'tags',
-        accent: true,
-        items: ['真实项目记录', '作品集页面', '方案验证'],
-      },
-    ],
-  },
-  {
-    id: 'users',
-    num: '02',
-    title: '目标用户与问题',
-    blocks: [
-      {
-        type: 'p',
-        text: '目标用户是需要把广告 SDK 接入 Android / iOS 工程的开发者，以及负责支持接入的技术人员。',
-      },
-      { type: 'h', text: '用户面对的问题' },
-      {
-        type: 'list',
-        items: [
-          '接入步骤分散在依赖配置、初始化、广告功能与生命周期等多个位置，容易漏改。',
-          '不同 SDK 版本的接入要求不同，复制旧代码或旧文档容易产生配置错误。',
-          '出错后需要在工程配置、注入代码与编译日志之间来回排查，定位成本高。',
-          '重复的接入工作占用开发者时间，也难以保证每次接入的一致性。',
-        ],
-      },
-      { type: 'h', text: '为什么用 Agent 而不是更长的文档' },
-      {
-        type: 'p',
-        text: '文档只能说明「应该怎么做」，无法确认「当前工程实际改成了什么样」。Agent 可以在读取工程后生成针对当前项目的接入计划，并通过本地工具执行与校验，把说明变成可验证的动作。',
-      },
-    ],
-  },
-  {
-    id: 'solution',
-    num: '03',
-    title: '产品方案与工作流',
-    blocks: [
-      {
-        type: 'p',
-        text: '整体方案分为三层：IDE Agent 负责理解需求与组织任务，Remote MCP 负责生成和确认接入计划，Local CLI 负责在本地工程中执行分析与注入。',
-      },
-      {
-        type: 'flow',
-        lines: [
-          'IDE Agent（理解需求、生成任务）',
-          '↓',
-          'Remote MCP（生成接入计划、等待用户确认）',
-          '↓',
-          'Local CLI（分析工程、注入代码、反向校验）',
-          '↓',
-          '开发者本地 Android / iOS 工程',
-        ],
-      },
-      { type: 'h', text: '核心链路' },
-      {
-        type: 'flow',
-        lines: [
-          '能力预检',
-          '→ 信息收集',
-          '→ 项目扫描',
-          '→ 生成接入方案',
-          '→ 用户确认',
-          '→ SDK 代码注入',
-          '→ 反向校验',
-          '→ 编译验证',
-          '→ 结果总结',
-        ],
-      },
-      {
-        type: 'p',
-        text: '「用户确认」被放在代码写入之前：Agent 先给出将要修改的文件、依赖与功能范围，开发者确认后再执行注入。这样即使方案不准确，也不会在未确认的情况下改动工程。',
-      },
-      {
-        type: 'note',
-        bold: '说明',
-        text: '上述架构与工具分工来自团队已有的方案验证环境，用于解释产品设计；本页不展示真实项目路径、内部接口实现或运行日志。',
-      },
-    ],
-  },
-  {
-    id: 'decisions',
-    num: '04',
-    title: '关键设计决策',
-    blocks: [
-      {
-        type: 'decisions',
-        itemsDecisions: [
-          {
-            label: '决策 01',
-            title: '先确认，再写入',
-            text: '把接入计划与用户确认设为强制步骤。Agent 不直接修改工程，而是先说明依赖、初始化位置和功能代码范围，降低误改成本。',
-          },
-          {
-            label: '决策 02',
-            title: '把接入约束写进 Prompt',
-            text: 'Prompt 中明确任务目标、代码修改范围、认证与配置要求、广告功能与生命周期要求，并加入「防止代码遗漏与配置错误」的约束。',
-          },
-          {
-            label: '决策 03',
-            title: '以编译通过作为验收标准',
-            text: '不以「Agent 说完成了」作为结果，而是在 Android Demo 中实际编译。编译失败时回看注入内容与 Prompt 约束，形成可重复的验证闭环。',
-          },
-          {
-            label: '决策 04',
-            title: '失败要能定位到环节',
-            text: '把失败拆分为代码遗漏、配置错误、编译错误等类型，分别对应到 Prompt 约束或工具校验环节，避免只做笼统的「再试一次」。',
-          },
-        ],
-      },
-    ],
-  },
-  {
-    id: 'contribution',
-    num: '05',
-    title: '真实贡献与验证证据',
-    blocks: [
-      { type: 'h', text: '我实际参与的工作' },
-      {
-        type: 'list',
-        items: [
-          '负责 MCP SDK 自动化集成方案中的 Agent Prompt 设计与测试。',
-          '在 Android Demo 中验证 SDK 依赖配置、初始化、广告功能代码注入及编译结果。',
-          '针对代码遗漏、配置错误与编译问题分析原因，调整 Prompt 后重新验证。',
-          '协助验证完整 Agent 工作流（预检 → 收集 → 扫描 → 方案 → 确认 → 注入 → 校验 → 编译）。',
-        ],
-      },
-      { type: 'h', text: '验证方式' },
-      {
-        type: 'p',
-        text: '验证以 Android Demo 为对象：完成依赖与初始化配置、注入广告功能代码后执行编译，以编译结果作为是否通过的依据；失败时记录问题类型并回到对应环节修正。',
-      },
-      {
-        type: 'note',
-        bold: '职责边界',
-        text: 'Remote MCP 与 Local CLI 为团队已有能力，我不独立开发整个 MCP 系统，也不主导原始架构设计。我的贡献集中在 Agent Prompt、Android Demo 验证与问题分析。',
-      },
-      {
-        type: 'note',
-        bold: '不展示的内容',
-        text: '出于保密与真实性考虑，本页不提供真实工程路径、内部工具实现、完整 Prompt 原文或编译日志。',
-      },
-    ],
-  },
-  {
-    id: 'limitations',
-    num: '06',
-    title: '项目局限与后续优化',
-    blocks: [
-      { type: 'h', text: '当前局限' },
-      {
-        type: 'list',
-        items: [
-          '项目处于方案验证阶段，未对外正式上线。',
-          '验证主要集中在 Android Demo，尚未覆盖全部 SDK 版本与平台组合。',
-          'Prompt 的稳定性依赖人工回归验证，失败类型仍需要人工判断。',
-          '注入结果依赖本地构建环境，环境差异可能影响验证结论。',
-        ],
-      },
-      { type: 'h', text: '优化设想' },
-      {
-        type: 'p',
-        text: '以下为尚未在原项目中实现的改进方向，仅作为产品思考展示：',
-      },
-      {
-        type: 'list',
-        items: [
-          '把失败类型与对应 Prompt 约束整理成可检索的回归用例集，减少重复排查。',
-          '在确认步骤中展示更细的变更预览，让开发者能逐项核对依赖与代码改动。',
-          '扩展 iOS 与更多 SDK 版本的 Demo 验证，形成跨平台的一致验收标准。',
-          '将编译结果与失败原因结构化记录，便于后续对比不同 Prompt 版本的表现。',
-        ],
-      },
-      {
-        type: 'tags',
-        items: ['优化设想', '未在原项目实现'],
-      },
-    ],
-  },
-];
+import BaseLayout from '../../layouts/BaseLayout.astro';
 ---
 
-<CaseStudyLayout
-  caseNo="02"
-  title="MCP SDK 自动化集成助手"
-  subtitle="让自然语言需求驱动 SDK 自动集成：从理解需求、生成计划、用户确认，到代码注入与编译验证。"
-  description="MCP SDK 自动化集成助手 Case Study：Agent Prompt 设计、用户确认、代码注入与编译验证。"
-  tags={['Agent 自动化集成', 'MCP', 'Prompt', 'Android Demo']}
+<BaseLayout
+  title="基于 MCP 的 SDK 自动化集成助手 | 内部 POC"
+  description="面向广告 SDK 接入场景的内部 POC：通过 Agent 工作流与工具调用，把依赖配置、初始化、广告功能代码注入与编译验证组织为一条可确认、可校验的自动化流程"
   current="work"
-  sections={sections}
-  neighbors={{
-    prev: { href: '/work/sdk-ai-support', label: '项目 A · SDK 开发者智能问答与知识库系统' },
-    next: { href: '/work/sdk-size-checker', label: '项目 C · SDK 包体增量检测工具' },
-  }}
-/>
+>
+  <!-- ======================= 页头 ======================= -->
+  <section class="mcp-hero">
+    <div class="container">
+      <p class="kicker">Internal POC · Work</p>
+      <h1 class="mcp-title">基于 MCP 的 SDK 自动化集成助手</h1>
+      <p class="mcp-subtitle">探索把 SDK 依赖配置、初始化、广告功能代码注入与编译验证，组织成一条可确认、可校验的自动化流程。</p>
+      <div class="mcp-hero-meta">
+        <div class="mcp-hero-meta-item">
+          <span class="mcp-hero-meta-key">项目类型</span>
+          <span class="mcp-hero-meta-val">内部 POC</span>
+        </div>
+        <div class="mcp-hero-meta-item">
+          <span class="mcp-hero-meta-key">核心技术</span>
+          <span class="mcp-hero-meta-val">MCP · Agent · Prompt Engineering · SDK 集成</span>
+        </div>
+        <div class="mcp-hero-meta-item">
+          <span class="mcp-hero-meta-key">我的角色</span>
+          <span class="mcp-hero-meta-val">Agent Prompt 设计与测试 · Android Demo 验证</span>
+        </div>
+      </div>
+      <div class="mcp-hero-tags">
+        <span class="tag tag--accent">真实项目记录</span>
+        <span class="tag">作品集交互原型</span>
+        <span class="tag">方案验证 · 未上线</span>
+      </div>
+      <p class="mcp-hero-desc">
+        面向广告 SDK 接入场景，探索用「IDE Agent + Remote MCP Server + Local CLI」把自然语言接入需求转化为可执行的 SDK 集成流程：
+        Agent 理解需求、生成接入计划、等待用户确认，再由本地工具完成工程分析、代码注入与编译验证。
+        本页重点展示问题分析、系统架构、核心工作流、交互原型与测试迭代方法。
+      </p>
+      <div class="mcp-status-note">
+        真实项目记录 + 作品集交互原型。交互原型为前端模拟：不调用真实 MCP 服务，不修改真实项目文件；
+        页面不编造运行日志、编译结果、成功次数或业务指标。
+      </div>
+    </div>
+  </section>
+
+  <!-- ======================= 模块导航栏（吸顶，含阅读进度线） ======================= -->
+  <nav class="mcp-hero-anchors" aria-label="目录锚点">
+    <div class="container mcp-toc-inner">
+      <span class="mcp-progress" id="mcp-progress" role="progressbar" aria-label="阅读进度"></span>
+      <a href="#overview">01 项目概览</a>
+      <a href="#problems">02 问题分析</a>
+      <a href="#architecture">03 系统架构</a>
+      <a href="#workflow">04 核心工作流</a>
+      <a href="#demo">05 交互 Demo</a>
+      <a href="#prompt">06 Prompt 设计与测试迭代</a>
+      <a href="#evidence">07 验证证据</a>
+      <a href="#limitations">08 复盘与后续优化</a>
+    </div>
+  </nav>
+
+  <!-- ======================= 01 项目概览 ======================= -->
+  <section id="overview" class="mcp-section">
+    <div class="container">
+      <div class="mcp-section-head">
+        <span class="mcp-section-num">01</span>
+        <h2>项目概览</h2>
+      </div>
+      <p class="mcp-p mcp-p--lead">
+        SDK 接入看起来是「照着文档加几行配置」，实际却分布在依赖配置、初始化、广告功能与生命周期等多个位置。
+        这个内部 POC 想验证一件事：能否通过 Agent 工作流与工具调用，把整条接入流程组织成
+        <strong>可确认、可校验</strong>的自动化链路，让开发者少漏改、少排查。
+      </p>
+      <p class="mcp-p">
+        <strong>目标用户</strong>：需要在 Android 项目（本 POC 以 Android 为验证对象）中接入 SDK 的开发者，
+        以及负责支持接入的技术人员。核心价值是把「说明怎么做」升级为「确认后直接改好并通过编译验证」。
+      </p>
+      <h3 class="mcp-h3">我的角色（真实参与）</h3>
+      <ul class="mcp-list">
+        <li>负责 <strong>Agent Prompt 的设计与测试</strong>。</li>
+        <li>在 <strong>Android Demo</strong> 中测试并迭代 Prompt。</li>
+        <li>针对<strong>代码遗漏、配置错误和编译问题</strong>进行测试和优化。</li>
+        <li>协助<strong>梳理、验证整体工作流</strong>。</li>
+      </ul>
+      <p class="mcp-note mcp-note--dim">
+        真实性标注：本页「项目概览 / 问题分析 / 验证方式」等基于我在原项目中的实际参与；系统架构与工具分工来自团队已有的
+        方案验证环境，非我独立设计；项目处于方案验证阶段，未对外正式上线，页面不展示虚构的运行日志或业务指标。
+      </p>
+    </div>
+  </section>
+
+  <!-- ======================= 02 问题分析 ======================= -->
+  <section id="problems" class="mcp-section mcp-section--alt">
+    <div class="container">
+      <div class="mcp-section-head">
+        <span class="mcp-section-num">02</span>
+        <h2>问题分析</h2>
+      </div>
+      <p class="mcp-p mcp-p--lead">
+        这节用「问题 → 对应需求」的结构，说明为什么「文档 + 手动接入」在 SDK 接入场景下不够用，
+        以及 Agent 化要解决哪些具体问题。以下问题均来自实际接入痛点，作为作品集产品分析展示。
+      </p>
+
+      <div class="mcp-problem-grid">
+        <article class="mcp-problem">
+          <span class="mcp-problem-num">01</span>
+          <h4>接入步骤分散在依赖配置、初始化、广告功能与生命周期等多个位置，容易漏改。</h4>
+          <p class="mcp-problem-need"><strong>对应需求：</strong>把接入步骤组织成固定、可核对的任务序列，逐个确认。</p>
+          <span class="mcp-problem-tag mcp-problem-tag--real">真实背景</span>
+        </article>
+        <article class="mcp-problem">
+          <span class="mcp-problem-num">02</span>
+          <h4>不同 SDK 版本接入要求不同，复制旧代码或旧文档容易产生配置错误。</h4>
+          <p class="mcp-problem-need"><strong>对应需求：</strong>按版本校验依赖、初始化参数与配置项。</p>
+          <span class="mcp-problem-tag mcp-problem-tag--real">真实背景</span>
+        </article>
+        <article class="mcp-problem">
+          <span class="mcp-problem-num">03</span>
+          <h4>出错后要在工程配置、注入代码与编译日志之间来回排查，定位成本高。</h4>
+          <p class="mcp-problem-need"><strong>对应需求：</strong>把失败定位到具体环节（代码遗漏 / 配置错误 / 编译错误）。</p>
+          <span class="mcp-problem-tag mcp-problem-tag--real">真实背景</span>
+        </article>
+        <article class="mcp-problem">
+          <span class="mcp-problem-num">04</span>
+          <h4>重复的接入工作占用开发者时间，也难以保证每次接入的一致性。</h4>
+          <p class="mcp-problem-need"><strong>对应需求：</strong>把接入过程沉淀为可复用、可确认、可校验的流程。</p>
+          <span class="mcp-problem-tag mcp-problem-tag--real">真实背景</span>
+        </article>
+        <article class="mcp-problem">
+          <span class="mcp-problem-num">05</span>
+          <h4>文档只说明「应该怎么做」，无法确认「当前工程实际改成了什么样」。</h4>
+          <p class="mcp-problem-need"><strong>对应需求：</strong>Agent 读取当前工程、生成针对性接入计划并执行校验。</p>
+          <span class="mcp-problem-tag mcp-problem-tag--real">真实背景</span>
+        </article>
+      </div>
+      <p class="mcp-note mcp-note--dim">
+        以上问题作为作品集产品分析展示，未声称量化影响（如节省的开发时间或错误率下降比例）。
+      </p>
+    </div>
+  </section>
+
+  <!-- ======================= 03 系统架构 ======================= -->
+  <section id="architecture" class="mcp-section">
+    <div class="container">
+      <div class="mcp-section-head">
+        <span class="mcp-section-num">03</span>
+        <h2>系统架构</h2>
+      </div>
+      <p class="mcp-p mcp-p--lead">
+        方案把「理解与决策」和「本地执行」分开：<strong>远端负责理解需求、生成并确认计划</strong>，
+        <strong>本地负责读写工程、注入代码与编译验证</strong>，避免远端直接操作本地文件，也让每一步都可被开发者核对。
+      </p>
+
+      <div class="mcp-arch-flow" aria-label="系统架构示意">
+        <div class="mcp-arch-step">
+          <span class="mcp-arch-num">01</span>
+          <strong>IDE Agent</strong>
+          <p>理解自然语言接入需求，组织任务与执行步骤，与开发者交互。</p>
+        </div>
+        <span class="mcp-arch-arrow">→</span>
+        <div class="mcp-arch-step">
+          <span class="mcp-arch-num">02</span>
+          <strong>Remote MCP Server</strong>
+          <p>作为工具调用入口，生成接入计划并等待用户确认。</p>
+        </div>
+        <span class="mcp-arch-arrow">→</span>
+        <div class="mcp-arch-step">
+          <span class="mcp-arch-num">03</span>
+          <strong>Local CLI / sdk-injector</strong>
+          <p>在本地工程中分析、注入代码、反向校验。</p>
+        </div>
+        <span class="mcp-arch-arrow">→</span>
+        <div class="mcp-arch-step">
+          <span class="mcp-arch-num">04</span>
+          <strong>Android 项目</strong>
+          <p>依赖、初始化、广告功能代码的落点与编译验证对象。</p>
+        </div>
+      </div>
+      <p class="mcp-note mcp-note--dim">
+        方案说明 / 待确认：该分工来自团队已有的方案验证环境。各层之间的接口协议与内部实现细节待确认；
+        本页仅用于解释产品设计思路，不展示真实工程路径、内部接口实现或运行日志。
+      </p>
+    </div>
+  </section>
+
+  <!-- ======================= 04 核心工作流 ======================= -->
+  <section id="workflow" class="mcp-section mcp-section--alt">
+    <div class="container">
+      <div class="mcp-section-head">
+        <span class="mcp-section-num">04</span>
+        <h2>核心工作流</h2>
+      </div>
+      <p class="mcp-p mcp-p--lead">
+        完整链路为：<strong>需求输入 → 需求解析 → 方案生成 → 用户确认 → 变更预览 → 执行注入 → 反向校验 → 编译验证 → 结果摘要</strong>。
+        其中「用户确认」与「变更预览」是两条关键边界，保证 Agent 不会在未确认的情况下改动工程。
+      </p>
+
+      <div class="mcp-wf-flow" aria-label="核心工作流">
+        <span class="mcp-wf-step">需求输入</span>
+        <span class="mcp-wf-arrow">→</span>
+        <span class="mcp-wf-step">需求解析</span>
+        <span class="mcp-wf-arrow">→</span>
+        <span class="mcp-wf-step">方案生成</span>
+        <span class="mcp-wf-arrow">→</span>
+        <span class="mcp-wf-step mcp-wf-step--gate">用户确认</span>
+        <span class="mcp-wf-arrow">→</span>
+        <span class="mcp-wf-step mcp-wf-step--gate">变更预览</span>
+        <span class="mcp-wf-arrow">→</span>
+        <span class="mcp-wf-step">执行注入</span>
+        <span class="mcp-wf-arrow">→</span>
+        <span class="mcp-wf-step">反向校验</span>
+        <span class="mcp-wf-arrow">→</span>
+        <span class="mcp-wf-step">编译验证</span>
+        <span class="mcp-wf-arrow">→</span>
+        <span class="mcp-wf-step">结果摘要</span>
+      </div>
+
+      <h3 class="mcp-h3">关键边界：先确认，再写入</h3>
+      <p class="mcp-p">
+        Agent 不直接修改工程。它先给出将改动哪些文件、依赖与功能范围，经开发者确认后再执行注入；
+        编译结果作为验收标准，失败时回到对应环节定位。即使方案不准确，也不会在未确认的情况下改动工程。
+      </p>
+      <p class="mcp-note mcp-note--dim">
+        执行边界说明：未确认前，Agent 处于只读状态；本页交互原型也遵循同一规则——确认前不会执行任何「修改」动作（且原型本身为模拟，不修改真实文件）。
+      </p>
+      <h3 class="mcp-h3">未实现环节（明确标注）</h3>
+      <ul class="mcp-list">
+        <li><strong>自动回滚、自动修复失败配置</strong>为后续优化设想，当前方案遇到失败时回到人工 / 重新确认环节定位。</li>
+        <li>跨版本、跨平台的<strong>全量自动回归</strong>尚未覆盖，验证集中在 Android Demo。</li>
+        <li>工作流中的「能力预检 → 信息收集 → 项目扫描」为前置步骤，本页 Demo 用预设场景简化呈现。</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ======================= 05 交互 Demo：SDK 接入工作台 ======================= -->
+  <section id="demo" class="mcp-section">
+    <div class="container">
+      <div class="mcp-section-head">
+        <span class="mcp-section-num">05</span>
+        <h2>交互 Demo：SDK 接入工作台</h2>
+      </div>
+      <p class="mcp-p mcp-p--lead">
+        本节用可操作的原型演示核心产品路径：<strong>需求输入 → 方案生成 → 方案确认 → 变更预览 → 校验与编译验证 → 结果摘要</strong>，
+        并覆盖「缺少必要参数、配置错误导致编译失败」两类异常案例。原型为<strong>纯前端模拟</strong>，用于验证交互路径是否顺畅。
+      </p>
+
+      <div class="mcp-demo-rules" aria-label="交互规则说明">
+        <h4>交互规则（本地模拟）</h4>
+        <ul>
+          <li>需求输入或载入预设场景后，点击「生成方案」开始流程。</li>
+          <li>方案生成后必须先「确认」，才会进入下一步；任何时候可「取消」。</li>
+          <li>缺少必要参数（如 appId）时流程暂停，请求补充后再继续，不猜测默认值。</li>
+          <li>配置错误（如 minSdkVersion 过低）会在校验环节失败，并展示定位到环节的说明。</li>
+          <li>流程结束可「重新开始」。所有日志与编译输出均为前端模拟，标注「模拟」。</li>
+        </ul>
+      </div>
+
+      <div class="mcp-workbench" aria-label="SDK 接入工作台原型">
+        <div class="mcp-workbench-status" id="mcp-status" data-tone="normal"></div>
+
+        <div class="mcp-steps" id="mcp-steps" aria-label="流程步骤"></div>
+
+        <div class="mcp-workbench-input">
+          <label class="mcp-field" for="mcp-input">
+            <span>接入需求描述</span>
+            <textarea
+              id="mcp-input"
+              rows="3"
+              placeholder="例如：帮我把 TopOn SDK 接入我的 Android 项目，需要初始化并展示开屏广告。"
+            ></textarea>
+          </label>
+          <div class="mcp-scenario-row">
+            <span class="mcp-scenario-label">预设场景（点击载入）</span>
+            <button type="button" class="mcp-scenario-btn" data-scenario="a">正常接入 · 全部通过</button>
+            <button type="button" class="mcp-scenario-btn" data-scenario="b">异常 · 缺少必要参数</button>
+            <button type="button" class="mcp-scenario-btn" data-scenario="c">异常 · 配置错误（编译失败）</button>
+          </div>
+          <div class="mcp-workbench-actions">
+            <button type="button" id="mcp-start" class="btn btn--solid">生成方案</button>
+            <button type="button" id="mcp-cancel" class="btn btn--outline">取消流程</button>
+          </div>
+        </div>
+
+        <div class="mcp-panel" id="mcp-panel" aria-live="polite">
+          <div class="mcp-empty">输入接入需求或选择一个预设场景，然后点击「生成方案」。</div>
+        </div>
+      </div>
+
+      <p class="mcp-note mcp-prototype-note">
+        作品集交互原型 · 模拟执行，不调用真实 MCP 服务，不修改真实项目文件。
+        方案、变更预览、校验与编译日志均为预设的示例内容，不代表真实工程变更记录。
+      </p>
+      <div class="mcp-note">
+        <strong>本原型的验证目的：</strong>检验「先确认再执行、缺参暂停请求补充、失败定位到环节、可取消 / 可重来」这几条关键交互
+        是否清晰顺畅，以及异常场景下用户能否得到明确反馈。Demo 用预设场景演示交互路径，不含真实数据。
+      </div>
+    </div>
+  </section>
+
+  <!-- ======================= 06 Prompt 设计与测试迭代 ======================= -->
+  <section id="prompt" class="mcp-section mcp-section--alt">
+    <div class="container">
+      <div class="mcp-section-head">
+        <span class="mcp-section-num">06</span>
+        <h2>Prompt 设计与测试迭代</h2>
+      </div>
+      <p class="mcp-p mcp-p--lead">
+        Agent 的接入质量不只取决于工具能力，还取决于 Prompt 如何约束任务目标、执行边界与事实边界。
+        原始 Prompt 涉及内部实现细节，不公开；以下为整理后的<strong>作品集示例 Prompt 模板</strong>与
+        <strong>测试迭代案例说明模板</strong>，用于展示设计思路，不代表原项目历史原文或真实测试记录。
+      </p>
+
+      <p class="mcp-note mcp-note--dim">
+        说明：以下示例为整理脱敏后的「作品集示例 Prompt 模板」，不声称与原项目实际使用的完整 Prompt 一致。
+      </p>
+      <pre class="mcp-prompt">你是 SDK 自动化集成助手（作品集示例 Prompt 模板，非原项目原文）。
+
+【任务目标】
+1. 将用户用自然语言描述的 SDK 接入需求，转换为针对当前 Android 工程的具体接入方案。
+2. 输出顺序固定：依赖配置 → 初始化 → 广告功能代码 → 校验步骤。
+
+【执行边界】
+3. 任何对工程文件的修改，都必须先展示方案并获得用户确认；未确认前只读不改。
+4. 信息缺失（如 appId、SDK 版本）时先请求补充，不猜测默认值。
+5. 校验以 Android 编译通过为验收标准，不以「看起来完成」作为结果。
+
+【事实约束】
+6. 不编造 SDK 参数、接口与版本号；以官方发布信息为准。
+7. 编译失败时定位到具体环节（代码遗漏 / 配置错误 / 版本不兼容），并说明修改方向。</pre>
+
+      <h3 class="mcp-h3">设计意图</h3>
+      <p class="mcp-p">每条约束对应一类具体风险，避免「答案看起来合理、实际不可用」：</p>
+      <div class="mcp-table-wrap">
+        <table class="mcp-intent-table">
+          <thead>
+            <tr>
+              <th>Prompt 约束</th>
+              <th>对应风险</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>先展示方案并获确认，再修改工程</td>
+              <td>未经确认直接改工程，一旦方案不准确会污染工程，难以回退。</td>
+            </tr>
+            <tr>
+              <td>信息缺失先请求补充，不猜测默认值</td>
+              <td>缺少 appId 等必要参数时强行生成，会产生不可用的初始化代码。</td>
+            </tr>
+            <tr>
+              <td>以编译通过作为验收标准</td>
+              <td>仅凭 Agent 自我判断无法确认代码真的可用，编译是最直接的门禁。</td>
+            </tr>
+            <tr>
+              <td>不编造 SDK 参数、接口与版本号</td>
+              <td>虚构的接口名、参数或代码片段无法编译通过，损害可信度。</td>
+            </tr>
+            <tr>
+              <td>失败定位到具体环节并说明修改方向</td>
+              <td>笼统「再试一次」无法收敛问题，需要区分代码遗漏 / 配置错误 / 版本兼容。</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3 class="mcp-h3">测试迭代（案例说明模板）</h3>
+      <p class="mcp-p">
+        以下用三个案例说明「测试 → 观察 → 调整 → 验证」的迭代方法。列为<strong>方法示例</strong>，
+        用于展示如何设计测试场景并驱动 Prompt / 规则调整；不代表原项目真实发生过的具体测试记录。
+      </p>
+      <div class="mcp-table-wrap">
+        <table class="mcp-eval-table">
+          <thead>
+            <tr>
+              <th>测试场景</th>
+              <th>观察问题</th>
+              <th>Prompt 调整方向</th>
+              <th>Demo 验证方式</th>
+              <th>验证结果与局限</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>正常接入请求（含 appId 与 SDK 版本）</td>
+              <td>示例：依赖、初始化与权限配置生成正确，可进入编译。</td>
+              <td>保持「先确认再写入」的强制步骤，避免增加冗余输出。</td>
+              <td>工作台预设场景 A，走完整流程。</td>
+              <td>通过；局限：仅覆盖单一 SDK 版本与示例工程。</td>
+            </tr>
+            <tr>
+              <td>缺少必要参数（未提供 appId）</td>
+              <td>示例：Agent 在缺参时未猜测默认值，流程暂停请求补充。</td>
+              <td>强化「信息缺失先请求补充，不猜测默认值」约束。</td>
+              <td>工作台预设场景 B，走缺参恢复路径。</td>
+              <td>通过；局限：补充参数为模拟操作，未覆盖真实交互。</td>
+            </tr>
+            <tr>
+              <td>版本配置错误（minSdkVersion 过低）</td>
+              <td>示例：编译失败能定位到「版本兼容」环节，而非笼统失败。</td>
+              <td>在校验步骤显式加入版本兼容性检查，失败给出修改方向。</td>
+              <td>工作台预设场景 C，观察失败定位与结果摘要。</td>
+              <td>失败案例可复现并给出修改方向；局限：未覆盖真实构建环境差异。</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="mcp-note mcp-note--dim">
+        以上为<strong>方法论示例</strong>，不代表真实历史测试记录；不编造通过次数、失败率或优化百分比。
+      </p>
+
+      <h3 class="mcp-h3">迭代闭环</h3>
+      <div class="mcp-gov-flow" aria-label="测试迭代闭环">
+        <div class="mcp-gov-step">
+          <span class="mcp-gov-num">设计用例</span>
+          <span class="mcp-gov-label">围绕正常、缺参、配置错误等场景设计</span>
+        </div>
+        <span class="mcp-gov-arrow">→</span>
+        <div class="mcp-gov-step">
+          <span class="mcp-gov-num">执行并记录</span>
+          <span class="mcp-gov-label">逐条执行，记录通过 / 失败</span>
+        </div>
+        <span class="mcp-gov-arrow">→</span>
+        <div class="mcp-gov-step">
+          <span class="mcp-gov-num">问题分类</span>
+          <span class="mcp-gov-label">代码遗漏 / 配置错误 / 编译错误</span>
+        </div>
+        <span class="mcp-gov-arrow">→</span>
+        <div class="mcp-gov-step">
+          <span class="mcp-gov-num">优化 Prompt</span>
+          <span class="mcp-gov-label">针对失败类型调整约束</span>
+        </div>
+        <span class="mcp-gov-arrow">→</span>
+        <div class="mcp-gov-step">
+          <span class="mcp-gov-num">回归验证</span>
+          <span class="mcp-gov-label">在 Android Demo 重新编译确认</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ======================= 07 验证证据 ======================= -->
+  <section id="evidence" class="mcp-section">
+    <div class="container">
+      <div class="mcp-section-head">
+        <span class="mcp-section-num">07</span>
+        <h2>验证证据</h2>
+      </div>
+      <p class="mcp-p mcp-p--lead">
+        本页为作品集页面。我在原项目中的参与可以用<strong>文字说明</strong>呈现（下方「已完成」），
+        但具体的截图、日志与版本迭代记录因保密与整理原因暂不公开，因此以<strong>「待补充真实验证材料」占位</strong>展示，
+        不编造任何验证截图、编译日志或成功率数据。
+      </p>
+
+      <h3 class="mcp-h3">已完成（真实，文字说明）</h3>
+      <ul class="mcp-list">
+        <li>负责 Agent Prompt 的设计与测试。</li>
+        <li>在 Android Demo 中测试并迭代 Prompt，验证 SDK 依赖配置、初始化、广告功能代码注入与编译结果。</li>
+        <li>针对代码遗漏、配置错误与编译问题分析原因，调整 Prompt 后重新验证。</li>
+        <li>协助验证完整 Agent 工作流（预检 → 收集 → 扫描 → 方案 → 确认 → 注入 → 校验 → 编译）。</li>
+      </ul>
+
+      <h3 class="mcp-h3">待补充真实验证材料</h3>
+      <div class="mcp-evidence-grid">
+        <div class="mcp-evidence-card">
+          <span class="mcp-evidence-tag">待补充</span>
+          <h4>Prompt 版本迭代记录（脱敏）</h4>
+          <p>不同版本的 Prompt 约束与对应验证结果对比。</p>
+        </div>
+        <div class="mcp-evidence-card">
+          <span class="mcp-evidence-tag">待补充</span>
+          <h4>Android Demo 接入前后对比</h4>
+          <p>接入前后工程配置、注入代码与编译结果（脱敏）。</p>
+        </div>
+        <div class="mcp-evidence-card">
+          <span class="mcp-evidence-tag">待补充</span>
+          <h4>编译结果与失败记录</h4>
+          <p>通过 / 失败记录及失败原因分类（脱敏）。</p>
+        </div>
+      </div>
+      <p class="mcp-note mcp-note--dim">
+        上述材料整理完成并经许可后补充到本页；当前不提供虚构截图、日志或成功率数据。
+      </p>
+    </div>
+  </section>
+
+  <!-- ======================= 08 复盘与后续优化 ======================= -->
+  <section id="limitations" class="mcp-section mcp-section--alt">
+    <div class="container">
+      <div class="mcp-section-head">
+        <span class="mcp-section-num">08</span>
+        <h2>复盘与后续优化</h2>
+      </div>
+      <p class="mcp-p mcp-p--lead">
+        复盘部分明确区分<strong>「已完成（真实）」</strong>与<strong>「后续优化设想（未实现）」</strong>，
+        避免把设想描述成已落地能力。
+      </p>
+
+      <h3 class="mcp-h3">已完成（真实）</h3>
+      <ul class="mcp-list">
+        <li>完成 Agent Prompt 设计与测试，并在 Android Demo 中迭代。</li>
+        <li>通过「先确认再写入」的流程设计，降低误改工程的风险。</li>
+        <li>以编译通过作为验收标准，把失败拆分为代码遗漏、配置错误、编译错误等类型并定位到环节。</li>
+        <li>协助梳理、验证整体工作流，形成可重复的验证闭环。</li>
+      </ul>
+
+      <h3 class="mcp-h3">当前局限</h3>
+      <ul class="mcp-list">
+        <li>项目处于方案验证阶段，未对外正式上线。</li>
+        <li>验证主要集中在 Android Demo，尚未覆盖全部 SDK 版本与平台组合。</li>
+        <li>Prompt 的稳定性依赖人工回归验证，失败类型仍需要人工判断。</li>
+        <li>注入结果依赖本地构建环境，环境差异可能影响验证结论。</li>
+      </ul>
+
+      <h3 class="mcp-h3">后续优化设想（未实现）</h3>
+      <p class="mcp-p">
+        <span class="tag">优化设想</span>
+        以下为尚未在原项目中实现的改进方向，仅作为产品思考展示：
+      </p>
+      <ul class="mcp-list">
+        <li>把失败类型与对应 Prompt 约束整理成<strong>可检索的回归用例集</strong>，减少重复排查。</li>
+        <li>在确认步骤展示<strong>更细粒度的变更预览</strong>，让开发者逐项核对依赖与代码改动。</li>
+        <li>扩展 <strong>iOS 与更多 SDK 版本</strong>的 Demo 验证，形成跨平台的一致验收标准。</li>
+        <li>把编译结果与失败原因<strong>结构化记录</strong>，便于对比不同 Prompt 版本的表现。</li>
+      </ul>
+      <p class="mcp-note mcp-note--dim">
+        上方「后续优化设想」均未落地，不代表已在原项目中实现。
+      </p>
+    </div>
+  </section>
+
+  <!-- ======================= 项目切换 ======================= -->
+  <nav class="mcp-project-switch" aria-label="切换项目">
+    <div class="container mcp-project-switch-inner">
+      <span class="mcp-project-switch-label">继续查看</span>
+      <a href="/work/sdk-ai-support">← 项目 A · SDK 开发者智能问答与知识库系统</a>
+      <a href="/work/sdk-size-checker">项目 C · SDK 包体增量检测工具 →</a>
+    </div>
+  </nav>
+</BaseLayout>
+
+<script>
+  import { initMcpWorkbench } from '../../scripts/mcp-sdk-app';
+  initMcpWorkbench();
+</script>
+<script>
+  // 模块导航 + 阅读进度线（进度线与导航标签精确对齐）：
+  // - 点击导航：精确滚动到对应区块开头（区块顶部对齐吸顶导航下缘）
+  // - 进度线右缘以「导航标签」为刻度：
+  //     进度 0%   = 01 标签起点（点 01 后进度线刚好在 01 开始处）
+  //     进度 x%   = 当前标签起点 + 当前区块内的阅读进度（区块内平滑推进）
+  //     点 02     → 进度线右缘刚好落在 02 标签起点
+  //     100%      = 读到最后一个区块底部（进度线铺满导航栏）
+  const toc = document.querySelector('.mcp-hero-anchors');
+  const tocInner = document.querySelector('.mcp-toc-inner');
+  const progressEl = document.getElementById('mcp-progress');
+  const headerEl = document.querySelector('.site-header') || { offsetHeight: 0 };
+  if (toc && tocInner && progressEl) {
+    const links = Array.from(toc.querySelectorAll('a'));
+    const sections = links.map((l) => document.getElementById(l.getAttribute('href').slice(1)));
+
+    // 吸顶导航总高度（site-header + 模块导航栏）
+    const tocHeight = () => (headerEl.offsetHeight || 0) + toc.offsetHeight;
+
+    // 跳转到指定区块：区块顶部对齐吸顶导航下缘
+    const jumpTo = (sec) => {
+      if (!sec) return;
+      const top = sec.getBoundingClientRect().top + window.scrollY - tocHeight();
+      window.scrollTo({ top: Math.max(top, 0), behavior: 'smooth' });
+      history.replaceState(null, '', '#' + sec.id);
+    };
+
+    // 点击：精确跳转
+    links.forEach((link, i) => {
+      link.addEventListener('click', (e) => {
+        e.preventDefault();
+        jumpTo(sections[i]);
+      });
+    });
+
+    const update = () => {
+      const doc = document.documentElement;
+      const scrollTop = doc.scrollTop || document.body.scrollTop;
+      const viewportH = doc.clientHeight;
+      const offset = tocHeight();
+      const lastIndex = sections.length - 1;
+      if (!sections[0] || !sections[lastIndex]) return;
+
+      // 各区块在文档中的绝对位置（每次实时测量，避免布局 / 字体加载造成失准）
+      const pos = sections.map((s) => (s ? s.getBoundingClientRect().top + window.scrollY : 0));
+      const h = sections.map((s) => (s ? s.getBoundingClientRect().height : 0));
+
+      // 当前阅读区块：以「内容阅读头」（视口顶 + 导航高）命中最靠前的区块
+      const activeTop = scrollTop + offset;
+      let activeIndex = -1;
+      for (let i = 0; i <= lastIndex; i++) {
+        if (pos[i] <= activeTop) activeIndex = i;
+      }
+
+      // 已读到最后一区块底部时强制 100%
+      if (scrollTop >= pos[lastIndex] + h[lastIndex] - viewportH) {
+        activeIndex = lastIndex;
+      }
+      links.forEach((l, i) => l.classList.toggle('is-active', i === activeIndex));
+
+      // 进度线宽度：右缘 = 当前标签起点 + 当前标签宽度 × 区块内阅读分数
+      const barRect = tocInner.getBoundingClientRect();
+      if (activeIndex < 0) {
+        progressEl.style.width = '0px';
+        return;
+      }
+
+      let frac = 1;
+      const start = pos[activeIndex] - offset;
+      const end = pos[activeIndex] + h[activeIndex] - viewportH;
+      if (end > start) {
+        frac = (scrollTop - start) / (end - start);
+        frac = Math.min(1, Math.max(0, frac));
+      }
+      const cur = links[activeIndex].getBoundingClientRect();
+      let fill = (cur.left - barRect.left) + frac * cur.width;
+      if (activeIndex === lastIndex && frac >= 1) fill = barRect.width;
+      progressEl.style.width = fill + 'px';
+    };
+
+    update();
+    window.addEventListener('scroll', update, { passive: true });
+    window.addEventListener('resize', update);
+    window.addEventListener('load', update);
+    // 字体加载完成后标签宽度可能变化，重新校准
+    if (document.fonts && document.fonts.ready) {
+      document.fonts.ready.then(update);
+    }
+  }
+</script>
+
+<style is:global>
+  /* ==================== 阅读进度线（位于模块导航栏底部） ==================== */
+  .mcp-progress {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    height: 2px;
+    width: 0;
+    background: var(--accent);
+    pointer-events: none;
+  }
+
+  /* ==================== 页头 ==================== */
+  .mcp-hero {
+    padding: 72px 0 40px;
+    border-bottom: 1px solid var(--line);
+  }
+  .mcp-title {
+    font-size: clamp(28px, 4vw, 44px);
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    line-height: 1.15;
+    margin: 4px 0 8px;
+  }
+  .mcp-subtitle {
+    font-size: 15px;
+    color: var(--text-3);
+    margin-bottom: 18px;
+  }
+  .mcp-hero-tags { margin-bottom: 16px; }
+  .mcp-hero-desc {
+    font-size: 16px;
+    color: var(--text-2);
+    max-width: 720px;
+  }
+  .mcp-status-note {
+    margin-top: 18px;
+    max-width: 720px;
+    padding: 12px 16px;
+    border: 1px solid var(--line);
+    border-left: 3px solid var(--accent);
+    background: var(--accent-soft);
+    font-size: 14px;
+    color: var(--text-2);
+  }
+  .mcp-hero-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px 28px;
+    margin: 18px 0 14px;
+  }
+  .mcp-hero-meta-item {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  .mcp-hero-meta-key {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.06em;
+    color: var(--text-4);
+  }
+  .mcp-hero-meta-val {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text);
+  }
+
+  /* ==================== 模块导航栏（吸顶，含阅读进度线） ==================== */
+  .mcp-hero-anchors {
+    position: sticky;
+    top: var(--nav-h);
+    margin-top: -1px;
+    z-index: 90;
+    background: rgba(255, 255, 255, 0.92);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--line);
+  }
+  .mcp-toc-inner {
+    position: relative;
+    display: flex;
+    gap: 4px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    scrollbar-width: thin;
+  }
+  .mcp-hero-anchors a {
+    flex: 0 0 auto;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-3);
+    background: none;
+    border: none;
+    border-radius: 0;
+    padding: 4px 12px;
+    transition: color 0.18s;
+  }
+  .mcp-hero-anchors a:hover { color: var(--accent); }
+  .mcp-hero-anchors a:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+  .mcp-hero-anchors a.is-active {
+    color: var(--accent);
+    font-weight: 600;
+  }
+
+  /* ==================== 通用章节 ==================== */
+  .mcp-section {
+    padding: 72px 0;
+    scroll-margin-top: calc(var(--nav-h) + 52px);
+    border-bottom: 1px solid var(--line);
+  }
+  .mcp-section--alt { background: #fafafa; }
+  .mcp-section-head {
+    display: flex;
+    align-items: baseline;
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+  .mcp-section-num {
+    font-family: var(--font-mono);
+    font-size: 22px;
+    font-weight: 300;
+    color: var(--accent);
+    min-width: 40px;
+  }
+  .mcp-section-head h2 {
+    font-size: 24px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+  }
+  .mcp-h3 {
+    font-size: 16px;
+    font-weight: 700;
+    margin: 28px 0 10px;
+  }
+  .mcp-p {
+    color: var(--text-2);
+    max-width: 760px;
+  }
+  .mcp-p--lead { font-size: 15.5px; }
+  .mcp-p strong { color: var(--text); }
+  .mcp-list {
+    margin: 6px 0 0;
+    padding-left: 20px;
+    color: var(--text-2);
+    max-width: 760px;
+  }
+  .mcp-list li { margin: 6px 0; }
+  .mcp-list strong { color: var(--text); }
+  .mcp-note {
+    margin-top: 14px;
+    padding: 12px 16px;
+    border: 1px solid var(--line);
+    background: #fff;
+    font-size: 13.5px;
+    color: var(--text-3);
+    max-width: 760px;
+  }
+  .mcp-note--dim {
+    border-left: 3px solid var(--line-strong);
+    background: #fafafa;
+  }
+  .mcp-p .tag,
+  .mcp-list .tag {
+    margin-right: 8px;
+  }
+
+  /* ==================== 问题分析 ==================== */
+  .mcp-problem-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+    margin-top: 20px;
+  }
+  .mcp-problem {
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    background: #fff;
+    padding: 18px 20px 16px;
+  }
+  .mcp-problem-num {
+    font-family: var(--font-mono);
+    font-size: 13px;
+    font-weight: 300;
+    color: var(--accent);
+    letter-spacing: 0.04em;
+  }
+  .mcp-problem h4 {
+    font-size: 14.5px;
+    font-weight: 600;
+    line-height: 1.6;
+    margin: 8px 0 10px;
+    color: var(--text);
+  }
+  .mcp-problem-need {
+    font-size: 13px;
+    color: var(--text-2);
+    line-height: 1.7;
+    margin-bottom: 12px;
+  }
+  .mcp-problem-need strong {
+    color: var(--accent);
+    font-weight: 600;
+  }
+  .mcp-problem-tag {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 600;
+    border-radius: 999px;
+    padding: 2px 10px;
+  }
+  .mcp-problem-tag--real { color: #166534; background: #f0fdf4; border: 1px solid #bbf7d0; }
+
+  /* ==================== 系统架构 ==================== */
+  .mcp-arch-flow {
+    display: flex;
+    align-items: stretch;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin: 16px 0 14px;
+  }
+  .mcp-arch-step {
+    flex: 1 1 180px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    border: 1px solid var(--line);
+    border-top: 3px solid var(--accent);
+    border-radius: 10px;
+    background: #fff;
+    padding: 16px 18px;
+  }
+  .mcp-arch-num {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    font-weight: 300;
+    color: var(--accent);
+    letter-spacing: 0.04em;
+  }
+  .mcp-arch-step strong {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--text);
+  }
+  .mcp-arch-step p {
+    font-size: 12.5px;
+    color: var(--text-3);
+    line-height: 1.6;
+    margin: 0;
+  }
+  .mcp-arch-arrow {
+    align-self: center;
+    font-size: 16px;
+    color: var(--accent);
+    padding: 0 2px;
+  }
+
+  /* ==================== 核心工作流 ==================== */
+  .mcp-wf-flow {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    margin: 16px 0 6px;
+  }
+  .mcp-wf-step {
+    flex: 0 0 auto;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text);
+    background: #fff;
+    border: 1px solid var(--line-strong);
+    border-radius: 999px;
+    padding: 6px 14px;
+  }
+  .mcp-wf-step--gate {
+    color: var(--accent);
+    border-color: var(--accent);
+    background: var(--accent-soft);
+  }
+  .mcp-wf-arrow {
+    color: var(--text-4);
+    font-size: 14px;
+  }
+
+  /* ==================== 流程闭环（测试迭代） ==================== */
+  .mcp-gov-flow {
+    display: flex;
+    align-items: stretch;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin: 16px 0 14px;
+  }
+  .mcp-gov-step {
+    flex: 1 1 160px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    border: 1px solid var(--line);
+    border-top: 3px solid var(--accent);
+    border-radius: 10px;
+    background: #fff;
+    padding: 16px 18px;
+  }
+  .mcp-gov-num { font-size: 15px; font-weight: 700; color: var(--text); }
+  .mcp-gov-label { font-size: 12.5px; color: var(--text-3); line-height: 1.6; }
+  .mcp-gov-arrow {
+    align-self: center;
+    font-size: 16px;
+    color: var(--accent);
+    padding: 0 2px;
+  }
+
+  /* ==================== 交互规则说明 / 原型提示 ==================== */
+  .mcp-demo-rules {
+    margin-top: 16px;
+    border: 1px solid var(--line);
+    border-left: 3px solid var(--accent);
+    border-radius: 8px;
+    background: var(--accent-soft);
+    padding: 14px 18px 6px;
+    max-width: 900px;
+  }
+  .mcp-demo-rules h4 {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 8px;
+  }
+  .mcp-demo-rules ul {
+    margin: 0;
+    padding-left: 18px;
+    font-size: 13px;
+    color: var(--text-2);
+  }
+  .mcp-demo-rules li { margin: 6px 0; }
+  .mcp-prototype-note {
+    margin-top: 16px;
+    border: 1px solid var(--accent);
+    border-left: 4px solid var(--accent);
+    background: var(--accent-soft);
+    color: var(--text-2);
+    font-weight: 600;
+  }
+
+  /* ==================== 项目切换 ==================== */
+  .mcp-project-switch {
+    border-top: 1px solid var(--line);
+    background: #fff;
+  }
+  .mcp-project-switch-inner {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    flex-wrap: wrap;
+    padding-top: 32px;
+    padding-bottom: 32px;
+  }
+  .mcp-project-switch-label {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    color: var(--text-4);
+  }
+  .mcp-project-switch a {
+    font-size: 14px;
+    font-weight: 600;
+  }
+
+  /* ==================== 交互原型：SDK 接入工作台 ==================== */
+  .mcp-workbench {
+    margin-top: 20px;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    background: #fff;
+    overflow: hidden;
+  }
+  .mcp-workbench-status {
+    padding: 10px 16px;
+    font-size: 12.5px;
+    color: var(--text-3);
+    background: var(--accent-soft);
+    border-bottom: 1px solid var(--line);
+  }
+  .mcp-workbench-status[data-tone="warn"] {
+    color: #92400e;
+    background: #fffbeb;
+    border-color: #fcd34d;
+  }
+  .mcp-workbench-status[data-tone="error"] {
+    color: #b91c1c;
+    background: #fef2f2;
+    border-color: #fecaca;
+  }
+  .mcp-workbench-status[data-tone="ok"] {
+    color: #166534;
+    background: #f0fdf4;
+    border-color: #bbf7d0;
+  }
+
+  /* 步骤条 */
+  .mcp-steps {
+    display: flex;
+    gap: 2px;
+    padding: 10px 16px;
+    border-bottom: 1px solid var(--line);
+    background: #fafafa;
+    overflow-x: auto;
+    scrollbar-width: thin;
+  }
+  .mcp-step {
+    flex: 0 0 auto;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 10px;
+    font-size: 12px;
+    color: var(--text-4);
+    border-radius: 999px;
+  }
+  .mcp-step-num {
+    font-family: var(--font-mono);
+    font-size: 11px;
+  }
+  .mcp-step-label { white-space: nowrap; }
+  .mcp-step--done { color: var(--text-2); }
+  .mcp-step--done .mcp-step-num { color: #166534; }
+  .mcp-step--current {
+    color: var(--accent);
+    background: var(--accent-soft);
+    font-weight: 600;
+  }
+
+  /* 输入区 */
+  .mcp-workbench-input {
+    padding: 18px 20px;
+    border-bottom: 1px solid var(--line);
+  }
+  .mcp-field {
+    display: block;
+    margin-bottom: 14px;
+  }
+  .mcp-field > span {
+    display: block;
+    font-size: 12.5px;
+    color: var(--text-3);
+    margin-bottom: 6px;
+  }
+  .mcp-field textarea {
+    width: 100%;
+    padding: 10px 12px;
+    font-size: 14px;
+    font-family: var(--font-sans);
+    color: var(--text);
+    background: #fff;
+    border: 1px solid var(--line-strong);
+    border-radius: 6px;
+    resize: vertical;
+    min-height: 72px;
+    transition: border-color 0.18s, box-shadow 0.18s;
+  }
+  .mcp-field textarea:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+  }
+  .mcp-field textarea:disabled {
+    background: #fafafa;
+    color: var(--text-4);
+  }
+  .mcp-scenario-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 14px;
+  }
+  .mcp-scenario-label {
+    font-size: 12.5px;
+    color: var(--text-3);
+  }
+  .mcp-scenario-btn {
+    padding: 6px 12px;
+    font-size: 12.5px;
+    font-weight: 600;
+    color: var(--text-2);
+    background: #fff;
+    border: 1px solid var(--line-strong);
+    border-radius: 999px;
+    cursor: pointer;
+    transition: all 0.18s;
+  }
+  .mcp-scenario-btn:hover {
+    color: var(--accent);
+    border-color: var(--accent);
+    background: var(--accent-soft);
+  }
+  .mcp-scenario-btn:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+  .mcp-scenario-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+  .mcp-workbench-actions {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+  .mcp-workbench-actions .btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  /* 面板 */
+  .mcp-panel {
+    padding: 18px 20px;
+    min-height: 120px;
+  }
+  .mcp-empty {
+    padding: 32px 16px;
+    text-align: center;
+    font-size: 13.5px;
+    color: var(--text-4);
+    border: 1px dashed var(--line-strong);
+    border-radius: 8px;
+    background: #fafafa;
+    line-height: 1.8;
+  }
+
+  /* 卡片 */
+  .mcp-card {
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    background: #fff;
+    padding: 18px 20px;
+  }
+  .mcp-card--error {
+    border-color: #fecaca;
+    border-left: 3px solid #dc2626;
+    background: #fffdfd;
+  }
+  .mcp-card-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: 12px;
+  }
+  .mcp-card-head h4 {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--text);
+  }
+  .mcp-badge {
+    flex: 0 0 auto;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text-3);
+    background: #f3f4f6;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    padding: 2px 10px;
+  }
+  .mcp-badge--warn {
+    color: #92400e;
+    background: #fffbeb;
+    border-color: #fde68a;
+  }
+  .mcp-card-text {
+    font-size: 13.5px;
+    color: var(--text-2);
+    line-height: 1.7;
+    margin: 8px 0;
+  }
+  .mcp-card-actions {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 16px;
+  }
+  .mcp-card-hint {
+    margin-top: 12px;
+    font-size: 12px;
+    color: var(--text-4);
+  }
+
+  /* 方案列表 */
+  .mcp-plan-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .mcp-plan-item {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    padding: 12px 14px;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    background: #fafafa;
+  }
+  .mcp-plan-num {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    font-weight: 300;
+    color: var(--accent);
+    flex: 0 0 auto;
+    padding-top: 2px;
+  }
+  .mcp-plan-item strong {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text);
+  }
+  .mcp-plan-item p {
+    font-size: 13px;
+    color: var(--text-2);
+    line-height: 1.6;
+    margin: 4px 0 0;
+  }
+
+  /* 变更预览（diff） */
+  .mcp-diff {
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    margin: 10px 0;
+    overflow: hidden;
+  }
+  .mcp-diff-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 8px 12px;
+    background: #fafafa;
+    border-bottom: 1px solid var(--line);
+  }
+  .mcp-diff-file {
+    font-family: var(--font-mono);
+    font-size: 12.5px;
+    font-weight: 600;
+    color: var(--text);
+  }
+  .mcp-diff-action {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--accent);
+    background: var(--accent-soft);
+    border-radius: 999px;
+    padding: 1px 8px;
+  }
+  .mcp-diff-cols {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+  }
+  .mcp-diff-col {
+    padding: 10px 12px;
+    min-width: 0;
+  }
+  .mcp-diff-col + .mcp-diff-col {
+    border-left: 1px solid var(--line);
+  }
+  .mcp-diff-col--after { background: #f0fdf4; }
+  .mcp-diff-col-label {
+    font-size: 11px;
+    color: var(--text-4);
+    margin-bottom: 6px;
+    font-weight: 600;
+  }
+  .mcp-diff-col pre {
+    margin: 0;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    line-height: 1.6;
+    color: var(--text-2);
+    white-space: pre;
+    overflow-x: auto;
+  }
+
+  /* 校验列表 */
+  .mcp-validate-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .mcp-validate-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    padding: 8px 12px;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    background: #fafafa;
+  }
+  .mcp-validate-status {
+    flex: 0 0 auto;
+    font-size: 11px;
+    font-weight: 600;
+    border-radius: 999px;
+    padding: 2px 10px;
+  }
+  .mcp-validate-status[data-vstatus="pending"] {
+    color: var(--text-4);
+    background: #f3f4f6;
+    border: 1px solid var(--line);
+  }
+  .mcp-validate-status[data-vstatus="running"] {
+    color: var(--accent);
+    background: var(--accent-soft);
+    border: 1px solid var(--accent);
+  }
+  .mcp-validate-status[data-vstatus="pass"] {
+    color: #166534;
+    background: #f0fdf4;
+    border: 1px solid #bbf7d0;
+  }
+  .mcp-validate-status[data-vstatus="fail"] {
+    color: #b91c1c;
+    background: #fef2f2;
+    border: 1px solid #fecaca;
+  }
+  .mcp-validate-label {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text);
+  }
+  .mcp-validate-detail {
+    flex: 1 1 260px;
+    font-size: 12.5px;
+    color: var(--text-3);
+  }
+
+  /* 控制台 / 日志 */
+  .mcp-console {
+    margin-top: 12px;
+    background: #0b1220;
+    border-radius: 8px;
+    padding: 14px 16px;
+    font-family: var(--font-mono);
+    font-size: 12.5px;
+    line-height: 1.7;
+    color: #cbd5e1;
+    overflow-x: auto;
+  }
+  .mcp-console--build { margin-top: 12px; }
+  .mcp-log-line--pending { color: #64748b; }
+  .mcp-log-line--ok { color: #e2e8f0; }
+
+  /* 结果摘要 */
+  .mcp-summary-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-top: 8px;
+  }
+  .mcp-summary-col {
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 14px 16px;
+    background: #fafafa;
+  }
+  .mcp-summary-col h5 {
+    font-size: 12.5px;
+    font-weight: 700;
+    color: var(--text-3);
+    margin-bottom: 8px;
+  }
+  .mcp-summary-list {
+    margin: 0;
+    padding-left: 18px;
+    font-size: 13px;
+    line-height: 1.7;
+  }
+  .mcp-summary-list--ok li { color: #166534; }
+  .mcp-summary-list--fail li { color: #b91c1c; }
+  .mcp-summary-empty {
+    font-size: 13px;
+    color: var(--text-4);
+    margin: 0;
+  }
+
+  /* ==================== Prompt 代码块 ==================== */
+  .mcp-prompt {
+    margin: 12px 0 6px;
+    padding: 18px 20px;
+    background: #0b1220;
+    color: #e2e8f0;
+    border-radius: 10px;
+    font-family: var(--font-mono);
+    font-size: 13px;
+    line-height: 1.8;
+    white-space: pre;
+    overflow-x: auto;
+    max-width: 860px;
+  }
+
+  /* ==================== 表格 ==================== */
+  .mcp-table-wrap {
+    margin-top: 10px;
+    overflow-x: auto;
+    max-width: 900px;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+  }
+  .mcp-table-wrap table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13.5px;
+  }
+  .mcp-intent-table th:first-child { width: 44%; }
+  .mcp-intent-table th,
+  .mcp-intent-table td {
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--line);
+    text-align: left;
+    vertical-align: top;
+  }
+  .mcp-intent-table thead th {
+    background: #fafafa;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--text-3);
+  }
+  .mcp-intent-table tbody tr:last-child td { border-bottom: 0; }
+  .mcp-eval-table {
+    min-width: 1080px;
+  }
+  .mcp-eval-table th,
+  .mcp-eval-table td {
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--line);
+    text-align: left;
+    vertical-align: top;
+  }
+  .mcp-eval-table thead th {
+    background: #fafafa;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--text-3);
+  }
+  .mcp-eval-table tbody tr:last-child td { border-bottom: 0; }
+
+  /* ==================== 验证证据 ==================== */
+  .mcp-evidence-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin-top: 10px;
+  }
+  .mcp-evidence-card {
+    border: 1px solid var(--line);
+    border-left: 3px solid var(--line-strong);
+    border-radius: 8px;
+    background: #fff;
+    padding: 16px 18px;
+  }
+  .mcp-evidence-tag {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 600;
+    color: #92400e;
+    background: #fffbeb;
+    border: 1px solid #fde68a;
+    border-radius: 999px;
+    padding: 1px 10px;
+    margin-bottom: 10px;
+  }
+  .mcp-evidence-card h4 {
+    font-size: 14px;
+    font-weight: 700;
+    margin-bottom: 6px;
+  }
+  .mcp-evidence-card p {
+    font-size: 13px;
+    color: var(--text-2);
+    margin: 0;
+    line-height: 1.6;
+  }
+
+  /* ==================== 响应式 ==================== */
+  @media (max-width: 900px) {
+    .mcp-metrics { grid-template-columns: repeat(2, 1fr); }
+    .mcp-evidence-grid { grid-template-columns: 1fr; }
+    .mcp-summary-grid { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 600px) {
+    .mcp-section { padding: 56px 0; }
+    .mcp-problem-grid { grid-template-columns: 1fr; }
+    .mcp-diff-cols { grid-template-columns: 1fr; }
+    .mcp-diff-col + .mcp-diff-col { border-left: 0; border-top: 1px solid var(--line); }
+    .mcp-summary-grid { grid-template-columns: 1fr; }
+    .mcp-evidence-grid { grid-template-columns: 1fr; }
+    .mcp-project-switch-inner {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 12px;
+      padding-top: 24px;
+      padding-bottom: 24px;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+  }
+</style>

@@ -346,10 +346,15 @@ export const WORKFLOW_FLOW = [
   'insufficient',
 ];
 
-/** 测试用例（由评测面板按模拟规则自动执行） */
+/** 测试用例（由评测面板按模拟规则自动执行）
+ * 用例与输入条件为「作品集示例」：基于真实历史 FAQ 设计思路整理，实际观察由前端模拟规则自动生成。
+ */
 export interface TestCase {
   id: string;
+  /** 测试场景 */
   name: string;
+  /** 问题分类 */
+  category: string;
   sdkVersion: SdkVersion | '';
   platform: Platform | '';
   query: string;
@@ -361,6 +366,7 @@ export const TEST_CASES: TestCase[] = [
   {
     id: 'T01',
     name: '版本、平台与问题一致',
+    category: '具体问题',
     sdkVersion: 'TopOn',
     platform: 'Flutter',
     query: 'Flutter 如何接入开屏广告？',
@@ -370,6 +376,7 @@ export const TEST_CASES: TestCase[] = [
   {
     id: 'T02',
     name: '问题明确提及不同平台',
+    category: '跨平台干扰',
     sdkVersion: 'TopOn',
     platform: 'Flutter',
     query: 'TopOn Android 如何接入开屏广告？',
@@ -379,6 +386,7 @@ export const TEST_CASES: TestCase[] = [
   {
     id: 'T03',
     name: '未选择平台',
+    category: '缺少平台信息',
     sdkVersion: 'TopOn',
     platform: '',
     query: '如何接入开屏广告？',
@@ -388,6 +396,7 @@ export const TEST_CASES: TestCase[] = [
   {
     id: 'T04',
     name: '资料不足',
+    category: '资料不足',
     sdkVersion: 'Taku',
     platform: 'Cocos',
     query: 'Cocos 如何接入开屏广告？',
@@ -397,6 +406,7 @@ export const TEST_CASES: TestCase[] = [
   {
     id: 'T05',
     name: '跨版本问题',
+    category: '跨版本干扰',
     sdkVersion: 'TopOn',
     platform: 'Flutter',
     query: 'Taku 的初始化配置和 TopOn 一样吗？',
@@ -406,6 +416,7 @@ export const TEST_CASES: TestCase[] = [
   {
     id: 'T06',
     name: '连续对话中的平台确认',
+    category: '多轮上下文',
     sdkVersion: 'TopOn',
     platform: 'Flutter',
     query: 'Android 如何接入开屏广告？（先冲突，确认后继续）',
@@ -415,6 +426,7 @@ export const TEST_CASES: TestCase[] = [
   {
     id: 'T07',
     name: '知识库中存在相关文档',
+    category: '具体问题',
     sdkVersion: 'TopOn',
     platform: 'Android',
     query: 'Android 初始化失败怎么办？',
@@ -424,6 +436,7 @@ export const TEST_CASES: TestCase[] = [
   {
     id: 'T08',
     name: '知识库中不存在相关文档',
+    category: '资料不足',
     sdkVersion: '酷盈',
     platform: 'Harmony',
     query: 'Harmony 端如何配置隐私合规？',
@@ -433,6 +446,7 @@ export const TEST_CASES: TestCase[] = [
   {
     id: 'T09',
     name: '非标准平台表述（未知关键词）',
+    category: '模糊问题',
     sdkVersion: 'TopOn',
     platform: '',
     query: '平板设备上如何接入开屏广告？',
