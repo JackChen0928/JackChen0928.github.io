@@ -2,7 +2,7 @@
 import BaseLayout from './BaseLayout.astro';
 
 interface Block {
-  type: 'p' | 'list' | 'flow' | 'info' | 'decisions' | 'note' | 'tags';
+  type: 'p' | 'h' | 'list' | 'flow' | 'info' | 'decisions' | 'note' | 'tags';
   text?: string;
   items?: string[];
   lines?: string[];
@@ -26,16 +26,26 @@ interface Props {
   description?: string;
   tags?: string[];
   sections: CaseSection[];
+  current?: 'home' | 'work' | 'about' | 'case';
   neighbors?: {
     prev?: { href: string; label: string };
     next?: { href: string; label: string };
   };
 }
 
-const { caseNo, title, subtitle, description, tags = [], sections, neighbors } = Astro.props;
+const {
+  caseNo,
+  title,
+  subtitle,
+  description,
+  tags = [],
+  sections,
+  current = 'case',
+  neighbors,
+} = Astro.props;
 ---
 
-<BaseLayout title={`Case Study ${caseNo} · ${title}`} description={description} current="case">
+<BaseLayout title={`Case Study ${caseNo} · ${title}`} description={description} current={current}>
   <!-- Case Header -->
   <header class="case-header">
     <div class="container">
@@ -168,6 +178,12 @@ const { caseNo, title, subtitle, description, tags = [], sections, neighbors } =
     }
     .case-toc a:hover {
       color: var(--accent);
+    }
+    .case-subhead {
+      font-size: 16px;
+      font-weight: 600;
+      margin: 28px 0 10px;
+      color: var(--text);
     }
     @media (max-width: 640px) {
       .case-section .prose {

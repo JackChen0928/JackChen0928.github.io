@@ -1,0 +1,226 @@
+---
+import CaseStudyLayout, { type CaseSection } from '../../layouts/CaseStudyLayout.astro';
+
+const sections: CaseSection[] = [
+  {
+    id: 'overview',
+    num: '01',
+    title: '项目概览',
+    blocks: [
+      {
+        type: 'info',
+        rows: [
+          ['项目类型', 'SDK 开发者工具 · IDE Agent'],
+          ['项目状态', '方案验证（内部，未正式上线）'],
+          ['我的角色', 'Agent Prompt 设计与测试、Android Demo 验证'],
+          ['技术方向', 'MCP · Agent · Prompt Engineering · SDK 集成'],
+        ],
+      },
+      {
+        type: 'p',
+        text: '面向广告 SDK 接入场景，探索用 IDE Agent + Remote MCP + Local CLI 把自然语言接入需求转化为可执行的 SDK 集成流程：Agent 理解需求、生成接入计划、等待用户确认，再由本地 CLI 完成工程分析、代码注入与编译验证。',
+      },
+      {
+        type: 'p',
+        text: '我在方案验证阶段负责与 Agent 行为直接相关的部分：设计并迭代 Agent Prompt，在 Android Demo 中验证 SDK 依赖配置、初始化与广告功能代码注入，并对照编译结果定位失败原因。',
+      },
+      {
+        type: 'note',
+        bold: '真实性标注',
+        text: '本页「真实项目记录」部分来自我在原项目中的实际参与；方案架构为团队已有能力，非我独立设计。项目处于方案验证阶段，未对外上线，页面不展示虚构的运行日志或业务指标。',
+      },
+      {
+        type: 'tags',
+        accent: true,
+        items: ['真实项目记录', '作品集页面', '方案验证'],
+      },
+    ],
+  },
+  {
+    id: 'users',
+    num: '02',
+    title: '目标用户与问题',
+    blocks: [
+      {
+        type: 'p',
+        text: '目标用户是需要把广告 SDK 接入 Android / iOS 工程的开发者，以及负责支持接入的技术人员。',
+      },
+      { type: 'h', text: '用户面对的问题' },
+      {
+        type: 'list',
+        items: [
+          '接入步骤分散在依赖配置、初始化、广告功能与生命周期等多个位置，容易漏改。',
+          '不同 SDK 版本的接入要求不同，复制旧代码或旧文档容易产生配置错误。',
+          '出错后需要在工程配置、注入代码与编译日志之间来回排查，定位成本高。',
+          '重复的接入工作占用开发者时间，也难以保证每次接入的一致性。',
+        ],
+      },
+      { type: 'h', text: '为什么用 Agent 而不是更长的文档' },
+      {
+        type: 'p',
+        text: '文档只能说明「应该怎么做」，无法确认「当前工程实际改成了什么样」。Agent 可以在读取工程后生成针对当前项目的接入计划，并通过本地工具执行与校验，把说明变成可验证的动作。',
+      },
+    ],
+  },
+  {
+    id: 'solution',
+    num: '03',
+    title: '产品方案与工作流',
+    blocks: [
+      {
+        type: 'p',
+        text: '整体方案分为三层：IDE Agent 负责理解需求与组织任务，Remote MCP 负责生成和确认接入计划，Local CLI 负责在本地工程中执行分析与注入。',
+      },
+      {
+        type: 'flow',
+        lines: [
+          'IDE Agent（理解需求、生成任务）',
+          '↓',
+          'Remote MCP（生成接入计划、等待用户确认）',
+          '↓',
+          'Local CLI（分析工程、注入代码、反向校验）',
+          '↓',
+          '开发者本地 Android / iOS 工程',
+        ],
+      },
+      { type: 'h', text: '核心链路' },
+      {
+        type: 'flow',
+        lines: [
+          '能力预检',
+          '→ 信息收集',
+          '→ 项目扫描',
+          '→ 生成接入方案',
+          '→ 用户确认',
+          '→ SDK 代码注入',
+          '→ 反向校验',
+          '→ 编译验证',
+          '→ 结果总结',
+        ],
+      },
+      {
+        type: 'p',
+        text: '「用户确认」被放在代码写入之前：Agent 先给出将要修改的文件、依赖与功能范围，开发者确认后再执行注入。这样即使方案不准确，也不会在未确认的情况下改动工程。',
+      },
+      {
+        type: 'note',
+        bold: '说明',
+        text: '上述架构与工具分工来自团队已有的方案验证环境，用于解释产品设计；本页不展示真实项目路径、内部接口实现或运行日志。',
+      },
+    ],
+  },
+  {
+    id: 'decisions',
+    num: '04',
+    title: '关键设计决策',
+    blocks: [
+      {
+        type: 'decisions',
+        itemsDecisions: [
+          {
+            label: '决策 01',
+            title: '先确认，再写入',
+            text: '把接入计划与用户确认设为强制步骤。Agent 不直接修改工程，而是先说明依赖、初始化位置和功能代码范围，降低误改成本。',
+          },
+          {
+            label: '决策 02',
+            title: '把接入约束写进 Prompt',
+            text: 'Prompt 中明确任务目标、代码修改范围、认证与配置要求、广告功能与生命周期要求，并加入「防止代码遗漏与配置错误」的约束。',
+          },
+          {
+            label: '决策 03',
+            title: '以编译通过作为验收标准',
+            text: '不以「Agent 说完成了」作为结果，而是在 Android Demo 中实际编译。编译失败时回看注入内容与 Prompt 约束，形成可重复的验证闭环。',
+          },
+          {
+            label: '决策 04',
+            title: '失败要能定位到环节',
+            text: '把失败拆分为代码遗漏、配置错误、编译错误等类型，分别对应到 Prompt 约束或工具校验环节，避免只做笼统的「再试一次」。',
+          },
+        ],
+      },
+    ],
+  },
+  {
+    id: 'contribution',
+    num: '05',
+    title: '真实贡献与验证证据',
+    blocks: [
+      { type: 'h', text: '我实际参与的工作' },
+      {
+        type: 'list',
+        items: [
+          '负责 MCP SDK 自动化集成方案中的 Agent Prompt 设计与测试。',
+          '在 Android Demo 中验证 SDK 依赖配置、初始化、广告功能代码注入及编译结果。',
+          '针对代码遗漏、配置错误与编译问题分析原因，调整 Prompt 后重新验证。',
+          '协助验证完整 Agent 工作流（预检 → 收集 → 扫描 → 方案 → 确认 → 注入 → 校验 → 编译）。',
+        ],
+      },
+      { type: 'h', text: '验证方式' },
+      {
+        type: 'p',
+        text: '验证以 Android Demo 为对象：完成依赖与初始化配置、注入广告功能代码后执行编译，以编译结果作为是否通过的依据；失败时记录问题类型并回到对应环节修正。',
+      },
+      {
+        type: 'note',
+        bold: '职责边界',
+        text: 'Remote MCP 与 Local CLI 为团队已有能力，我不独立开发整个 MCP 系统，也不主导原始架构设计。我的贡献集中在 Agent Prompt、Android Demo 验证与问题分析。',
+      },
+      {
+        type: 'note',
+        bold: '不展示的内容',
+        text: '出于保密与真实性考虑，本页不提供真实工程路径、内部工具实现、完整 Prompt 原文或编译日志。',
+      },
+    ],
+  },
+  {
+    id: 'limitations',
+    num: '06',
+    title: '项目局限与后续优化',
+    blocks: [
+      { type: 'h', text: '当前局限' },
+      {
+        type: 'list',
+        items: [
+          '项目处于方案验证阶段，未对外正式上线。',
+          '验证主要集中在 Android Demo，尚未覆盖全部 SDK 版本与平台组合。',
+          'Prompt 的稳定性依赖人工回归验证，失败类型仍需要人工判断。',
+          '注入结果依赖本地构建环境，环境差异可能影响验证结论。',
+        ],
+      },
+      { type: 'h', text: '优化设想' },
+      {
+        type: 'p',
+        text: '以下为尚未在原项目中实现的改进方向，仅作为产品思考展示：',
+      },
+      {
+        type: 'list',
+        items: [
+          '把失败类型与对应 Prompt 约束整理成可检索的回归用例集，减少重复排查。',
+          '在确认步骤中展示更细的变更预览，让开发者能逐项核对依赖与代码改动。',
+          '扩展 iOS 与更多 SDK 版本的 Demo 验证，形成跨平台的一致验收标准。',
+          '将编译结果与失败原因结构化记录，便于后续对比不同 Prompt 版本的表现。',
+        ],
+      },
+      {
+        type: 'tags',
+        items: ['优化设想', '未在原项目实现'],
+      },
+    ],
+  },
+];
+---
+
+<CaseStudyLayout
+  caseNo="02"
+  title="MCP SDK 自动化集成助手"
+  subtitle="让自然语言需求驱动 SDK 自动集成：从理解需求、生成计划、用户确认，到代码注入与编译验证。"
+  description="MCP SDK 自动化集成助手 Case Study：Agent Prompt 设计、用户确认、代码注入与编译验证。"
+  tags={['Agent 自动化集成', 'MCP', 'Prompt', 'Android Demo']}
+  current="work"
+  sections={sections}
+  neighbors={{
+    prev: { href: '/work/sdk-ai-support', label: '项目 A · SDK 开发者智能问答与知识库系统' },
+    next: { href: '/work/sdk-size-checker', label: '项目 C · SDK 包体增量检测工具' },
+  }}
+/>
