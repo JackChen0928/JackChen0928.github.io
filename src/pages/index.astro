@@ -7,7 +7,7 @@ const strengths = [
     title: '技术理解力',
     desc: '能读懂 SDK 编译链路、报错日志与工程约束，用 Python 写过包体检测脚本，和研发沟通不需要「翻译」。',
     evidence: '证据 · Python 自动化检测 SDK 包体大小',
-    href: '/work',
+    href: '/work/sdk-size-checker',
   },
   {
     num: '02',
@@ -30,14 +30,15 @@ interface Project {
   type: string;
   title: string;
   problem: string;
-  role: string;
-  highlights: string[];
+  work: string[];
+  outputs: string[];
+  evidence: string;
   status: string;
+  truth: string;
+  tags: string[];
   href: string;
   demoHref?: string;
-  cta: string;
-  demoCta?: string;
-  featured: boolean;
+  demoLabel?: string;
 }
 
 const projects: Project[] = [
@@ -45,78 +46,125 @@ const projects: Project[] = [
     index: '01',
     type: 'AI 知识问答 · RAG',
     title: '小T｜SDK开发者AI智能客服与知识库系统',
-    problem: 'SDK 开发者反复咨询接入与报错问题，多版本、多平台文档容易混淆。',
-    role: '参与 FAQ 清洗、文档关联与测试迭代；独立实现交互原型',
-    highlights: ['版本 / 平台路由', 'RAG 知识治理', 'Prompt 约束', '可在线体验'],
-    status: '内部测试阶段 · 交互原型',
+    problem:
+      'SDK 文档涉及不同平台和版本，历史 FAQ 分散，文档关联信息不易被检索利用，回答还需要减少跨平台混淆。',
+    work: [
+      '参与清洗 600+ 条历史 FAQ，整理为 100+ 条问答',
+      '使用 Python 构建文档关联知识图谱',
+      '设计具体问题、模糊问题等测试场景，迭代 Prompt 并回归测试',
+    ],
+    outputs: ['FAQ 整理', '文档关联知识图谱', '测试问题集'],
+    evidence: '证据：FAQ 整理记录、文档关联脚本与测试问题集（详见完整案例）',
+    status: '内部测试阶段',
+    truth: '真实项目经历 · 另附作品集交互原型',
+    tags: ['Dify', 'RAG', '知识库治理', 'Prompt 迭代'],
     href: '/work/sdk-ai-support',
     demoHref: '/work/sdk-ai-support#demo',
-    cta: '查看详情',
-    demoCta: '体验原型',
-    featured: true,
+    demoLabel: '体验交互原型',
   },
   {
     index: '02',
     type: 'Agent 自动化集成 · MCP',
-    title: 'MCP SDK 自动化集成助手',
-    problem: '把自然语言接入需求转化为可执行的 SDK 集成流程。',
-    role: 'Agent Prompt 设计与测试、Android Demo 验证',
-    highlights: ['MCP', 'Agent 工作流', '用户确认', '编译验证'],
-    status: '方案验证 · 原型待补充',
+    title: '基于 MCP 的 SDK 自动化集成助手',
+    problem:
+      'SDK 接入涉及依赖配置、初始化、广告功能代码注入和编译验证，存在多个手动操作步骤。',
+    work: [
+      '参与梳理 IDE Agent、Remote MCP Server、Local CLI 的协作流程',
+      '负责 Agent Prompt 设计与测试',
+      '在 Android Demo 中验证并迭代，针对代码遗漏、配置错误和编译问题优化',
+    ],
+    outputs: ['工作流设计', 'Prompt 测试案例', 'Android Demo 验证'],
+    evidence: '证据：Prompt 测试记录与 Android Demo 验证（详见完整案例）',
+    status: '内部 POC',
+    truth: '真实项目经历 · 交互原型建设中',
+    tags: ['MCP', 'Agent', 'Prompt 设计', 'Android Demo'],
     href: '/work/mcp-sdk-agent',
     demoHref: '/work/mcp-integration-prototype',
-    cta: '查看详情',
-    demoCta: '体验原型',
-    featured: false,
+    demoLabel: '原型占位',
   },
   {
     index: '03',
     type: 'AI 工具落地 · Hermes',
-    title: 'SDK 包体增量检测工具',
-    problem: '构建空包基线与引入 SDK 后的 APK，计算体积差并通过钉钉反馈结果。',
-    role: '独立开发 Python 工具并接入 Hermes 与钉钉',
-    highlights: ['Python', 'Hermes', 'APK 体积差', '钉钉通知'],
-    status: '已在小组内使用 · 原型待补充',
+    title: '基于 Hermes 的 SDK 包体增量检测工具',
+    problem: '接入 SDK 前后需要构建 APK、比较体积并整理结果。',
+    work: [
+      '使用 Python 编写 APK 包体增量检测脚本',
+      '将脚本接入 Hermes，由 Hermes 提取自然语言需求参数并调用本地脚本',
+      '打通 Hermes 与钉钉的消息链路，通知检测任务结果',
+    ],
+    outputs: ['Python 检测脚本', 'Hermes 调用链路', '钉钉通知'],
+    evidence: '证据：检测脚本与调用链路已在小组内实际使用',
+    status: '小组内使用',
+    truth: '真实项目经历 · 交互原型建设中',
+    tags: ['Python', 'Hermes', 'APK 体积差', '钉钉通知'],
     href: '/work/sdk-size-checker',
     demoHref: '/work/sdk-size-detection-prototype',
-    cta: '查看详情',
-    demoCta: '体验原型',
-    featured: false,
+    demoLabel: '原型占位',
   },
 ];
 
-const capabilities = [
+const methodSteps = [
+  '理解用户问题',
+  '拆解产品需求',
+  '设计 AI 工作流',
+  '测试与迭代',
+  '验证实际效果',
+];
+
+const methodCapabilities = [
   {
-    label: '产品能力',
-    items: ['AI Agent 设计', 'RAG 知识库治理', 'Prompt 设计与约束', 'AI 评测与迭代', '工作流设计', '需求分析'],
+    title: '需求拆解与场景分析',
+    desc: '从真实咨询与文档使用场景出发，区分具体问题、模糊问题与跨平台问题，先明确边界再设计。',
   },
   {
-    label: '技术栈',
-    items: ['Python', 'Java', 'SQL', 'Spring Boot', 'MySQL', 'Redis'],
+    title: 'RAG、Prompt 与 Agent 工作流设计',
+    desc: '围绕 SDK 版本、开发平台与知识边界，设计路由、澄清、检索与回答约束。',
+  },
+  {
+    title: '测试集设计、问题分析与回归验证',
+    desc: '用历史 FAQ 构造测试用例，定位失败原因，修改 Prompt 或规则后做回归验证。',
+  },
+  {
+    title: '与研发协作及自动化工具实践',
+    desc: '用 Python 编写检测脚本，理解 SDK 编译与配置约束，能和研发对齐实现细节。',
   },
 ];
+
+const experienceBullets = [
+  '参与 Dify 智能技术支持工作流的搭建与迭代，参与 SDK 版本与开发平台的分流优化。',
+  '参与 600+ 条历史 FAQ 清洗与治理，整理为 100+ 条问答；使用 Python 构建 SDK 文档关联知识图谱。',
+  '基于历史 FAQ 设计测试用例，进行问题分析、Prompt 优化与回归测试。',
+  '参与 MCP SDK 自动化集成方案的 Agent Prompt 设计与测试，在 Android Demo 中验证代码注入与编译结果。',
+  '使用 Python 开发 APK 包体增量检测工具，接入 Hermes 并打通钉钉通知链路。',
+];
+
+const techStack = ['Python', 'Java', 'SQL', 'Spring Boot', 'MySQL', 'Redis'];
 ---
 
-<BaseLayout title="AI 产品经理作品集 · 用技术理解力做能落地的 AI 产品" current="home">
+<BaseLayout
+  title="陈卓杰 · AI 应用产品经理作品集"
+  description="AI 应用产品经理校招作品集：RAG 知识库、Agent 工作流、MCP 集成与 Python 自动化实践"
+  current="home"
+>
   <!-- Hero -->
   <section class="hero">
     <div class="container">
-      <p class="kicker">陈卓杰 · 求职方向：AI 应用产品经理</p>
+      <p class="kicker">陈卓杰 · 2027 届校招</p>
       <h1 class="hero-title">
-        用技术理解力，<br />做能<span class="accent-line">落地</span>的 AI 产品
+        把 AI 能力，<br />变成<span class="accent-line">可验证</span>的产品方案。
       </h1>
+      <p class="hero-role">AI 应用产品经理｜RAG · Agent · MCP · Developer Tools</p>
       <p class="hero-sub">
-        计算机科学与技术本科。参与企业级 SDK AI 客服项目，负责 FAQ 清洗、文档关联、测试与
-        Prompt 约束优化，并用 Astro 独立实现了可交互原型。
+        关注 AI 应用的真实落地：从用户问题、工作流设计，到工具集成、测试验证与持续迭代。
       </p>
       <div class="hero-meta">
-        <span class="tag tag--accent">校招 · AI 应用产品经理</span>
-        <span class="tag">AI Agent 产品经理</span>
-        <span class="tag">懂研发</span>
+        <span class="tag">RAG 与知识库治理</span>
+        <span class="tag">Agent 工作流与工具调用</span>
+        <span class="tag">Python 自动化与工程验证</span>
       </div>
       <div class="hero-actions">
-        <a class="btn btn--solid" href="#projects">查看精选项目</a>
-        <a class="btn btn--outline" href="/work/sdk-ai-support">体验交互 Demo</a>
+        <a class="btn btn--solid" href="#projects">查看项目案例</a>
+        <a class="btn btn--outline" href="#experience">个人经历</a>
       </div>
     </div>
   </section>
@@ -147,35 +195,52 @@ const capabilities = [
       <div class="section-head">
         <div>
           <p class="kicker">Selected Work</p>
-          <h2 class="h-lg">精选项目</h2>
+          <h2 class="h-lg">精选项目案例</h2>
         </div>
         <a class="link-arrow" href="/work">查看全部项目</a>
       </div>
+      <p class="section-lead">
+        三个项目属于同一类 SDK 开发者业务场景，分别对应 AI 知识问答、Agent 自动化集成与 AI 工具落地。
+        每张卡片完整呈现问题、个人工作与成果证据，深度细节可进入完整案例。
+      </p>
       <div class="project-list">
         {
           projects.map((p) => (
-            <article class={`project-card${p.featured ? ' project-card--demo' : ''}`}>
+            <article class="project-card">
               <span class="project-index">{p.index}</span>
-              <span class="project-body">
+              <div class="project-body">
                 <span class="project-type">{p.type}</span>
                 <a class="project-title" href={p.href}>{p.title}</a>
-                <span class="project-problem">{p.problem}</span>
-                <span class="project-role">我的角色 · {p.role}</span>
-                <span class="project-tags">
-                  {p.highlights.map((h) => <span class="tag">{h}</span>)}
-                </span>
-              </span>
-              <span class="project-side">
+                <p class="project-problem">{p.problem}</p>
+                <div class="project-detail">
+                  <div class="project-block">
+                    <span class="project-label">我的工作</span>
+                    <ul class="project-bullets">
+                      {p.work.map((w) => <li>{w}</li>)}
+                    </ul>
+                  </div>
+                  <div class="project-block">
+                    <span class="project-label">成果产出与验证</span>
+                    <ul class="project-bullets">
+                      {p.outputs.map((o) => <li>{o}</li>)}
+                    </ul>
+                    <span class="project-evidence">{p.evidence}</span>
+                  </div>
+                </div>
+                <div class="project-tags">
+                  {p.tags.map((t) => <span class="tag">{t}</span>)}
+                </div>
+                <span class="project-truth">{p.truth}</span>
+              </div>
+              <div class="project-side">
                 <span class="project-status">{p.status}</span>
-                <span class="project-actions">
-                  <a class="project-cta" href={p.href}>{p.cta} →</a>
+                <div class="project-actions">
+                  <a class="project-cta project-cta--accent" href={p.href}>查看完整案例 →</a>
                   {p.demoHref && (
-                    <a class="project-cta project-cta--accent" href={p.demoHref}>
-                      {p.demoCta} →
-                    </a>
+                    <a class="project-cta" href={p.demoHref}>{p.demoLabel} →</a>
                   )}
-                </span>
-              </span>
+                </div>
+              </div>
             </article>
           ))
         }
@@ -183,21 +248,85 @@ const capabilities = [
     </div>
   </section>
 
-  <!-- 能力与工具 -->
-  <section class="section section--tight" id="capability">
+  <!-- 我的工作方式 -->
+  <section class="section section--tight" id="method">
     <div class="container">
-      <p class="kicker">Capability</p>
-      <h2 class="h-lg">能力与工具</h2>
-      <dl class="capability-list">
+      <p class="kicker">How I Work</p>
+      <h2 class="h-lg">我的工作方式</h2>
+      <p class="section-lead">
+        从用户问题出发，把模糊需求拆成可设计、可测试、可验证的 AI 工作流。
+      </p>
+      <ol class="method-flow">
         {
-          capabilities.map((c) => (
-            <div class="capability-row">
-              <dt>{c.label}</dt>
-              <dd>{c.items.map((i) => <span class="tag">{i}</span>)}</dd>
+          methodSteps.map((step, i) => (
+            <li>
+              <span class="method-step-num">{String(i + 1).padStart(2, '0')}</span>
+              {step}
+            </li>
+          ))
+        }
+      </ol>
+      <p class="method-note">
+        以上是对个人工作方式的概括，并非每个项目都完整执行了全部环节。
+      </p>
+      <div class="method-grid">
+        {
+          methodCapabilities.map((c) => (
+            <div class="method-item">
+              <h3>{c.title}</h3>
+              <p>{c.desc}</p>
             </div>
           ))
         }
-      </dl>
+      </div>
+    </div>
+  </section>
+
+  <!-- 实习与技术背景 -->
+  <section class="section section--tight" id="experience">
+    <div class="container">
+      <p class="kicker">Experience &amp; Background</p>
+      <h2 class="h-lg">实习与技术背景</h2>
+      <div class="exp-list">
+        <article class="exp-item">
+          <div class="exp-meta">
+            <span class="exp-date">2026.03 — 2026.08</span>
+            <span class="exp-type">实习</span>
+          </div>
+          <div class="exp-body">
+            <h3>TopOn · AI 应用实习</h3>
+            <p>参与 SDK 开发者智能技术支持相关的 AI 应用实践，主要工作包括：</p>
+            <ul class="exp-bullets">
+              {experienceBullets.map((b) => <li>{b}</li>)}
+            </ul>
+          </div>
+        </article>
+        <article class="exp-item">
+          <div class="exp-meta">
+            <span class="exp-date">教育</span>
+            <span class="exp-type">本科</span>
+          </div>
+          <div class="exp-body">
+            <h3>计算机科学与技术 · 本科</h3>
+            <p>
+              计算机专业背景，保留工程实践能力，能够理解 SDK 编译链路、配置约束与研发协作方式。
+            </p>
+            <p class="exp-muted">学校名称与毕业时间待补充。</p>
+          </div>
+        </article>
+      </div>
+      <div class="exp-tech">
+        <div class="exp-tech-row">
+          <span class="exp-tech-label">技术栈</span>
+          <div class="exp-tech-tags">
+            {techStack.map((t) => <span class="tag">{t}</span>)}
+          </div>
+        </div>
+        <div class="exp-tech-row">
+          <span class="exp-tech-label">简历</span>
+          <span class="btn btn--disabled" aria-disabled="true">简历 PDF · 待补充</span>
+        </div>
+      </div>
     </div>
   </section>
 
@@ -207,10 +336,10 @@ const capabilities = [
       <p class="kicker">Contact</p>
       <h2 class="h-lg" style="margin-bottom: 16px;">开放交流</h2>
       <p class="lead">
-        如果你在找懂 AI 技术、能落地验证的 AI 产品经理，或想聊聊 AI 应用产品，欢迎联系我。
+        欢迎交流 AI 应用、Agent 工作流与开发者效率方向的产品实践。
       </p>
       <div class="contact-actions">
-        <a class="btn btn--solid" href="mailto:your-email@example.com">邮箱 · 待补充</a>
+        <span class="btn btn--solid btn--disabled" aria-disabled="true">邮箱 · 待补充</span>
         <a
           class="btn btn--outline"
           href="https://github.com/JackChen0928"
@@ -219,12 +348,21 @@ const capabilities = [
         >
           GitHub
         </a>
+        <span class="btn btn--outline btn--disabled" aria-disabled="true">简历 PDF · 待补充</span>
       </div>
     </div>
   </section>
 </BaseLayout>
 
 <style>
+  /* ---------- Hero 局部补充 ---------- */
+  .hero-role {
+    font-size: 15px;
+    color: var(--text-3);
+    letter-spacing: 0.01em;
+    margin: 0 0 18px;
+  }
+
   /* ---------- 核心优势 ---------- */
   .strengths {
     display: grid;
@@ -262,6 +400,15 @@ const capabilities = [
     font-weight: 500;
   }
 
+  /* ---------- 区块说明 ---------- */
+  .section-lead {
+    max-width: 720px;
+    margin-top: 12px;
+    font-size: 14.5px;
+    line-height: 1.75;
+    color: var(--text-3);
+  }
+
   /* ---------- 精选项目 ---------- */
   .section-head {
     display: flex;
@@ -269,7 +416,7 @@ const capabilities = [
     justify-content: space-between;
     gap: 24px;
     flex-wrap: wrap;
-    margin-bottom: 32px;
+    margin-bottom: 8px;
   }
 
   .section-head .h-lg {
@@ -280,11 +427,12 @@ const capabilities = [
     display: flex;
     flex-direction: column;
     gap: 14px;
+    margin-top: 32px;
   }
 
   .project-card {
     display: grid;
-    grid-template-columns: 56px 1fr 190px;
+    grid-template-columns: 56px 1fr 200px;
     gap: 24px;
     padding: 26px 28px;
     border: 1px solid var(--line);
@@ -334,18 +482,87 @@ const capabilities = [
   .project-problem {
     font-size: 14px;
     color: var(--text-2);
+    line-height: 1.7;
   }
 
-  .project-role {
+  .project-detail {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px 32px;
+    margin-top: 12px;
+    padding-top: 14px;
+    border-top: 1px dashed var(--line);
+  }
+
+  .project-label {
+    display: block;
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text-4);
+    margin-bottom: 7px;
+  }
+
+  .project-bullets {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .project-bullets li {
+    position: relative;
+    padding-left: 12px;
     font-size: 13px;
-    color: var(--text-3);
+    color: var(--text-2);
+    line-height: 1.65;
+  }
+
+  .project-bullets li::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0.62em;
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: var(--line-strong);
+  }
+
+  .project-evidence {
+    display: block;
+    margin-top: 8px;
+    font-size: 11.5px;
+    line-height: 1.6;
+    color: var(--text-4);
   }
 
   .project-tags {
     display: flex;
     flex-wrap: wrap;
     gap: 6px;
-    margin-top: 6px;
+    margin-top: 8px;
+  }
+
+  .project-truth {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 2px;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.04em;
+    color: var(--text-3);
+  }
+
+  .project-truth::before {
+    content: "";
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: var(--accent);
+    flex-shrink: 0;
   }
 
   .project-side {
@@ -401,43 +618,177 @@ const capabilities = [
     color: var(--accent);
   }
 
-  .project-card--demo {
-    background: var(--accent-soft);
-    border-color: #c7d9fb;
+  /* ---------- 我的工作方式 ---------- */
+  .method-flow {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    list-style: none;
+    margin-top: 32px;
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
   }
 
-  .project-card--demo .project-type {
+  .method-flow li {
+    position: relative;
+    padding: 18px 20px 18px 0;
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 1.45;
+    color: var(--text);
+  }
+
+  .method-flow li + li {
+    padding-left: 20px;
+    border-left: 1px solid var(--line);
+  }
+
+  .method-flow li:not(:last-child)::after {
+    content: "→";
+    position: absolute;
+    right: 7px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 12px;
+    font-weight: 400;
+    color: var(--text-4);
+  }
+
+  .method-step-num {
+    display: block;
+    margin-bottom: 4px;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 400;
+    letter-spacing: 0.08em;
     color: var(--accent);
   }
 
-  .project-card--demo .project-cta {
-    border-color: var(--accent);
-    color: var(--accent);
+  .method-note {
+    margin-top: 12px;
+    font-size: 12.5px;
+    color: var(--text-4);
   }
 
-  /* ---------- 能力与工具 ---------- */
-  .capability-list {
+  .method-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0 40px;
+    margin-top: 36px;
+  }
+
+  .method-item {
+    padding: 18px 0;
+    border-top: 1px solid var(--line);
+  }
+
+  .method-item h3 {
+    margin-bottom: 6px;
+    font-size: 15.5px;
+  }
+
+  .method-item p {
+    font-size: 13.5px;
+    line-height: 1.7;
+    color: var(--text-3);
+  }
+
+  /* ---------- 实习与技术背景 ---------- */
+  .exp-list {
     margin-top: 32px;
     border-top: 1px solid var(--line);
   }
 
-  .capability-row {
+  .exp-item {
     display: grid;
-    grid-template-columns: 140px 1fr;
-    gap: 20px;
-    align-items: baseline;
-    padding: 20px 0;
+    grid-template-columns: 180px 1fr;
+    gap: 24px;
+    padding: 26px 0;
     border-bottom: 1px solid var(--line);
   }
 
-  .capability-row dt {
+  .exp-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .exp-date {
     font-family: var(--font-mono);
     font-size: 12px;
-    letter-spacing: 0.08em;
+    letter-spacing: 0.04em;
+    color: var(--text-3);
+  }
+
+  .exp-type {
+    font-size: 12px;
     color: var(--text-4);
   }
 
-  .capability-row dd {
+  .exp-body h3 {
+    margin-bottom: 8px;
+    font-size: 17px;
+  }
+
+  .exp-body p {
+    font-size: 14px;
+    color: var(--text-2);
+  }
+
+  .exp-bullets {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-top: 10px;
+  }
+
+  .exp-bullets li {
+    position: relative;
+    padding-left: 14px;
+    font-size: 13.5px;
+    line-height: 1.7;
+    color: var(--text-2);
+  }
+
+  .exp-bullets li::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0.78em;
+    width: 5px;
+    height: 1px;
+    background: var(--line-strong);
+  }
+
+  .exp-muted {
+    margin-top: 10px;
+    font-size: 12.5px;
+    color: var(--text-4);
+  }
+
+  .exp-tech {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px 40px;
+    padding-top: 24px;
+  }
+
+  .exp-tech-row {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+
+  .exp-tech-label {
+    min-width: 64px;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    color: var(--text-4);
+  }
+
+  .exp-tech-tags {
     display: flex;
     flex-wrap: wrap;
     gap: 8px;
@@ -453,7 +804,7 @@ const capabilities = [
   }
 
   .contact-inner .lead {
-    max-width: 520px;
+    max-width: 560px;
     margin: 0 auto 28px;
     text-wrap: balance;
   }
@@ -463,6 +814,13 @@ const capabilities = [
     justify-content: center;
     gap: 12px;
     flex-wrap: wrap;
+  }
+
+  .btn--disabled {
+    background: #f9fafb;
+    border: 1px dashed var(--line-strong);
+    color: var(--text-4);
+    cursor: not-allowed;
   }
 
   /* ---------- 响应式 ---------- */
@@ -478,23 +836,87 @@ const capabilities = [
       padding: 22px;
     }
 
+    .project-detail {
+      grid-template-columns: 1fr;
+      gap: 14px;
+    }
+
     .project-side {
       flex-direction: row;
       align-items: center;
       justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
     }
 
     .project-actions {
       flex-direction: row;
+      flex-wrap: wrap;
     }
 
     .project-status {
       text-align: left;
     }
 
-    .capability-row {
+    .method-flow {
       grid-template-columns: 1fr;
+    }
+
+    .method-flow li {
+      padding: 14px 0;
+    }
+
+    .method-flow li + li {
+      padding-left: 0;
+      border-left: 0;
+      border-top: 1px solid var(--line);
+    }
+
+    .method-flow li:not(:last-child)::after {
+      display: none;
+    }
+
+    .method-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .exp-item {
+      grid-template-columns: 1fr;
+      gap: 10px;
+    }
+
+    .exp-meta {
+      flex-direction: row;
+      align-items: baseline;
+      gap: 12px;
+    }
+
+    .exp-tech {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media (max-width: 560px) {
+    .hero-role {
+      font-size: 14px;
+    }
+
+    .project-side {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+
+    .project-actions {
+      flex-direction: row;
+      flex-wrap: wrap;
+    }
+
+    .exp-tech-row {
+      align-items: flex-start;
+      flex-direction: column;
       gap: 8px;
     }
   }
 </style>
+
+
