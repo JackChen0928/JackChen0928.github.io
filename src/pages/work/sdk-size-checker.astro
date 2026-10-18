@@ -52,23 +52,20 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
   <nav class="szc-hero-anchors" aria-label="目录锚点">
     <div class="container szc-toc-inner">
       <span class="szc-progress" id="szc-progress" role="progressbar" aria-label="阅读进度"></span>
-      <a href="#overview">01 项目概览</a>
-      <a href="#problems">02 业务问题与需求分析</a>
-      <a href="#solution">03 检测方案与核心流程</a>
-      <a href="#script">04 Python 脚本实现</a>
-      <a href="#automation">05 Hermes 与钉钉自动化链路</a>
-      <a href="#demo">06 交互演示台</a>
-      <a href="#evidence">07 验证证据</a>
-      <a href="#limitations">08 结果与复盘</a>
+      <a href="#background">01 项目背景与目标</a>
+      <a href="#role">02 我的角色与核心工作</a>
+      <a href="#solution">03 需求分析与解决方案</a>
+      <a href="#demo">04 真实成果与交互演示台</a>
+      <a href="#review">05 项目结果与复盘</a>
     </div>
   </nav>
 
-  <!-- ======================= 01 项目概览 ======================= -->
-  <section id="overview" class="szc-section">
+  <!-- ======================= 01 项目背景与目标 ======================= -->
+  <section id="background" class="szc-section">
     <div class="container">
       <div class="szc-section-head">
         <span class="szc-section-num">01</span>
-        <h2>项目概览</h2>
+        <h2>项目背景与目标</h2>
       </div>
       <p class="szc-p szc-p--lead">
         SDK 包体变化是接入决策里的一个具体问题：接入一个 SDK，到底让 APK 大了多少，是否在可接受范围内。
@@ -76,34 +73,11 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
         这个工具把整条检测过程封装成一条可重复的自动化链路，并用自然语言入口和钉钉通知降低使用门槛。
       </p>
       <p class="szc-p">
-        <strong>解决方式</strong>：Python 脚本负责环境检查、构建、体积读取与增量计算，保持可独立运行；
-        Hermes 负责从自然语言需求中提取检测参数并调用本地脚本；钉钉负责把检测结果推送到协作场景。
-      </p>
-      <h3 class="szc-h3">我的角色（真实参与）</h3>
-      <ul class="szc-list">
-        <li>开发 <strong>Python 检测脚本</strong>：环境检查、构建命令执行、APK 体积读取与增量计算、结果输出。</li>
-        <li>接入 <strong>Hermes 参数提取与本地脚本调用链路</strong>：让自然语言描述能发起一次检测。</li>
-        <li>集成 <strong>钉钉消息通知</strong>：检测任务完成后把结果同步到钉钉。</li>
-      </ul>
-      <p class="szc-note szc-note--dim">
-        真实性标注：工具由我参与开发并在小组内实际使用；页面只陈述已实现的能力，不展示未确认的
-        构建日志、包体数值、执行次数或效率提升比例；演示台为前端模拟，不代表真实运行记录。
-      </p>
-    </div>
-  </section>
-
-  <!-- ======================= 02 业务问题与需求分析 ======================= -->
-  <section id="problems" class="szc-section szc-section--alt">
-    <div class="container">
-      <div class="szc-section-head">
-        <span class="szc-section-num">02</span>
-        <h2>业务问题与需求分析</h2>
-      </div>
-      <p class="szc-p szc-p--lead">
-        一次包体检测任务原本涉及<strong>环境检查、基线 APK 构建、接入 SDK 后构建、体积差计算和结果通知</strong>
-        等多个步骤。工具要做的，是把重复的检测过程封装起来，降低直接操作终端与手动整理结果的需求。
+        <strong>项目目标</strong>：让不熟悉脚本参数的成员也能用一句话发起一次检测，并把检测结果直接送到协作场景，
+        而不是把能力停留在少数人的终端操作里。
       </p>
 
+      <h3 class="szc-h3">问题拆解</h3>
       <div class="szc-problem-grid">
         <article class="szc-problem">
           <span class="szc-problem-num">01</span>
@@ -125,29 +99,50 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
         </article>
         <article class="szc-problem">
           <span class="szc-problem-num">04</span>
-          <h4>检测结果要同步给其他成员，靠口头转述或复制粘贴，链路长、易失真。</h4>
-          <p class="szc-problem-need"><strong>对应需求：</strong>打通钉钉通知，结果直接进入协作场景。</p>
-          <span class="szc-problem-tag szc-problem-tag--real">真实背景</span>
-        </article>
-        <article class="szc-problem">
-          <span class="szc-problem-num">05</span>
-          <h4>不熟悉脚本参数的成员难以直接发起检测，能力容易被少数人掌握。</h4>
-          <p class="szc-problem-need"><strong>对应需求：</strong>用自然语言入口（Hermes）描述需求，降低使用门槛。</p>
+          <h4>结果要同步给其他成员、且不熟悉脚本参数的人难以直接发起检测。</h4>
+          <p class="szc-problem-need"><strong>对应需求：</strong>打通钉钉通知，并用自然语言入口降低使用门槛。</p>
           <span class="szc-problem-tag szc-problem-tag--real">真实背景</span>
         </article>
       </div>
       <p class="szc-note szc-note--dim">
-        以上问题与需求作为作品集产品分析展示，未声称量化影响（如节省的时间、使用人数或业务收益）。
+        真实性标注：工具由我参与开发并在小组内实际使用；页面只陈述已实现的能力，不展示未确认的
+        构建日志、包体数值、执行次数或效率提升比例；演示台为前端模拟，不代表真实运行记录。
       </p>
     </div>
   </section>
 
-  <!-- ======================= 03 检测方案与核心流程 ======================= -->
+  <!-- ======================= 02 我的角色与核心工作 ======================= -->
+  <section id="role" class="szc-section szc-section--alt">
+    <div class="container">
+      <div class="szc-section-head">
+        <span class="szc-section-num">02</span>
+        <h2>我的角色与核心工作</h2>
+      </div>
+      <p class="szc-p szc-p--lead">
+        一句话结论：我的核心工作是把重复的包体检测封装成<strong>可复用脚本</strong>，并接入 Hermes 与钉钉，
+        形成「自然语言 → 参数 → 执行 → 通知」的<strong>自动化闭环</strong>。
+      </p>
+
+      <h3 class="szc-h3">真实参与</h3>
+      <ul class="szc-list">
+        <li>开发 <strong>Python 检测脚本</strong>：环境检查、构建命令执行、APK 体积读取与增量计算、结果输出。</li>
+        <li>接入 <strong>Hermes 参数提取与本地脚本调用链路</strong>：让自然语言描述能发起一次检测。</li>
+        <li>集成 <strong>钉钉消息通知</strong>：检测任务完成后把结果同步到钉钉。</li>
+      </ul>
+
+      <p class="szc-note szc-note--dim">
+        分工与真实性：以上为我实际负责的模块；工具整体在小组内使用，但使用人数、节省的时间等影响
+        未公开量化，页面不编造此类数据。
+      </p>
+    </div>
+  </section>
+
+  <!-- ======================= 03 需求分析与解决方案 ======================= -->
   <section id="solution" class="szc-section">
     <div class="container">
       <div class="szc-section-head">
         <span class="szc-section-num">03</span>
-        <h2>检测方案与核心流程</h2>
+        <h2>需求分析与解决方案</h2>
       </div>
       <p class="szc-p szc-p--lead">
         检测思路是「对照」：先构建不含 SDK 的基线 APK，再构建引入 SDK 后的 APK，两者体积之差即为 SDK 带来的包体增量。
@@ -176,159 +171,56 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
         说明：该差值表示<strong>当前构建条件下的 APK 体积差</strong>，不等同于 SDK 文件本身的大小。
       </p>
 
-      <h3 class="szc-h3">环境要求与构建配置（真实脚本能力）</h3>
-      <div class="szc-arch-flow">
-        <div class="szc-arch-step">
-          <span class="szc-arch-num">ENV</span>
-          <strong>环境检查</strong>
-          <p>检查 JAVA_HOME、ANDROID_HOME 等必要构建环境；环境缺失时先明确提示，避免构建失败原因不直观。</p>
-        </div>
-        <div class="szc-arch-step">
-          <span class="szc-arch-num">BUILD</span>
-          <strong>构建执行</strong>
-          <p>必要时创建沙箱，使用实际脚本配置的 Gradle / Android Gradle Plugin 版本完成构建。</p>
-        </div>
-        <div class="szc-arch-step">
-          <span class="szc-arch-num">OUT</span>
-          <strong>结果处理</strong>
-          <p>读取构建产物 APK 的体积，计算增量，输出结构化检测结果供 Hermes 与钉钉消费。</p>
-        </div>
-      </div>
+      <h3 class="szc-h3">脚本能力（真实）</h3>
+      <ul class="szc-list">
+        <li><strong>环境检查</strong>：校验 JAVA_HOME、ANDROID_HOME 等环境变量，缺失时输出明确错误并终止。</li>
+        <li><strong>构建执行</strong>：按脚本配置的 Gradle / Android Gradle Plugin 版本，生成基线 APK 与接入后 APK。</li>
+        <li><strong>体积读取与计算</strong>：定位构建产物 APK，读取体积并按固定口径计算增量。</li>
+        <li><strong>结果输出</strong>：按固定格式输出结构化结果，便于 Hermes 与钉钉消费。</li>
+      </ul>
       <p class="szc-note szc-note--dim">
-        以上为脚本真实能力的概括说明；具体源码与配置见 04 章节。未确认的构建参数与配置不在本页补充。
-      </p>
-    </div>
-  </section>
-
-  <!-- ======================= 04 Python 脚本实现 ======================= -->
-  <section id="script" class="szc-section szc-section--alt">
-    <div class="container">
-      <div class="szc-section-head">
-        <span class="szc-section-num">04</span>
-        <h2>Python 脚本实现</h2>
-      </div>
-      <p class="szc-p szc-p--lead">
-        脚本按「环境检查 → 构建 → 读取体积 → 计算增量 → 输出结果」组织，保证每次检测的口径一致，并保持可独立运行。
-        以下为脚本的能力结构与关键实现点说明。
+        以上为脚本真实能力的概括说明；未确认的构建参数与配置不在本页补充，源码与运行输出见 05 章节待补充材料。
       </p>
 
-      <div class="szc-arch-flow">
-        <div class="szc-arch-step">
-          <span class="szc-arch-num">01</span>
-          <strong>环境检查</strong>
-          <p>校验 JAVA_HOME、ANDROID_HOME 等环境变量，缺失时输出明确的错误信息并终止执行。</p>
-        </div>
-        <div class="szc-arch-step">
-          <span class="szc-arch-num">02</span>
-          <strong>构建命令执行</strong>
-          <p>按脚本配置的 Gradle / Android Gradle Plugin 版本，调用构建命令生成基线 APK 与接入后 APK。</p>
-        </div>
-        <div class="szc-arch-step">
-          <span class="szc-arch-num">03</span>
-          <strong>APK 体积读取</strong>
-          <p>定位构建产物中的 APK 文件，读取文件体积作为包体大小。</p>
-        </div>
-        <div class="szc-arch-step">
-          <span class="szc-arch-num">04</span>
-          <strong>增量计算与输出</strong>
-          <p>增量 = 接入后体积 − 基线体积；按固定格式输出结果，便于 Hermes 与钉钉消费。</p>
-        </div>
-      </div>
-
-      <h3 class="szc-h3">待补充材料</h3>
-      <div class="szc-evidence-grid">
-        <div class="szc-evidence-card szc-evidence-card--pending">
-          <span class="szc-evidence-tag">待补充</span>
-          <strong>真实 Python 源码片段</strong>
-          <p>环境检查、构建调用与体积计算的真实关键代码（脱敏后展示）。</p>
-        </div>
-        <div class="szc-evidence-card szc-evidence-card--pending">
-          <span class="szc-evidence-tag">待补充</span>
-          <strong>真实运行输出</strong>
-          <p>脚本实际执行时的终端输出记录（脱敏）。</p>
-        </div>
-      </div>
-      <p class="szc-note szc-note--dim">
-        说明：当前页面没有可用的源码与运行截图，以上为脚本能力结构说明，不是代码原文；不伪造代码、日志与检测数值。
-      </p>
-    </div>
-  </section>
-
-  <!-- ======================= 05 Hermes 与钉钉自动化链路 ======================= -->
-  <section id="automation" class="szc-section">
-    <div class="container">
-      <div class="szc-section-head">
-        <span class="szc-section-num">05</span>
-        <h2>Hermes 与钉钉自动化链路</h2>
-      </div>
-      <p class="szc-p szc-p--lead">
-        检测脚本之上，是一条「自然语言 → 参数 → 执行 → 通知」的自动化链路：Hermes 负责理解需求，
-        脚本负责执行，钉钉负责把结果送到协作场景。
-      </p>
-
-      <div class="szc-arch-flow szc-arch-flow--chain">
-        <div class="szc-arch-step">
-          <span class="szc-arch-num">01</span>
-          <strong>自然语言需求</strong>
-          <p>成员用一句话描述检测需求，如「检测 XX SDK 接入后的包体增量」。</p>
-        </div>
-        <span class="szc-arch-arrow">→</span>
-        <div class="szc-arch-step">
-          <span class="szc-arch-num">02</span>
-          <strong>Hermes 参数提取</strong>
-          <p>Hermes 从需求中提取 SDK 名称、接入版本、基线分支等检测参数。</p>
-        </div>
-        <span class="szc-arch-arrow">→</span>
-        <div class="szc-arch-step">
-          <span class="szc-arch-num">03</span>
-          <strong>本地 Python 脚本调用</strong>
-          <p>Hermes 调用本地检测脚本，把解析后的参数传入并执行。</p>
-        </div>
-        <span class="szc-arch-arrow">→</span>
-        <div class="szc-arch-step">
-          <span class="szc-arch-num">04</span>
-          <strong>Android APK 构建与体积差计算</strong>
-          <p>脚本完成环境检查、两次构建、体积读取与增量计算。</p>
-        </div>
-        <span class="szc-arch-arrow">→</span>
-        <div class="szc-arch-step">
-          <span class="szc-arch-num">05</span>
-          <strong>钉钉结果通知</strong>
-          <p>任务结果发送到钉钉群，通知相关成员查看。</p>
-        </div>
-      </div>
-
+      <h3 class="szc-h3">Hermes 与钉钉自动化链路</h3>
       <p class="szc-p">
-        <strong>各层职责：</strong>Hermes 只负责入口与参数传递，不承担构建计算；脚本保持可独立运行，
-        对话入口不可用时检测能力依然可用，也便于单独排查是参数问题还是脚本问题。
+        检测脚本之上是一条「自然语言 → 参数 → 执行 → 通知」的自动化链路，各层职责如下：
       </p>
-
-      <h3 class="szc-h3">待补充材料</h3>
-      <div class="szc-evidence-grid">
-        <div class="szc-evidence-card szc-evidence-card--pending">
-          <span class="szc-evidence-tag">待补充</span>
-          <strong>Hermes 执行记录</strong>
-          <p>自然语言需求与参数提取结果的真实执行记录（脱敏）。</p>
-        </div>
-        <div class="szc-evidence-card szc-evidence-card--pending">
-          <span class="szc-evidence-tag">待补充</span>
-          <strong>钉钉通知截图</strong>
-          <p>检测结果在钉钉中的真实消息截图（脱敏）。</p>
-        </div>
-      </div>
+      <ul class="szc-list">
+        <li><strong>自然语言需求</strong>：成员用一句话描述检测需求，如「检测 XX SDK 接入后的包体增量」。</li>
+        <li><strong>Hermes 参数提取</strong>：从需求中提取 SDK 名称、接入版本、基线分支等检测参数。</li>
+        <li><strong>本地脚本调用</strong>：Hermes 调用本地检测脚本，把解析后的参数传入并执行。</li>
+        <li><strong>构建与计算</strong>：脚本完成环境检查、两次构建、体积读取与增量计算。</li>
+        <li><strong>钉钉结果通知</strong>：任务结果发送到钉钉群，通知相关成员查看。</li>
+      </ul>
       <p class="szc-note szc-note--dim">
-        链路结构来自实际接入；真实执行记录与截图待补充，未提供前不在页面展示。
+        职责边界：Hermes 只负责入口与参数传递，不承担构建计算；脚本保持可独立运行，
+        对话入口不可用时检测能力依然可用，也便于单独排查是参数问题还是脚本问题。
+        链路结构来自实际接入；真实执行记录与截图待补充。
       </p>
     </div>
   </section>
 
-  <!-- ======================= 06 交互演示台 ======================= -->
+  <!-- ======================= 04 真实成果与交互演示台 ======================= -->
   <section id="demo" class="szc-section szc-section--alt">
     <div class="container">
       <div class="szc-section-head">
-        <span class="szc-section-num">06</span>
-        <h2>交互演示台</h2>
+        <span class="szc-section-num">04</span>
+        <h2>真实成果与交互演示台</h2>
       </div>
+
+      <h3 class="szc-h3">已实现能力（真实，文字说明）</h3>
+      <ul class="szc-list">
+        <li>Python APK 包体增量检测工具已开发，支持环境检查、基线构建、接入后构建、体积差计算与结果输出。</li>
+        <li>检测脚本已接入 Hermes，可通过自然语言描述发起检测。</li>
+        <li>Hermes 与钉钉的消息链路已打通，检测任务结果可通知到钉钉。</li>
+        <li>工具已在小组内实际使用。</li>
+      </ul>
+      <p class="szc-note szc-note--dim">
+        以上为已实现能力的文字说明；不展示未确认的构建日志、包体数值或截图。
+      </p>
+
+      <h3 class="szc-h3">交互演示台（前端模拟）</h3>
       <p class="szc-p szc-p--lead">
         一个轻量的步骤演示器，辅助理解整条任务链路：从自然语言输入出发，依次经过
         Hermes 参数提取、脚本调用、环境检查、两次构建、体积差计算与钉钉通知。
@@ -364,24 +256,48 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
     </div>
   </section>
 
-  <!-- ======================= 07 验证证据 ======================= -->
-  <section id="evidence" class="szc-section">
+  <!-- ======================= 05 项目结果与复盘 ======================= -->
+  <section id="review" class="szc-section">
     <div class="container">
       <div class="szc-section-head">
-        <span class="szc-section-num">07</span>
-        <h2>验证证据</h2>
+        <span class="szc-section-num">05</span>
+        <h2>项目结果与复盘</h2>
       </div>
       <p class="szc-p szc-p--lead">
-        以下为本项目「已实现、可用文字说明」的真实能力，以及需要补充的真实验证材料。
+        一句话结论：完成了「自然语言 → 参数 → 执行 → 通知」的完整闭环，工具已在小组内使用；
+        这是内部工具，没有公开的量化指标（效率、包体数值、使用次数等）。
       </p>
 
-      <h3 class="szc-h3">已完成（真实，文字说明）</h3>
+      <h3 class="szc-h3">复盘反思</h3>
       <ul class="szc-list">
-        <li>Python APK 包体增量检测工具已开发，支持环境检查、基线构建、接入后构建、体积差计算与结果输出。</li>
-        <li>检测脚本已接入 Hermes，可通过自然语言描述发起检测。</li>
-        <li>Hermes 与钉钉的消息链路已打通，检测任务结果可通知到钉钉。</li>
-        <li>工具已在小组内实际使用。</li>
+        <li><strong>把重复流程脚本化比靠人记更省心</strong>：能力沉淀到工具里，而不是依赖少数成员的操作经验。</li>
+        <li><strong>职责分离便于排查</strong>：Hermes 只管入口与参数，脚本保持独立运行，问题能快速定位在入口还是脚本。</li>
+        <li><strong>环境检查前置让失败原因直观</strong>：先明确提示缺什么，减少「为什么构建失败」的沟通成本。</li>
+        <li><strong>自然语言入口降低门槛，但依赖需求清晰</strong>：参数提取效果与描述质量强相关，边界需要持续说明。</li>
       </ul>
+
+      <h3 class="szc-h3">当前局限</h3>
+      <ul class="szc-list">
+        <li>当前面向 Android APK，尚未覆盖 iOS 等其他产物。</li>
+        <li>检测依赖本地构建环境，环境差异可能影响构建与对比结果。</li>
+        <li>自然语言参数提取的效果依赖需求描述的清晰程度。</li>
+        <li>钉钉通知依赖已有的机器人与群配置，换环境需要重新接入。</li>
+      </ul>
+
+      <h3 class="szc-h3">后续优化设想（未实现）</h3>
+      <p class="szc-p">
+        <span class="tag">优化设想</span>
+        以下为尚未在原项目中实现的改进方向，仅作为产品思考展示，不声称已经具备：
+      </p>
+      <ul class="szc-list">
+        <li>支持 iOS 与多产物对比，统一不同平台的包体检测口径。</li>
+        <li>将体积变化按模块或依赖归因，而不只给出总体差值。</li>
+        <li>记录历史检测结果，支持版本之间的趋势对比。</li>
+        <li>接入 CI 流程，在构建阶段自动执行检测并通知结果。</li>
+      </ul>
+      <p class="szc-note szc-note--dim">
+        工具未实现自动重试与多 Agent 编排，页面也不将其描述为已实现能力；上方「后续优化设想」均未落地。
+      </p>
 
       <h3 class="szc-h3">待补充真实验证材料</h3>
       <div class="szc-evidence-grid">
@@ -402,47 +318,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
         </div>
       </div>
       <p class="szc-note szc-note--dim">
-        未确认的构建日志、包体数值与截图一律不在页面展示，避免把说明包装成可复现的生产记录。
-      </p>
-    </div>
-  </section>
-
-  <!-- ======================= 08 结果与复盘 ======================= -->
-  <section id="limitations" class="szc-section szc-section--alt">
-    <div class="container">
-      <div class="szc-section-head">
-        <span class="szc-section-num">08</span>
-        <h2>结果与复盘</h2>
-      </div>
-
-      <h3 class="szc-h3">已实现能力（真实）</h3>
-      <ul class="szc-list">
-        <li>Python APK 包体增量检测：环境检查、两次构建、体积读取与增量计算。</li>
-        <li>Hermes 参数提取与本地脚本调用：自然语言描述即可发起检测。</li>
-        <li>钉钉任务结果通知：检测结果进入协作场景。</li>
-        <li>小组内实际使用。</li>
-      </ul>
-
-      <h3 class="szc-h3">当前局限</h3>
-      <ul class="szc-list">
-        <li>当前面向 Android APK，尚未覆盖 iOS 等其他产物。</li>
-        <li>检测依赖本地构建环境，环境差异可能影响构建与对比结果。</li>
-        <li>自然语言参数提取的效果依赖需求描述的清晰程度。</li>
-        <li>钉钉通知依赖已有的机器人与群配置，换环境需要重新接入。</li>
-      </ul>
-
-      <h3 class="szc-h3">后续优化设想（未实现）</h3>
-      <p class="szc-p">
-        以下为尚未在原项目中实现的改进方向，仅作为产品思考展示，不声称已经具备：
-      </p>
-      <ul class="szc-list">
-        <li>支持 iOS 与多产物对比，统一不同平台的包体检测口径。</li>
-        <li>将体积变化按模块或依赖归因，而不只给出总体差值。</li>
-        <li>记录历史检测结果，支持版本之间的趋势对比。</li>
-        <li>接入 CI 流程，在构建阶段自动执行检测并通知结果。</li>
-      </ul>
-      <p class="szc-note szc-note--dim">
-        工具未实现自动重试与多 Agent 编排，页面也不将其描述为已实现能力。
+        未确认的构建日志、包体数值与截图一律不在页面展示；上述材料整理完成并经许可后补充到本页。
       </p>
     </div>
   </section>
@@ -467,7 +343,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
   // - 进度线右缘以「导航标签」为刻度：
   //     进度 0%   = 01 标签起点
   //     进度 x%   = 当前标签起点 + 当前区块内的阅读进度
-  //     100%      = 读到最后一个区块底部（进度线铺满导航栏）
+  //     100%      = 读到 05 区块底部（进度线铺满导航栏）
   const toc = document.querySelector('.szc-hero-anchors');
   const tocInner = document.querySelector('.szc-toc-inner');
   const progressEl = document.getElementById('szc-progress');
@@ -768,7 +644,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
   }
   .szc-problem-tag--real { color: #166534; background: #f0fdf4; border: 1px solid #bbf7d0; }
 
-  /* ==================== 流程步骤（核心流程 / 自动化链路） ==================== */
+  /* ==================== 流程步骤（核心流程） ==================== */
   .szc-wf-flow {
     display: flex;
     flex-wrap: wrap;
@@ -816,52 +692,6 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
     font-weight: 600;
     color: var(--text);
     white-space: nowrap;
-  }
-
-  /* ==================== 能力 / 链路步骤卡片 ==================== */
-  .szc-arch-flow {
-    display: flex;
-    align-items: stretch;
-    gap: 12px;
-    flex-wrap: wrap;
-    margin: 16px 0 14px;
-  }
-  .szc-arch-flow--chain { align-items: center; }
-  .szc-arch-step {
-    flex: 1 1 180px;
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-    border: 1px solid var(--line);
-    border-top: 3px solid var(--accent);
-    border-radius: 10px;
-    background: #fff;
-    padding: 16px 18px;
-  }
-  .szc-arch-flow--chain .szc-arch-step { flex: 1 1 160px; }
-  .szc-arch-num {
-    font-family: var(--font-mono);
-    font-size: 12px;
-    font-weight: 300;
-    color: var(--accent);
-    letter-spacing: 0.04em;
-  }
-  .szc-arch-step strong {
-    font-size: 15px;
-    font-weight: 700;
-    color: var(--text);
-  }
-  .szc-arch-step p {
-    font-size: 12.5px;
-    color: var(--text-3);
-    line-height: 1.6;
-    margin: 0;
-  }
-  .szc-arch-arrow {
-    align-self: center;
-    font-size: 16px;
-    color: var(--accent);
-    padding: 0 2px;
   }
 
   /* ==================== 待补充材料卡片 ==================== */
@@ -1101,15 +931,6 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
   @media (max-width: 900px) {
     .szc-problem-grid {
       grid-template-columns: 1fr;
-    }
-    .szc-arch-flow--chain {
-      flex-direction: column;
-      align-items: stretch;
-    }
-    .szc-arch-flow--chain .szc-arch-arrow {
-      align-self: flex-start;
-      transform: rotate(90deg);
-      padding: 4px 0 4px 18px;
     }
     .szc-demo-input-row {
       flex-direction: column;

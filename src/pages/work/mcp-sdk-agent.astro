@@ -48,23 +48,20 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
   <nav class="mcp-hero-anchors" aria-label="目录锚点">
     <div class="container mcp-toc-inner">
       <span class="mcp-progress" id="mcp-progress" role="progressbar" aria-label="阅读进度"></span>
-      <a href="#overview">01 项目概览</a>
-      <a href="#problems">02 问题分析</a>
-      <a href="#architecture">03 系统架构</a>
-      <a href="#workflow">04 核心工作流</a>
-      <a href="#demo">05 交互 Demo</a>
-      <a href="#prompt">06 Prompt 设计与测试迭代</a>
-      <a href="#evidence">07 验证证据</a>
-      <a href="#limitations">08 复盘与后续优化</a>
+      <a href="#background">01 项目背景与目标</a>
+      <a href="#role">02 我的角色与核心工作</a>
+      <a href="#solution">03 需求分析与解决方案</a>
+      <a href="#demo">04 交互 Demo 工作台</a>
+      <a href="#review">05 项目结果与复盘</a>
     </div>
   </nav>
 
-  <!-- ======================= 01 项目概览 ======================= -->
-  <section id="overview" class="mcp-section">
+  <!-- ======================= 01 项目背景与目标 ======================= -->
+  <section id="background" class="mcp-section">
     <div class="container">
       <div class="mcp-section-head">
         <span class="mcp-section-num">01</span>
-        <h2>项目概览</h2>
+        <h2>项目背景与目标</h2>
       </div>
       <p class="mcp-p mcp-p--lead">
         SDK 接入看起来是「照着文档加几行配置」，实际却分布在依赖配置、初始化、广告功能与生命周期等多个位置。
@@ -75,32 +72,12 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
         <strong>目标用户</strong>：需要在 Android 项目（本 POC 以 Android 为验证对象）中接入 SDK 的开发者，
         以及负责支持接入的技术人员。核心价值是把「说明怎么做」升级为「确认后直接改好并通过编译验证」。
       </p>
-      <h3 class="mcp-h3">我的角色（真实参与）</h3>
-      <ul class="mcp-list">
-        <li>负责 <strong>Agent Prompt 的设计与测试</strong>。</li>
-        <li>在 <strong>Android Demo</strong> 中测试并迭代 Prompt。</li>
-        <li>针对<strong>代码遗漏、配置错误和编译问题</strong>进行测试和优化。</li>
-        <li>协助<strong>梳理、验证整体工作流</strong>。</li>
-      </ul>
-      <p class="mcp-note mcp-note--dim">
-        真实性标注：本页「项目概览 / 问题分析 / 验证方式」等基于我在原项目中的实际参与；系统架构与工具分工来自团队已有的
-        方案验证环境，非我独立设计；项目处于方案验证阶段，未对外正式上线，页面不展示虚构的运行日志或业务指标。
-      </p>
-    </div>
-  </section>
 
-  <!-- ======================= 02 问题分析 ======================= -->
-  <section id="problems" class="mcp-section mcp-section--alt">
-    <div class="container">
-      <div class="mcp-section-head">
-        <span class="mcp-section-num">02</span>
-        <h2>问题分析</h2>
-      </div>
-      <p class="mcp-p mcp-p--lead">
-        这节用「问题 → 对应需求」的结构，说明为什么「文档 + 手动接入」在 SDK 接入场景下不够用，
-        以及 Agent 化要解决哪些具体问题。以下问题均来自实际接入痛点，作为作品集产品分析展示。
+      <h3 class="mcp-h3">问题拆解（作品集产品分析）</h3>
+      <p class="mcp-p">
+        以下问题用「问题 → 对应需求」的结构，说明为什么「文档 + 手动接入」不够用，
+        以及 Agent 化要解决哪些具体问题。
       </p>
-
       <div class="mcp-problem-grid">
         <article class="mcp-problem">
           <span class="mcp-problem-num">01</span>
@@ -122,79 +99,76 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
         </article>
         <article class="mcp-problem">
           <span class="mcp-problem-num">04</span>
-          <h4>重复的接入工作占用开发者时间，也难以保证每次接入的一致性。</h4>
-          <p class="mcp-problem-need"><strong>对应需求：</strong>把接入过程沉淀为可复用、可确认、可校验的流程。</p>
-          <span class="mcp-problem-tag mcp-problem-tag--real">真实背景</span>
-        </article>
-        <article class="mcp-problem">
-          <span class="mcp-problem-num">05</span>
           <h4>文档只说明「应该怎么做」，无法确认「当前工程实际改成了什么样」。</h4>
           <p class="mcp-problem-need"><strong>对应需求：</strong>Agent 读取当前工程、生成针对性接入计划并执行校验。</p>
           <span class="mcp-problem-tag mcp-problem-tag--real">真实背景</span>
         </article>
       </div>
       <p class="mcp-note mcp-note--dim">
-        以上问题作为作品集产品分析展示，未声称量化影响（如节省的开发时间或错误率下降比例）。
+        <strong>项目真实状态：</strong>内部 POC，处于方案验证阶段，未对外正式上线，没有可公开的真实线上业务指标。
+        问题作为作品集产品分析展示，未声称量化影响（如节省的开发时间或错误率下降比例）。
       </p>
     </div>
   </section>
 
-  <!-- ======================= 03 系统架构 ======================= -->
-  <section id="architecture" class="mcp-section">
+  <!-- ======================= 02 我的角色与核心工作 ======================= -->
+  <section id="role" class="mcp-section mcp-section--alt">
+    <div class="container">
+      <div class="mcp-section-head">
+        <span class="mcp-section-num">02</span>
+        <h2>我的角色与核心工作</h2>
+      </div>
+      <p class="mcp-p mcp-p--lead">
+        一句话结论：我的核心工作是让「Agent 接入流程」<strong>可确认、可校验</strong>——
+        通过 Agent Prompt 设计与测试、Android Demo 验证与整体工作流梳理，把「能不能自动接入」验证为
+        「确认后改好工程并通过编译」。
+      </p>
+      <p class="mcp-p">
+        <span class="tag tag--accent">真实项目记录</span>
+        以下为我在原项目中的实际参与内容：
+      </p>
+      <ul class="mcp-list">
+        <li>负责 <strong>Agent Prompt 的设计与测试</strong>。</li>
+        <li>在 <strong>Android Demo</strong> 中测试并迭代 Prompt，验证依赖配置、初始化、广告功能代码注入与编译结果。</li>
+        <li>针对<strong>代码遗漏、配置错误和编译问题</strong>分析原因，调整 Prompt 后重新验证。</li>
+        <li>协助<strong>梳理、验证整体工作流</strong>（预检 → 收集 → 扫描 → 方案 → 确认 → 注入 → 校验 → 编译）。</li>
+      </ul>
+      <p class="mcp-note mcp-note--dim">
+        <strong>团队与个人分工：</strong>上述为参与性贡献。系统架构、IDE Agent / Remote MCP Server / Local CLI 的工具分工
+        来自团队已有的方案验证环境，非我独立设计；本页的交互原型与方案总结为作品集整理补充。
+      </p>
+    </div>
+  </section>
+
+  <!-- ======================= 03 需求分析与解决方案 ======================= -->
+  <section id="solution" class="mcp-section">
     <div class="container">
       <div class="mcp-section-head">
         <span class="mcp-section-num">03</span>
-        <h2>系统架构</h2>
+        <h2>需求分析与解决方案</h2>
       </div>
       <p class="mcp-p mcp-p--lead">
-        方案把「理解与决策」和「本地执行」分开：<strong>远端负责理解需求、生成并确认计划</strong>，
-        <strong>本地负责读写工程、注入代码与编译验证</strong>，避免远端直接操作本地文件，也让每一步都可被开发者核对。
+        <strong>核心问题：</strong>文档只说明「应该怎么做」，无法确认「当前工程实际改成了什么样」。
+        方案把<strong>理解与决策</strong>和<strong>本地执行</strong>分开：远端负责理解需求、生成并确认计划；
+        本地负责读写工程、注入代码与编译验证。任何修改<strong>先确认再写入</strong>，以<strong>编译通过</strong>为验收标准。
       </p>
 
-      <div class="mcp-arch-flow" aria-label="系统架构示意">
-        <div class="mcp-arch-step">
-          <span class="mcp-arch-num">01</span>
-          <strong>IDE Agent</strong>
-          <p>理解自然语言接入需求，组织任务与执行步骤，与开发者交互。</p>
-        </div>
-        <span class="mcp-arch-arrow">→</span>
-        <div class="mcp-arch-step">
-          <span class="mcp-arch-num">02</span>
-          <strong>Remote MCP Server</strong>
-          <p>作为工具调用入口，生成接入计划并等待用户确认。</p>
-        </div>
-        <span class="mcp-arch-arrow">→</span>
-        <div class="mcp-arch-step">
-          <span class="mcp-arch-num">03</span>
-          <strong>Local CLI / sdk-injector</strong>
-          <p>在本地工程中分析、注入代码、反向校验。</p>
-        </div>
-        <span class="mcp-arch-arrow">→</span>
-        <div class="mcp-arch-step">
-          <span class="mcp-arch-num">04</span>
-          <strong>Android 项目</strong>
-          <p>依赖、初始化、广告功能代码的落点与编译验证对象。</p>
-        </div>
-      </div>
+      <h3 class="mcp-h3">角色分工</h3>
+      <ul class="mcp-list">
+        <li><strong>IDE Agent：</strong>理解自然语言接入需求，组织任务与执行步骤，与开发者交互。</li>
+        <li><strong>Remote MCP Server：</strong>作为工具调用入口，生成接入计划并等待用户确认。</li>
+        <li><strong>Local CLI / sdk-injector：</strong>在本地工程中分析、注入代码、反向校验，不把文件操作交给远端。</li>
+      </ul>
       <p class="mcp-note mcp-note--dim">
         方案说明 / 待确认：该分工来自团队已有的方案验证环境。各层之间的接口协议与内部实现细节待确认；
         本页仅用于解释产品设计思路，不展示真实工程路径、内部接口实现或运行日志。
       </p>
-    </div>
-  </section>
 
-  <!-- ======================= 04 核心工作流 ======================= -->
-  <section id="workflow" class="mcp-section mcp-section--alt">
-    <div class="container">
-      <div class="mcp-section-head">
-        <span class="mcp-section-num">04</span>
-        <h2>核心工作流</h2>
-      </div>
-      <p class="mcp-p mcp-p--lead">
+      <h3 class="mcp-h3">核心工作流</h3>
+      <p class="mcp-p">
         完整链路为：<strong>需求输入 → 需求解析 → 方案生成 → 用户确认 → 变更预览 → 执行注入 → 反向校验 → 编译验证 → 结果摘要</strong>。
         其中「用户确认」与「变更预览」是两条关键边界，保证 Agent 不会在未确认的情况下改动工程。
       </p>
-
       <div class="mcp-wf-flow" aria-label="核心工作流">
         <span class="mcp-wf-step">需求输入</span>
         <span class="mcp-wf-arrow">→</span>
@@ -229,14 +203,47 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
         <li>跨版本、跨平台的<strong>全量自动回归</strong>尚未覆盖，验证集中在 Android Demo。</li>
         <li>工作流中的「能力预检 → 信息收集 → 项目扫描」为前置步骤，本页 Demo 用预设场景简化呈现。</li>
       </ul>
+
+      <h3 class="mcp-h3">Prompt 关键设计</h3>
+      <p class="mcp-p">
+        Agent 的接入质量不只取决于工具能力，还取决于 Prompt 如何约束任务目标、执行边界与事实边界。
+        原始 Prompt 涉及内部实现细节，不公开；以下为整理后的<strong>作品集示例 Prompt 模板</strong>的关键片段，
+        每条约束对应一类具体风险，不代表原项目历史原文或真实测试记录。
+      </p>
+      <p class="mcp-note mcp-note--dim">
+        说明：以下示例为整理脱敏后的「作品集示例 Prompt 模板」，不声称与原项目实际使用的完整 Prompt 一致。
+      </p>
+      <pre class="mcp-prompt">你是 SDK 自动化集成助手（作品集示例 Prompt 模板，非原项目原文）。
+
+【任务目标】
+1. 将用户用自然语言描述的 SDK 接入需求，转换为针对当前 Android 工程的具体接入方案。
+2. 输出顺序固定：依赖配置 → 初始化 → 广告功能代码 → 校验步骤。
+
+【执行边界】
+3. 任何对工程文件的修改，都必须先展示方案并获得用户确认；未确认前只读不改。
+4. 信息缺失（如 appId、SDK 版本）时先请求补充，不猜测默认值。
+5. 校验以 Android 编译通过为验收标准，不以「看起来完成」作为结果。
+
+【事实约束】
+6. 不编造 SDK 参数、接口与版本号；以官方发布信息为准。
+7. 编译失败时定位到具体环节（代码遗漏 / 配置错误 / 版本不兼容），并说明修改方向。</pre>
+      <ul class="mcp-list">
+        <li><strong>先展示方案并获确认，再修改工程</strong>：未经确认直接改工程，一旦方案不准确会污染工程，难以回退。</li>
+        <li><strong>信息缺失先请求补充，不猜测默认值</strong>：缺少 appId 等必要参数时强行生成，会产生不可用的初始化代码。</li>
+        <li><strong>以编译通过作为验收标准</strong>：仅凭 Agent 自我判断无法确认代码真的可用，编译是最直接的门禁。</li>
+        <li><strong>失败定位到具体环节并说明修改方向</strong>：笼统「再试一次」无法收敛问题，需要区分代码遗漏 / 配置错误 / 版本兼容。</li>
+      </ul>
+      <p class="mcp-note mcp-note--dim">
+        仅保留能体现产品思考的关键约束；不重复解释 Agent / MCP / Prompt 的基础概念。
+      </p>
     </div>
   </section>
 
-  <!-- ======================= 05 交互 Demo：SDK 接入工作台 ======================= -->
-  <section id="demo" class="mcp-section">
+  <!-- ======================= 04 交互 Demo：SDK 接入工作台 ======================= -->
+  <section id="demo" class="mcp-section mcp-section--alt">
     <div class="container">
       <div class="mcp-section-head">
-        <span class="mcp-section-num">05</span>
+        <span class="mcp-section-num">04</span>
         <h2>交互 Demo：SDK 接入工作台</h2>
       </div>
       <p class="mcp-p mcp-p--lead">
@@ -297,71 +304,17 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
     </div>
   </section>
 
-  <!-- ======================= 06 Prompt 设计与测试迭代 ======================= -->
-  <section id="prompt" class="mcp-section mcp-section--alt">
+  <!-- ======================= 05 项目结果与复盘 ======================= -->
+  <section id="review" class="mcp-section">
     <div class="container">
       <div class="mcp-section-head">
-        <span class="mcp-section-num">06</span>
-        <h2>Prompt 设计与测试迭代</h2>
+        <span class="mcp-section-num">05</span>
+        <h2>项目结果与复盘</h2>
       </div>
       <p class="mcp-p mcp-p--lead">
-        Agent 的接入质量不只取决于工具能力，还取决于 Prompt 如何约束任务目标、执行边界与事实边界。
-        原始 Prompt 涉及内部实现细节，不公开；以下为整理后的<strong>作品集示例 Prompt 模板</strong>与
-        <strong>测试迭代案例说明模板</strong>，用于展示设计思路，不代表原项目历史原文或真实测试记录。
+        一句话结论：通过「先确认再写入」与「编译通过」两条机制，把接入流程组织成
+        <strong>可确认、可校验</strong>的闭环；方案仍在内部 POC 验证阶段，未上线，也没有可公开的量化指标。
       </p>
-
-      <p class="mcp-note mcp-note--dim">
-        说明：以下示例为整理脱敏后的「作品集示例 Prompt 模板」，不声称与原项目实际使用的完整 Prompt 一致。
-      </p>
-      <pre class="mcp-prompt">你是 SDK 自动化集成助手（作品集示例 Prompt 模板，非原项目原文）。
-
-【任务目标】
-1. 将用户用自然语言描述的 SDK 接入需求，转换为针对当前 Android 工程的具体接入方案。
-2. 输出顺序固定：依赖配置 → 初始化 → 广告功能代码 → 校验步骤。
-
-【执行边界】
-3. 任何对工程文件的修改，都必须先展示方案并获得用户确认；未确认前只读不改。
-4. 信息缺失（如 appId、SDK 版本）时先请求补充，不猜测默认值。
-5. 校验以 Android 编译通过为验收标准，不以「看起来完成」作为结果。
-
-【事实约束】
-6. 不编造 SDK 参数、接口与版本号；以官方发布信息为准。
-7. 编译失败时定位到具体环节（代码遗漏 / 配置错误 / 版本不兼容），并说明修改方向。</pre>
-
-      <h3 class="mcp-h3">设计意图</h3>
-      <p class="mcp-p">每条约束对应一类具体风险，避免「答案看起来合理、实际不可用」：</p>
-      <div class="mcp-table-wrap">
-        <table class="mcp-intent-table">
-          <thead>
-            <tr>
-              <th>Prompt 约束</th>
-              <th>对应风险</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>先展示方案并获确认，再修改工程</td>
-              <td>未经确认直接改工程，一旦方案不准确会污染工程，难以回退。</td>
-            </tr>
-            <tr>
-              <td>信息缺失先请求补充，不猜测默认值</td>
-              <td>缺少 appId 等必要参数时强行生成，会产生不可用的初始化代码。</td>
-            </tr>
-            <tr>
-              <td>以编译通过作为验收标准</td>
-              <td>仅凭 Agent 自我判断无法确认代码真的可用，编译是最直接的门禁。</td>
-            </tr>
-            <tr>
-              <td>不编造 SDK 参数、接口与版本号</td>
-              <td>虚构的接口名、参数或代码片段无法编译通过，损害可信度。</td>
-            </tr>
-            <tr>
-              <td>失败定位到具体环节并说明修改方向</td>
-              <td>笼统「再试一次」无法收敛问题，需要区分代码遗漏 / 配置错误 / 版本兼容。</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
 
       <h3 class="mcp-h3">测试迭代（案例说明模板）</h3>
       <p class="mcp-p">
@@ -435,31 +388,16 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
           <span class="mcp-gov-label">在 Android Demo 重新编译确认</span>
         </div>
       </div>
-    </div>
-  </section>
-
-  <!-- ======================= 07 验证证据 ======================= -->
-  <section id="evidence" class="mcp-section">
-    <div class="container">
-      <div class="mcp-section-head">
-        <span class="mcp-section-num">07</span>
-        <h2>验证证据</h2>
-      </div>
-      <p class="mcp-p mcp-p--lead">
-        本页为作品集页面。我在原项目中的参与可以用<strong>文字说明</strong>呈现（下方「已完成」），
-        但具体的截图、日志与版本迭代记录因保密与整理原因暂不公开，因此以<strong>「待补充真实验证材料」占位</strong>展示，
-        不编造任何验证截图、编译日志或成功率数据。
+      <p class="mcp-note mcp-note--dim">
+        真实项目中以「人工测试 + Android Demo 编译回归」的方式迭代，未落地自动化持续评测，也未产生可公开的指标数据。
       </p>
 
-      <h3 class="mcp-h3">已完成（真实，文字说明）</h3>
-      <ul class="mcp-list">
-        <li>负责 Agent Prompt 的设计与测试。</li>
-        <li>在 Android Demo 中测试并迭代 Prompt，验证 SDK 依赖配置、初始化、广告功能代码注入与编译结果。</li>
-        <li>针对代码遗漏、配置错误与编译问题分析原因，调整 Prompt 后重新验证。</li>
-        <li>协助验证完整 Agent 工作流（预检 → 收集 → 扫描 → 方案 → 确认 → 注入 → 校验 → 编译）。</li>
-      </ul>
-
-      <h3 class="mcp-h3">待补充真实验证材料</h3>
+      <h3 class="mcp-h3">验证证据</h3>
+      <p class="mcp-p">
+        我在原项目中的参与以<strong>文字说明</strong>呈现（详见 02「我的角色与核心工作」），并已在 Android Demo 中实际测试与迭代；
+        具体的截图、日志与版本迭代记录因保密与整理原因暂不公开，以<strong>「待补充真实验证材料」占位</strong>展示，
+        不编造任何验证截图、编译日志或成功率数据。
+      </p>
       <div class="mcp-evidence-grid">
         <div class="mcp-evidence-card">
           <span class="mcp-evidence-tag">待补充</span>
@@ -480,27 +418,13 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
       <p class="mcp-note mcp-note--dim">
         上述材料整理完成并经许可后补充到本页；当前不提供虚构截图、日志或成功率数据。
       </p>
-    </div>
-  </section>
 
-  <!-- ======================= 08 复盘与后续优化 ======================= -->
-  <section id="limitations" class="mcp-section mcp-section--alt">
-    <div class="container">
-      <div class="mcp-section-head">
-        <span class="mcp-section-num">08</span>
-        <h2>复盘与后续优化</h2>
-      </div>
-      <p class="mcp-p mcp-p--lead">
-        复盘部分明确区分<strong>「已完成（真实）」</strong>与<strong>「后续优化设想（未实现）」</strong>，
-        避免把设想描述成已落地能力。
-      </p>
-
-      <h3 class="mcp-h3">已完成（真实）</h3>
+      <h3 class="mcp-h3">复盘反思</h3>
       <ul class="mcp-list">
-        <li>完成 Agent Prompt 设计与测试，并在 Android Demo 中迭代。</li>
-        <li>通过「先确认再写入」的流程设计，降低误改工程的风险。</li>
-        <li>以编译通过作为验收标准，把失败拆分为代码遗漏、配置错误、编译错误等类型并定位到环节。</li>
-        <li>协助梳理、验证整体工作流，形成可重复的验证闭环。</li>
+        <li><strong>「先确认再写入」是关键安全边界</strong>：即使方案不准确，也不会在未确认的情况下改动工程。</li>
+        <li><strong>编译通过是直接、可信的验收标准</strong>：比 Agent 自我判断更可靠，失败还能拆到具体环节。</li>
+        <li><strong>Prompt 约束要对应具体风险</strong>：每条约束都针对一类会真实发生的失败，而不是泛泛要求「回答准确」。</li>
+        <li><strong>验证需要环境一致</strong>：本地构建环境差异会影响验证结论，跨版本 / 跨平台回归尚未覆盖。</li>
       </ul>
 
       <h3 class="mcp-h3">当前局限</h3>

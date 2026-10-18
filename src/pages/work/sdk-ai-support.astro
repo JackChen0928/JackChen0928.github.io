@@ -7,26 +7,13 @@ import {
   QUICK_QUESTIONS,
 } from '../../data/sdk-support-demo';
 
-const examplePrompt = `你是 SDK 开发者智能问答助手（作品集示例 Prompt）。
-
-【输入上下文】
-- SDK 版本：{sdk_version}
-- 开发平台：{platform}
-- 用户问题：{query}
-
-【回答依据与范围】
-1. 仅在已确认的 SDK 版本与开发平台范围内回答，优先使用该范围内的资料，不得跨版本、跨平台混用。
-2. 不将一个平台的接入方式套用到另一个平台；问题文本与所选平台不一致时，先让用户确认平台。
-
-【信息缺失处理】
-3. 未选择 SDK 版本时，先要求补充版本。
-4. 未指定开发平台时，先追问开发平台。
-5. 用户问题信息不足或表述模糊时，先补充提问，不猜测作答。
+const promptSnippet = `【回答依据与范围】
+1. 仅在已确认的 SDK 版本与开发平台范围内回答，不得跨版本、跨平台混用。
+2. 未选择版本或未指定平台时，先追问，不猜测作答。
 
 【事实约束】
-6. 资料不足时明确说明缺少依据，不编造技术结论。
-7. 不编造 SDK 参数、接口和代码；涉及具体配置时，以官方发布的最新文档为准。
-8. 回答尽量附来源：文档标题、SDK 版本、开发平台、文档类型、相关片段。`;
+3. 资料不足时明确说明缺少依据，不编造技术结论；不编造 SDK 参数、接口和代码。
+4. 回答尽量附来源：文档标题、SDK 版本、开发平台、文档类型。`;
 
 /** Prompt 设计意图：每条约束对应的具体风险 */
 const promptIntents: Array<{ rule: string; risk: string }> = [
@@ -82,16 +69,6 @@ const problems: Array<{ issue: string; need: string; tag: string }> = [
     need: '关联相关文档，顺着引用关系找到配套资料。',
     tag: '真实背景',
   },
-  {
-    issue: '用户问题可能缺少必要信息或表述模糊。',
-    need: '信息不足时先追问，不直接猜测作答。',
-    tag: '作品集原型演示',
-  },
-  {
-    issue: '回答质量需要持续验证，不能凭感觉判断改动效果。',
-    need: '基于历史 FAQ 设计测试用例，用测试集检查回答质量并驱动迭代。',
-    tag: '真实背景',
-  },
 ];
 ---
 
@@ -127,7 +104,7 @@ const problems: Array<{ issue: string; need: string; tag: string }> = [
       </div>
       <p class="sdkai-hero-desc">
         面向 SDK 开发者的智能技术支持系统，目标是帮助开发者自助解决 SDK 使用问题、减少重复技术咨询。
-        本页重点展示产品分析与验证过程：用户问题拆解、工作流设计、知识库治理、问答交互原型与评测迭代。
+        本页重点展示产品分析与验证过程：问题拆解、知识库治理、需求分析与解决方案、问答交互原型与结果复盘。
       </p>
       <div class="sdkai-status-note">
         真实项目经历 + 作品集交互原型。交互原型为前端模拟，不调用真实大模型，不连接真实 Dify / RAGFlow；
@@ -140,27 +117,26 @@ const problems: Array<{ issue: string; need: string; tag: string }> = [
   <nav class="sdkai-hero-anchors" aria-label="目录锚点">
     <div class="container sdkai-toc-inner">
       <span class="sdkai-progress" id="sdkai-progress" role="progressbar" aria-label="阅读进度"></span>
-      <a href="#problems">01 用户问题与需求拆解</a>
-      <a href="#workflow">02 工作流设计</a>
-      <a href="#knowledge">03 知识库治理</a>
+      <a href="#background">01 项目背景与目标</a>
+      <a href="#role">02 我的角色与核心工作</a>
+      <a href="#solution">03 需求分析与解决方案</a>
       <a href="#demo">04 问答交互原型</a>
-      <a href="#prompt">05 Prompt 设计</a>
-      <a href="#eval">06 AI 评测与迭代</a>
-      <a href="#contribution">07 个人贡献与复盘</a>
+      <a href="#review">05 项目结果与复盘</a>
     </div>
   </nav>
 
-  <!-- ======================= 01 用户问题与需求拆解 ======================= -->
-  <section id="problems" class="sdkai-section">
+  <!-- ======================= 01 项目背景与目标 ======================= -->
+  <section id="background" class="sdkai-section">
     <div class="container">
       <div class="sdkai-section-head">
         <span class="sdkai-section-num">01</span>
-        <h2>用户问题与需求拆解</h2>
+        <h2>项目背景与目标</h2>
       </div>
       <p class="sdkai-p sdkai-p--lead">
-        面向 SDK 开发者的技术咨询可以拆解为多个子问题，每个子问题对应一个产品需求。
-        这部分是作品集的<strong>产品分析</strong>：用「问题 → 需求」的结构解释为什么需要版本路由、
-        平台判断、知识库隔离与问答评测，而不是只介绍 Dify、RAGFlow 等工具。
+        项目面向<strong>SDK 开发者与技术支持团队</strong>：开发者接入 SDK 时常遇到接入、配置与排查问题，
+        支持人员反复回答类似问题。目标是打造一个<strong>基于 RAG 的智能问答系统</strong>，
+        让开发者自助解决高频问题、减少重复技术咨询。以下问题拆解来自真实项目背景，
+        用「问题 → 需求」的结构解释为什么需要版本路由、平台判断、知识库隔离与文档关联。
       </p>
 
       <div class="sdkai-problem-grid">
@@ -170,142 +146,63 @@ const problems: Array<{ issue: string; need: string; tag: string }> = [
               <span class="sdkai-problem-num">{String(i + 1).padStart(2, '0')}</span>
               <h4>{p.issue}</h4>
               <p class="sdkai-problem-need"><strong>对应需求：</strong>{p.need}</p>
-              <span class={'sdkai-problem-tag ' + (p.tag === '真实背景' ? 'sdkai-problem-tag--real' : 'sdkai-problem-tag--demo')}>{p.tag}</span>
+              <span class="sdkai-problem-tag sdkai-problem-tag--real">{p.tag}</span>
             </article>
           ))
         }
       </div>
 
       <p class="sdkai-note sdkai-note--dim">
-        需求拆解作为作品集产品分析展示：「真实背景」指项目中的实际动机；
-        「作品集原型演示」指原型中演示、但未声称已在真实系统中独立实现的交互。
+        <strong>项目真实状态：</strong>内部 POC，处于内部测试阶段，未对外正式上线，没有可公开的真实线上业务指标。
       </p>
     </div>
   </section>
 
-  <!-- ======================= 02 工作流设计 ======================= -->
-  <section id="workflow" class="sdkai-section sdkai-section--alt">
+  <!-- ======================= 02 我的角色与核心工作 ======================= -->
+  <section id="role" class="sdkai-section sdkai-section--alt">
     <div class="container">
       <div class="sdkai-section-head">
         <span class="sdkai-section-num">02</span>
-        <h2>工作流设计</h2>
+        <h2>我的角色与核心工作</h2>
       </div>
       <p class="sdkai-p sdkai-p--lead">
-        主流程：用户提出问题 → 确认 SDK 版本 → 判断开发平台 → 检索对应知识库 → 根据检索内容组织回答 → 展示回答与资料依据。
-        下方为可视化模拟工作流，当前执行路径会随聊天交互实时高亮；点击节点可查看其作用、输入 / 输出变量与执行条件。
-        本图为<strong>模拟工作流示意</strong>，并非真实 Dify 运行日志。
+        一句话结论：在团队共同推进的项目中，我的核心贡献是<strong>让「知识」与「边界」更可控</strong>——
+        通过 FAQ 清洗治理、知识图谱关联、平台分流与测试用例驱动评测，把问答质量从「靠感觉」变为「可验证」。
       </p>
-
-      <h3 class="sdkai-h3">异常分支处理</h3>
+      <p class="sdkai-p">
+        <span class="tag tag--accent">真实项目记录</span>
+        以下为我在原项目中的实际参与内容：
+      </p>
       <ul class="sdkai-list">
-        <li><strong>未选择 SDK 版本</strong>：先要求补充版本，再进入检索。</li>
-        <li><strong>未指定开发平台</strong>：追问开发平台，不猜测作答。</li>
-        <li><strong>资料不足</strong>：提示信息不足，不编造技术结论。</li>
-        <li><strong>检索到疑似跨平台内容</strong>：检查平台约束，限制回答范围，必要时先澄清平台。</li>
+        <li>参与 SDK 版本与开发平台的<strong>分流优化</strong>，减少版本 / 平台上下文混淆。</li>
+        <li>参与 600+ 条历史 FAQ 的<strong>清洗与治理</strong>，整理为 100+ 条可用于知识库的问答。</li>
+        <li>使用 Python 构建 SDK 文档之间的<strong>关联知识图谱</strong>，处理文档引用关系不易被普通检索发现的问题。</li>
+        <li>基于历史 FAQ 设计具体问题、模糊问题等<strong>测试用例</strong>，参与<strong>问题分析、Prompt 优化与回归测试</strong>。</li>
       </ul>
       <p class="sdkai-note sdkai-note--dim">
-        区分说明：平台冲突澄清、资料不足处理来自真实工作流中的处理思路（结合文档平台前缀、知识库隔离与 Prompt 约束）；
-        版本缺失追问、平台缺失追问等节点为作品集补全的<strong>设计建议</strong>，用于完整呈现产品逻辑，未声称全部已在真实系统中实现。
+        <strong>团队与个人分工：</strong>上述为参与性贡献。系统整体架构、Dify 工作流与 RAGFlow 知识库主体由团队共同推进，
+        并非我独立主导系统架构或独立设计全部原始 Prompt；本页的交互原型与方案总结为作品集整理补充。
       </p>
-
-      <div class="sdkai-wf-grid">
-        <!-- 流程图 -->
-        <div class="sdkai-wf-flow" aria-label="模拟工作流节点">
-          <div class="sdkai-wf-node" data-node="user-input" tabindex="0">
-            <span>用户输入问题</span><span class="sdkai-wf-node-id">user-input</span>
-          </div>
-          <div class="sdkai-wf-conn sdkai-wf-conn--down"></div>
-          <div class="sdkai-wf-node" data-node="version-router" tabindex="0">
-            <span>识别 SDK 版本</span><span class="sdkai-wf-node-id">version-router</span>
-          </div>
-          <div class="sdkai-wf-conn sdkai-wf-conn--down"></div>
-          <div class="sdkai-wf-node" data-node="platform-detect" tabindex="0">
-            <span>识别开发平台</span><span class="sdkai-wf-node-id">platform-detect</span>
-          </div>
-          <div class="sdkai-wf-conn sdkai-wf-conn--down"></div>
-          <div class="sdkai-wf-node" data-node="conflict-check" tabindex="0">
-            <span>判断平台是否冲突</span><span class="sdkai-wf-node-id">conflict-check</span>
-          </div>
-
-          <div class="sdkai-wf-branch">
-            <div class="sdkai-wf-branch-line"><span class="sdkai-wf-chip">存在平台冲突</span></div>
-            <div class="sdkai-wf-node sdkai-wf-node--warn" data-node="platform-clarify" tabindex="0">
-              <span>询问用户确认平台</span><span class="sdkai-wf-node-id">platform-clarify</span>
-            </div>
-          </div>
-
-          <div class="sdkai-wf-conn sdkai-wf-conn--down sdkai-wf-conn--merge">
-            <span class="sdkai-wf-chip">平台信息明确 · 已确认开发平台</span>
-          </div>
-          <div class="sdkai-wf-node" data-node="retrieval-builder" tabindex="0">
-            <span>构建检索条件</span><span class="sdkai-wf-node-id">retrieval-builder</span>
-          </div>
-          <div class="sdkai-wf-conn sdkai-wf-conn--down"></div>
-          <div class="sdkai-wf-node" data-node="knowledge-retrieval" tabindex="0">
-            <span>检索对应知识库</span><span class="sdkai-wf-node-id">knowledge-retrieval</span>
-          </div>
-          <div class="sdkai-wf-conn sdkai-wf-conn--down"></div>
-          <div class="sdkai-wf-node" data-node="evidence-check" tabindex="0">
-            <span>检查是否有足够依据</span><span class="sdkai-wf-node-id">evidence-check</span>
-          </div>
-
-          <div class="sdkai-wf-branch">
-            <div class="sdkai-wf-branch-line"><span class="sdkai-wf-chip">未找到足够依据</span></div>
-            <div class="sdkai-wf-node sdkai-wf-node--danger" data-node="insufficient" tabindex="0">
-              <span>资料不足处理</span><span class="sdkai-wf-node-id">insufficient</span>
-            </div>
-          </div>
-
-          <div class="sdkai-wf-conn sdkai-wf-conn--down sdkai-wf-conn--merge">
-            <span class="sdkai-wf-chip">检索到相关资料</span>
-          </div>
-          <div class="sdkai-wf-node" data-node="answer-generation" tabindex="0">
-            <span>生成技术答复</span><span class="sdkai-wf-node-id">answer-generation</span>
-          </div>
-          <div class="sdkai-wf-conn sdkai-wf-conn--down"></div>
-          <div class="sdkai-wf-node" data-node="final-answer" tabindex="0">
-            <span>展示答案与参考资料</span><span class="sdkai-wf-node-id">final-answer</span>
-          </div>
-        </div>
-
-        <!-- 变量与详情 -->
-        <div class="sdkai-wf-side">
-          <div class="sdkai-wf-block">
-            <div class="sdkai-wf-block-head">
-              <h4>当前变量</h4>
-              <button type="button" id="sdkai-wf-reset" class="btn btn--outline sdkai-btn-sm">重置高亮</button>
-            </div>
-            <p class="sdkai-wf-hint">变量值随实际交互更新，非固定示例。</p>
-            <div class="sdkai-wf-table-wrap">
-              <table class="sdkai-wf-vars">
-                <tbody id="sdkai-wf-vars"></tbody>
-              </table>
-            </div>
-          </div>
-
-          <div class="sdkai-wf-block">
-            <h4>节点详情</h4>
-            <div class="sdkai-wf-detail" id="sdkai-wf-detail">
-              <div class="sdkai-wf-detail-empty">
-                点击上方任意节点，查看节点作用、输入 / 输出变量、执行条件与下一步节点。
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
     </div>
   </section>
 
-  <!-- ======================= 03 知识库治理 ======================= -->
-  <section id="knowledge" class="sdkai-section">
+  <!-- ======================= 03 需求分析与解决方案 ======================= -->
+  <section id="solution" class="sdkai-section">
     <div class="container">
       <div class="sdkai-section-head">
         <span class="sdkai-section-num">03</span>
-        <h2>知识库治理</h2>
+        <h2>需求分析与解决方案</h2>
       </div>
       <p class="sdkai-p sdkai-p--lead">
-        知识库内容质量直接决定回答质量。本节把知识库工作拆成两件事：
-        <strong>FAQ 清洗整理</strong>（真实经历）与<strong>文档关联知识图谱</strong>（概念化示意）。
+        <strong>核心问题：</strong>问答质量取决于「检索到什么」和「如何约束回答」。
+        方案分三层：<strong>治理知识</strong>（FAQ 清洗、文档关联）→
+        <strong>限定检索边界</strong>（按 SDK 版本路由、按平台过滤）→
+        <strong>约束回答</strong>（Prompt 限定版本与平台范围、不编造结论），并用测试驱动迭代。
+      </p>
+      <p class="sdkai-p">
+        <strong>关键处理分支：</strong>未选择版本先追问；未指定平台先追问；
+        检索到疑似跨平台内容时先澄清平台；资料不足时明确说明、不编造技术结论。
+        平台冲突澄清、资料不足处理来自真实工作流思路；版本 / 平台缺失追问为作品集补全的设计建议。
       </p>
 
       <h3 class="sdkai-h3">FAQ 清洗与整理（真实背景）</h3>
@@ -442,6 +339,23 @@ const problems: Array<{ issue: string; need: string; tag: string }> = [
 
       <p class="sdkai-kb-count" id="sdk-kb-count"></p>
       <div class="sdkai-kb-list" id="sdk-kb-list" aria-live="polite"></div>
+
+      <h3 class="sdkai-h3">Prompt 关键设计</h3>
+      <p class="sdkai-p">
+        回答质量不只取决于检索，还取决于 Prompt 如何约束回答范围与事实边界。
+        以下为作品集整理后的<strong>关键片段</strong>，并非原项目历史原始 Prompt 全文。
+      </p>
+      <pre class="sdkai-prompt">{promptSnippet}</pre>
+      <ul class="sdkai-list">
+        {
+          promptIntents.filter((_, i) => [0, 1, 3, 5].includes(i)).map((it) => (
+            <li><strong>{it.rule}</strong>：{it.risk}</li>
+          ))
+        }
+      </ul>
+      <p class="sdkai-note sdkai-note--dim">
+        仅保留能体现产品思考的关键约束，每条约束对应一类具体风险，避免「答案看起来合理、实际不可用」。
+      </p>
     </div>
   </section>
 
@@ -548,100 +462,29 @@ const problems: Array<{ issue: string; need: string; tag: string }> = [
       <div class="sdkai-note">
         <strong>本原型的验证目的：</strong>检验「版本 + 平台路由、平台冲突澄清、回答 + 资料依据展示」三条关键交互是否清晰顺畅，
         以及异常场景下用户能否得到明确反馈。回答质量是否稳定，由下一节
-        <a href="#eval">AI 评测与迭代</a> 用测试用例客观验证。
+        <a href="#review">项目结果与复盘</a> 的测试用例验证。
       </div>
     </div>
   </section>
 
-  <!-- ======================= 05 Prompt 设计 ======================= -->
-  <section id="prompt" class="sdkai-section">
+  <!-- ======================= 05 项目结果与复盘 ======================= -->
+  <section id="review" class="sdkai-section">
     <div class="container">
       <div class="sdkai-section-head">
         <span class="sdkai-section-num">05</span>
-        <h2>Prompt 设计</h2>
+        <h2>项目结果与复盘</h2>
       </div>
       <p class="sdkai-p sdkai-p--lead">
-        回答质量不只取决于检索，还取决于 Prompt 如何约束回答范围与事实边界。
-        以下为作品集整理后的<strong>示例 Prompt</strong>，并非原项目历史原始 Prompt。
+        一句话结论：问答质量从「靠感觉判断」变为「可验证、可回归」——通过
+        <strong>测试用例驱动迭代</strong>客观记录通过与失败，而不是凭感觉判断改动效果。
+        本项目为内部 POC，测试结果只反映验证方法，不代表生产指标。
       </p>
 
-      <p class="sdkai-note sdkai-note--dim">
-        说明：这是用于展示设计思路的「作品集示例 Prompt」，不声称与原项目使用的完整 Prompt 一致。
-      </p>
-      <pre class="sdkai-prompt">{examplePrompt}</pre>
-
-      <h3 class="sdkai-h3">设计意图</h3>
-      <p class="sdkai-p">每条约束对应一类具体风险，避免「答案看起来合理、实际不可用」：</p>
-      <div class="sdkai-table-wrap">
-        <table class="sdkai-intent-table">
-          <thead>
-            <tr>
-              <th>Prompt 约束</th>
-              <th>对应风险</th>
-            </tr>
-          </thead>
-          <tbody>
-            {
-              promptIntents.map((it) => (
-                <tr>
-                  <td>{it.rule}</td>
-                  <td>{it.risk}</td>
-                </tr>
-              ))
-            }
-          </tbody>
-        </table>
-      </div>
-    </div>
-  </section>
-
-  <!-- ======================= 06 AI 评测与迭代 ======================= -->
-  <section id="eval" class="sdkai-section sdkai-section--alt">
-    <div class="container">
-      <div class="sdkai-section-head">
-        <span class="sdkai-section-num">06</span>
-        <h2>AI 评测与迭代</h2>
-      </div>
-      <p class="sdkai-p sdkai-p--lead">
-        回答质量需要持续验证，不能凭感觉判断改动效果。基于历史 FAQ 设计测试用例，
-        覆盖<strong>具体问题、模糊问题、缺少平台、跨平台干扰、资料不足</strong>等类型，
-        通过「测试 → 问题分析 → Prompt 优化 → 回归测试」循环迭代。
-      </p>
-
-      <h3 class="sdkai-h3">测试用例（作品集示例）</h3>
+      <h3 class="sdkai-h3">代表案例（方法示例）</h3>
       <p class="sdkai-p">
-        以下用例由前端模拟规则<strong>自动执行并计算</strong>结果，未预设全部通过，真实展示通过与失败。
-        用例与输入条件基于历史 FAQ 的设计思路整理，均标注为<strong>「作品集示例」</strong>，不伪造真实历史测试记录。
+        从测试集中精选两个代表案例：一个暴露「规则无法理解语义」的边界，一个说明「检索仅过滤未排序」的局限。
+        均标注为<strong>「方法示例」</strong>，不伪造真实历史测试记录。
       </p>
-      <div class="sdkai-eval-summary" id="sdk-eval-summary"></div>
-      <div class="sdkai-table-wrap">
-        <table class="sdkai-eval-table">
-          <thead>
-            <tr>
-              <th>用例</th>
-              <th>测试场景</th>
-              <th>输入问题</th>
-              <th>预期行为</th>
-              <th>实际观察</th>
-              <th>测试结果</th>
-              <th>失败原因</th>
-              <th>问题分类</th>
-              <th>优化动作</th>
-              <th>回归测试</th>
-            </tr>
-          </thead>
-          <tbody id="sdk-eval-body"></tbody>
-        </table>
-      </div>
-
-      <h3 class="sdkai-h3">评测结果</h3>
-      <div class="sdkai-metrics" id="sdk-eval-metrics"></div>
-      <p class="sdkai-note sdkai-note--dim">
-        以上结果仅反映当前前端模拟规则的测试表现，不代表真实大模型的回答准确率，也不代表原项目的生产效果；
-        不生成没有真实数据支撑的准确率、召回率或优化百分比。
-      </p>
-
-      <h3 class="sdkai-h3">失败案例分析（方法示例）</h3>
       <div class="sdkai-fail-grid">
         <div class="sdkai-fail-card">
           <h4>案例 1 · 非标准平台表述（T09）</h4>
@@ -694,38 +537,8 @@ const problems: Array<{ issue: string; need: string; tag: string }> = [
         以上为作品集展示的迭代方法闭环；真实项目中以「人工测试 + 测试集回归」的方式迭代，
         未落地自动化持续评测，也未产生可公开的指标数据。
       </p>
-    </div>
-  </section>
 
-  <!-- ======================= 07 个人贡献与复盘 ======================= -->
-  <section id="contribution" class="sdkai-section">
-    <div class="container">
-      <div class="sdkai-section-head">
-        <span class="sdkai-section-num">07</span>
-        <h2>个人贡献与复盘</h2>
-      </div>
-      <p class="sdkai-p sdkai-p--lead">
-        一句话结论：在团队共同推进的项目中，我的核心贡献是<strong>让「知识」与「边界」更可控</strong>——
-        通过 FAQ 清洗治理、知识图谱关联、平台分流与测试用例驱动评测，把问答质量从「靠感觉」变为「可验证」。
-      </p>
-
-      <h3 class="sdkai-h3">个人贡献（真实经历）</h3>
-      <p class="sdkai-p">
-        <span class="tag tag--accent">真实项目记录</span>
-        以下为我在原项目中的实际参与内容：
-      </p>
-      <ul class="sdkai-list">
-        <li>参与 SDK 版本与开发平台的<strong>分流优化</strong>，减少版本 / 平台上下文混淆。</li>
-        <li>参与 600+ 条历史 FAQ 的<strong>清洗与治理</strong>，整理为 100+ 条问答。</li>
-        <li>使用 Python 构建 SDK 文档之间的<strong>关联知识图谱</strong>，处理文档引用关系不易被普通检索发现的问题。</li>
-        <li>基于历史 FAQ 设计具体问题、模糊问题等<strong>测试用例</strong>。</li>
-        <li>参与<strong>问题分析、Prompt 优化与回归测试</strong>，迭代问答效果。</li>
-      </ul>
-      <p class="sdkai-note sdkai-note--dim">
-        上述为参与性贡献，项目整体由团队共同推进，并非我独立主导系统架构或独立设计全部原始 Prompt。
-      </p>
-
-      <h3 class="sdkai-h3">复盘</h3>
+      <h3 class="sdkai-h3">复盘反思</h3>
       <ul class="sdkai-list">
         <li><strong>知识库内容质量直接影响回答质量</strong>：FAQ 清洗与文档关联的投入，是解决重复咨询、提高检索可用性的根基。</li>
         <li><strong>平台路由与检索范围约束很重要</strong>：在入口处限定版本 / 平台范围，比事后纠正错误答案的成本更低。</li>
@@ -773,9 +586,8 @@ const problems: Array<{ issue: string; need: string; tag: string }> = [
   initSdkChat();
 </script>
 <script>
-  import { initSdkKnowledge, initSdkEvaluation } from '../../scripts/sdk-support-panels';
+  import { initSdkKnowledge } from '../../scripts/sdk-support-panels';
   initSdkKnowledge();
-  initSdkEvaluation();
 </script>
 <script>
   // 模块导航 + 阅读进度线（进度线与导航标签精确对齐）：
@@ -784,7 +596,7 @@ const problems: Array<{ issue: string; need: string; tag: string }> = [
   //     进度 0%   = 01 标签起点（点 01 后进度线刚好在 01 开始处）
   //     进度 x%   = 当前标签起点 + 当前区块内的阅读进度（区块内平滑推进）
   //     点 02     → 进度线右缘刚好落在 02 标签起点
-  //     100%      = 读到 07 区块底部（进度线铺满导航栏）
+  //     100%      = 读到 05 区块底部（进度线铺满导航栏）
   const toc = document.querySelector('.sdkai-hero-anchors');
   const tocInner = document.querySelector('.sdkai-toc-inner');
   const progressEl = document.getElementById('sdkai-progress');
