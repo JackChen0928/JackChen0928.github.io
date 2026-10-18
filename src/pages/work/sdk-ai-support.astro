@@ -1,0 +1,1532 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import {
+  SDK_VERSIONS,
+  PLATFORMS,
+  DOC_TYPES,
+  QUICK_QUESTIONS,
+} from '../../data/sdk-support-demo';
+
+const examplePrompt = `你是 SDK 技术支持助手（演示），面向接入广告 SDK 的开发者提供技术支持。
+
+【输入上下文】
+- SDK 版本：{sdk_version}
+- 开发平台：{platform}
+- 用户问题：{query}
+
+【SDK 版本约束】
+- 只引用当前选定 SDK 版本的演示资料，不得跨版本混用。
+- 问题提到其他版本时，需提示将按当前版本上下文回答。
+
+【开发平台约束】
+- 只引用当前开发平台对应的演示资料。
+
+【平台冲突处理】
+- 问题文本与所选平台不一致时，先让用户确认平台，不直接给出技术答案。
+
+【知识库检索约束】
+- 优先基于检索到的资料回答；未检索到资料时明确说明缺少依据，不编造。
+
+【答案依据要求】
+- 回答附来源：文档标题、SDK 版本、开发平台、文档类型、相关片段。
+
+【回答格式】
+- 结论 → 解决步骤 → 注意事项 → 参考资料`;
+---
+
+<BaseLayout
+  title="SDK 智能技术支持助手 · 交互原型"
+  description="面向多版本、多平台 SDK 开发者的 AI 技术支持助手交互原型（前端模拟）"
+  current="work"
+>
+  <!-- ======================= 页头 ======================= -->
+  <section class="sdkai-hero">
+    <div class="container">
+      <p class="kicker">Interactive Prototype · Work</p>
+      <h1 class="sdkai-title">SDK 智能技术支持助手</h1>
+      <p class="sdkai-subtitle">SDK AI Support — AI-powered SDK Technical Support</p>
+      <div class="sdkai-hero-tags">
+        <span class="tag tag--accent">交互原型 · 模拟工作流</span>
+      </div>
+      <p class="sdkai-hero-desc">
+        面向多版本、多平台 SDK 开发者的智能技术支持助手，通过版本路由、平台上下文约束和知识检索，
+        帮助用户更高效地定位 SDK 接入问题。
+      </p>
+      <div class="sdkai-status-note">
+        当前版本通过预设场景和演示知识库模拟 AI 客服的处理流程，尚未连接真实大模型（LLM）、Dify 或 RAGFlow。
+        页面用于展示产品设计、工作流逻辑与评测方案，不代表真实运行中的 AI 客服。
+      </div>
+    </div>
+  </section>
+
+  <!-- ======================= 模块导航 ======================= -->
+  <nav class="sdkai-toc" aria-label="页面模块导航">
+    <div class="container sdkai-toc-inner">
+      <a href="#overview">项目概览</a>
+      <a href="#demo">在线体验</a>
+      <a href="#workflow">工作流设计</a>
+      <a href="#knowledge">知识库管理</a>
+      <a href="#prompt-eval">提示词与评测</a>
+      <a href="#case-study">项目复盘</a>
+    </div>
+  </nav>
+
+  <!-- ======================= 一、项目概览 ======================= -->
+  <section id="overview" class="sdkai-section">
+    <div class="container">
+      <div class="sdkai-section-head">
+        <span class="sdkai-section-num">01</span>
+        <h2>项目概览</h2>
+      </div>
+
+      <h3 class="sdkai-h3">业务背景</h3>
+      <p class="sdkai-p">
+        SDK 开发者在集成广告 SDK 时，会反复咨询接入方法、配置要求、常见报错等问题。
+        技术支持人员需要查阅多个 SDK 版本和开发平台的文档，重复回答类似问题。
+        不同 SDK 版本、不同开发平台的文档容易混淆，可能造成错误回答。
+      </p>
+
+      <h3 class="sdkai-h3">核心问题</h3>
+      <ul class="sdkai-list">
+        <li>开发者需要查阅不同版本（TopOn / Taku / 酷盈）与不同平台（Android / iOS / Unity / Flutter / Cocos / Harmony）的技术文档，信息分散。</li>
+        <li>技术支持人员反复回答类似问题，重复劳动成本高。</li>
+        <li>版本、平台上下文不明确时，容易检索到不相关文档，导致错误回答。</li>
+      </ul>
+
+      <h3 class="sdkai-h3">产品目标</h3>
+      <ul class="sdkai-list">
+        <li>减少版本和平台混淆，降低跨平台回答错误的风险。</li>
+        <li>提高技术问题定位效率，缩短开发者等待时间。</li>
+        <li>提高回答的可追溯性：回答尽量附带来源。</li>
+        <li>通过测试用例识别和修正错误路径，持续优化。</li>
+      </ul>
+      <p class="sdkai-note sdkai-note--dim">
+        以上为产品设计目标，并非已经测得的业务成效，也未编造准确率提升等数据。
+      </p>
+
+      <h3 class="sdkai-h3">设计决策</h3>
+      <ul class="sdkai-list">
+        <li><strong>先路由后检索</strong>：先确定 SDK 版本，再进入对应版本的处理流程，限制检索范围。</li>
+        <li><strong>平台缺失先询问</strong>：平台信息缺失时，先询问用户，不猜测。</li>
+        <li><strong>冲突先澄清</strong>：问题文本提及的平台与当前选择冲突时，先澄清，不直接给出技术接入答案。</li>
+        <li><strong>检索受约束</strong>：知识检索需要受 SDK 版本和平台上下文约束。</li>
+        <li><strong>回答有依据</strong>：回答尽量附带来源；缺少依据时明确说明，而不是编造。</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ======================= 二、在线体验 ======================= -->
+  <section id="demo" class="sdkai-section sdkai-section--alt">
+    <div class="container">
+      <div class="sdkai-section-head">
+        <span class="sdkai-section-num">02</span>
+        <h2>在线体验</h2>
+      </div>
+      <p class="sdkai-p sdkai-p--lead">
+        以下为可交互的客服体验原型。默认示例为 TopOn + Flutter，
+        问题「TopOn Android 如何接入开屏广告？」——用于演示<strong>平台冲突澄清</strong>逻辑。
+      </p>
+
+      <div class="sdkai-demo">
+        <!-- 会话设置区 -->
+        <aside class="sdkai-side" aria-label="会话设置">
+          <div class="sdkai-side-block">
+            <h4>会话设置</h4>
+            <label class="sdkai-field">
+              <span>SDK 版本</span>
+              <select id="sdkai-version">
+                {
+                  SDK_VERSIONS.map((v) => (
+                    <option value={v} selected={v === 'TopOn'}>{v}</option>
+                  ))
+                }
+              </select>
+            </label>
+            <label class="sdkai-field">
+              <span>开发平台</span>
+              <select id="sdkai-platform">
+                {
+                  PLATFORMS.map((p) => (
+                    <option value={p} selected={p === 'Flutter'}>{p}</option>
+                  ))
+                }
+              </select>
+            </label>
+          </div>
+
+          <div class="sdkai-side-block">
+            <h4>常用问题</h4>
+            <div class="sdkai-quick">
+              {
+                QUICK_QUESTIONS.map((q) => (
+                  <button type="button" class="sdkai-quick-btn" data-quick={q}>{q}</button>
+                ))
+              }
+            </div>
+          </div>
+
+          <div class="sdkai-side-block">
+            <h4>会话操作</h4>
+            <div class="sdkai-actions">
+              <button type="button" id="sdkai-chat-new" class="btn btn--solid">新建会话</button>
+              <button type="button" id="sdkai-chat-clear" class="btn btn--outline">清空对话</button>
+            </div>
+          </div>
+        </aside>
+
+        <!-- 聊天主区 -->
+        <div class="sdkai-chat">
+          <div class="sdkai-chat-status">模拟检索流程 · 不接入真实 LLM / Dify API</div>
+          <div class="sdkai-chat-messages" id="sdkai-chat-messages" role="log" aria-live="polite"></div>
+          <div class="sdkai-composer">
+            <textarea
+              id="sdkai-chat-query"
+              rows="2"
+              placeholder="输入你的技术问题"
+              aria-label="输入你的技术问题"
+            >TopOn Android 如何接入开屏广告？</textarea>
+            <div class="sdkai-composer-bar">
+              <span class="sdkai-composer-hint">Enter 发送 · Shift + Enter 换行</span>
+              <button type="button" id="sdkai-chat-send" class="btn btn--solid">发送问题</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="sdkai-note sdkai-note--dim">
+        提示：切换 SDK 版本后，检索与来源将只匹配对应版本的演示资料；若问题中提到的平台与所选平台冲突，
+        客服会先请求确认，而不会直接输出接入教程。
+      </div>
+    </div>
+  </section>
+
+  <!-- ======================= 三、工作流设计 ======================= -->
+  <section id="workflow" class="sdkai-section">
+    <div class="container">
+      <div class="sdkai-section-head">
+        <span class="sdkai-section-num">03</span>
+        <h2>工作流设计</h2>
+      </div>
+      <p class="sdkai-p sdkai-p--lead">
+        可视化模拟工作流。当前执行路径会随聊天交互实时高亮，点击节点可查看其作用、输入 / 输出变量与执行条件。
+        本图为<strong>模拟工作流示意</strong>，并非真实 Dify 运行日志。
+      </p>
+
+      <div class="sdkai-wf-grid">
+        <!-- 流程图 -->
+        <div class="sdkai-wf-flow" aria-label="模拟工作流节点">
+          <div class="sdkai-wf-node" data-node="user-input" tabindex="0">
+            <span>用户输入问题</span><span class="sdkai-wf-node-id">user-input</span>
+          </div>
+          <div class="sdkai-wf-conn sdkai-wf-conn--down"></div>
+          <div class="sdkai-wf-node" data-node="version-router" tabindex="0">
+            <span>识别 SDK 版本</span><span class="sdkai-wf-node-id">version-router</span>
+          </div>
+          <div class="sdkai-wf-conn sdkai-wf-conn--down"></div>
+          <div class="sdkai-wf-node" data-node="platform-detect" tabindex="0">
+            <span>识别开发平台</span><span class="sdkai-wf-node-id">platform-detect</span>
+          </div>
+          <div class="sdkai-wf-conn sdkai-wf-conn--down"></div>
+          <div class="sdkai-wf-node" data-node="conflict-check" tabindex="0">
+            <span>判断平台是否冲突</span><span class="sdkai-wf-node-id">conflict-check</span>
+          </div>
+
+          <div class="sdkai-wf-branch">
+            <div class="sdkai-wf-branch-line"><span class="sdkai-wf-chip">存在平台冲突</span></div>
+            <div class="sdkai-wf-node sdkai-wf-node--warn" data-node="platform-clarify" tabindex="0">
+              <span>询问用户确认平台</span><span class="sdkai-wf-node-id">platform-clarify</span>
+            </div>
+          </div>
+
+          <div class="sdkai-wf-conn sdkai-wf-conn--down sdkai-wf-conn--merge">
+            <span class="sdkai-wf-chip">平台信息明确 · 已确认开发平台</span>
+          </div>
+          <div class="sdkai-wf-node" data-node="retrieval-builder" tabindex="0">
+            <span>构建检索条件</span><span class="sdkai-wf-node-id">retrieval-builder</span>
+          </div>
+          <div class="sdkai-wf-conn sdkai-wf-conn--down"></div>
+          <div class="sdkai-wf-node" data-node="knowledge-retrieval" tabindex="0">
+            <span>检索对应知识库</span><span class="sdkai-wf-node-id">knowledge-retrieval</span>
+          </div>
+          <div class="sdkai-wf-conn sdkai-wf-conn--down"></div>
+          <div class="sdkai-wf-node" data-node="evidence-check" tabindex="0">
+            <span>检查是否有足够依据</span><span class="sdkai-wf-node-id">evidence-check</span>
+          </div>
+
+          <div class="sdkai-wf-branch">
+            <div class="sdkai-wf-branch-line"><span class="sdkai-wf-chip">未找到足够依据</span></div>
+            <div class="sdkai-wf-node sdkai-wf-node--danger" data-node="insufficient" tabindex="0">
+              <span>资料不足处理</span><span class="sdkai-wf-node-id">insufficient</span>
+            </div>
+          </div>
+
+          <div class="sdkai-wf-conn sdkai-wf-conn--down sdkai-wf-conn--merge">
+            <span class="sdkai-wf-chip">检索到相关资料</span>
+          </div>
+          <div class="sdkai-wf-node" data-node="answer-generation" tabindex="0">
+            <span>生成技术答复</span><span class="sdkai-wf-node-id">answer-generation</span>
+          </div>
+          <div class="sdkai-wf-conn sdkai-wf-conn--down"></div>
+          <div class="sdkai-wf-node" data-node="final-answer" tabindex="0">
+            <span>展示答案与参考资料</span><span class="sdkai-wf-node-id">final-answer</span>
+          </div>
+        </div>
+
+        <!-- 变量与详情 -->
+        <div class="sdkai-wf-side">
+          <div class="sdkai-wf-block">
+            <div class="sdkai-wf-block-head">
+              <h4>当前变量</h4>
+              <button type="button" id="sdkai-wf-reset" class="btn btn--outline sdkai-btn-sm">重置高亮</button>
+            </div>
+            <p class="sdkai-wf-hint">变量值随实际交互更新，非固定示例。</p>
+            <div class="sdkai-wf-table-wrap">
+              <table class="sdkai-wf-vars">
+                <tbody id="sdkai-wf-vars"></tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="sdkai-wf-block">
+            <h4>节点详情</h4>
+            <div class="sdkai-wf-detail" id="sdkai-wf-detail">
+              <div class="sdkai-wf-detail-empty">
+                点击上方任意节点，查看节点作用、输入 / 输出变量、执行条件与下一步节点。
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ======================= 四、知识库管理 ======================= -->
+  <section id="knowledge" class="sdkai-section sdkai-section--alt">
+    <div class="container">
+      <div class="sdkai-section-head">
+        <span class="sdkai-section-num">04</span>
+        <h2>知识库管理</h2>
+      </div>
+      <p class="sdkai-p sdkai-p--lead">
+        演示知识库浏览器，用于展示版本 / 平台过滤与文档关联机制。
+        以下全部为<strong>演示资料</strong>，用于解释检索逻辑，不代表官方 SDK 文档。
+      </p>
+
+      <div class="sdkai-kb-filters" aria-label="知识库筛选">
+        <label class="sdkai-field">
+          <span>SDK 版本筛选</span>
+          <select id="sdk-kb-version">
+            <option value="">全部</option>
+            {
+              SDK_VERSIONS.map((v) => <option value={v}>{v}</option>)
+            }
+          </select>
+        </label>
+        <label class="sdkai-field">
+          <span>开发平台筛选</span>
+          <select id="sdk-kb-platform">
+            <option value="">全部</option>
+            {
+              PLATFORMS.map((p) => <option value={p}>{p}</option>)
+            }
+          </select>
+        </label>
+        <label class="sdkai-field">
+          <span>文档类型筛选</span>
+          <select id="sdk-kb-type">
+            <option value="">全部</option>
+            {
+              DOC_TYPES.map((t) => <option value={t}>{t}</option>)
+            }
+          </select>
+        </label>
+        <label class="sdkai-field sdkai-field--search">
+          <span>搜索文档</span>
+          <input id="sdk-kb-search" type="search" placeholder="输入标题或内容关键词" aria-label="搜索文档" />
+        </label>
+      </div>
+
+      <p class="sdkai-kb-count" id="sdk-kb-count"></p>
+      <div class="sdkai-kb-list" id="sdk-kb-list" aria-live="polite"></div>
+
+      <h3 class="sdkai-h3">FAQ 清洗与整理（真实背景）</h3>
+      <p class="sdkai-p">
+        在原项目实习中，我参与了历史 FAQ 的清洗与治理：将 600+ 条历史问答经过去重、归一化与质量筛选，
+        整理为 100+ 条可用于知识库的 FAQ。清洗目的是减少重复与低质量条目，提升知识可用性。
+      </p>
+      <p class="sdkai-note sdkai-note--dim">
+        以上为原项目真实背景说明，未编造清洗后的准确率或效果提升数据。
+        它与上方「演示资料」明确区分：演示资料仅用于解释检索与过滤逻辑。
+      </p>
+    </div>
+  </section>
+
+  <!-- ======================= 五、提示词与评测 ======================= -->
+  <section id="prompt-eval" class="sdkai-section">
+    <div class="container">
+      <div class="sdkai-section-head">
+        <span class="sdkai-section-num">05</span>
+        <h2>提示词与评测</h2>
+      </div>
+
+      <h3 class="sdkai-h3">提示词设计原则</h3>
+      <ul class="sdkai-list">
+        <li><strong>先路由后检索</strong>：先确定 SDK 版本与开发平台，再检索，缩小知识范围。</li>
+        <li><strong>冲突先澄清</strong>：问题文本与所选平台不一致时，先确认，不直接回答。</li>
+        <li><strong>知识约束</strong>：优先基于检索资料回答；无依据时不编造、不猜测。</li>
+        <li><strong>可追溯</strong>：回答附来源（标题、版本、平台、类型、片段）。</li>
+        <li><strong>测试驱动迭代</strong>：用测试用例识别错误路径，反过来约束 Prompt 与规则。</li>
+      </ul>
+
+      <h3 class="sdkai-h3">示例系统提示词</h3>
+      <p class="sdkai-note sdkai-note--dim">
+        此处为根据已知产品设计原则重新整理的示例系统提示词，并非原项目完整的历史 Prompt。
+      </p>
+      <pre class="sdkai-prompt">{examplePrompt}</pre>
+
+      <h3 class="sdkai-h3">测试用例</h3>
+      <p class="sdkai-p">
+        以下用例由前端模拟规则<strong>自动执行并计算</strong>结果，未预设全部通过，真实展示通过与失败。
+      </p>
+      <div class="sdkai-eval-summary" id="sdk-eval-summary"></div>
+      <div class="sdkai-table-wrap">
+        <table class="sdkai-eval-table">
+          <thead>
+            <tr>
+              <th>用例</th>
+              <th>测试场景</th>
+              <th>输入条件</th>
+              <th>预期行为</th>
+              <th>实际模拟行为</th>
+              <th>测试结果</th>
+              <th>失败原因</th>
+              <th>优化建议</th>
+            </tr>
+          </thead>
+          <tbody id="sdk-eval-body"></tbody>
+        </table>
+      </div>
+
+      <h3 class="sdkai-h3">评测结果</h3>
+      <div class="sdkai-metrics" id="sdk-eval-metrics"></div>
+      <p class="sdkai-note sdkai-note--dim">
+        以上结果仅反映当前前端模拟规则的测试表现，不代表真实大模型的回答准确率，也不代表原项目的生产效果。
+      </p>
+
+      <h3 class="sdkai-h3">失败案例分析</h3>
+      <div class="sdkai-fail-grid">
+        <div class="sdkai-fail-card">
+          <h4>案例 1 · 非标准平台表述（T09）</h4>
+          <p><strong>失败输入：</strong>「平板设备上如何接入开屏广告？」（未选择平台）</p>
+          <p><strong>为什么会失败：</strong>平台检测为关键词规则，「平板」不在规则内，且未选择平台，只能进入平台澄清；规则无法理解语义上的「平板 = Android 平板」。</p>
+          <p><strong>可能需要怎样修改：</strong>扩展平台关键词规则（平板、TV、鸿蒙系统等），并为无法识别的表述增加平台澄清兜底。</p>
+          <p><strong>验证方法：</strong>新增用例「平板」应正确澄清或命中对应平台，回归原有 8 条用例不回归。</p>
+        </div>
+        <div class="sdkai-fail-card">
+          <h4>案例 2 · 检索相关性不足（T01）</h4>
+          <p><strong>失败输入：</strong>「Flutter 如何接入开屏广告？」虽通过，但返回了同版本同平台下的初始化文档。</p>
+          <p><strong>为什么会失败：</strong>检索仅做版本 + 平台过滤，未做关键词相关度排序，导致相关度低的文档混入来源。</p>
+          <p><strong>可能需要怎样修改：</strong>为检索增加关键词命中与相关度排序，或利用 FAQ 清洗时整理的标签做主题过滤。</p>
+          <p><strong>验证方法：</strong>断言「开屏广告」问题的来源应全部包含「开屏广告」标签，且相关度排序正确。</p>
+        </div>
+      </div>
+      <p class="sdkai-note sdkai-note--dim">
+        以上为方法论示例，用于说明如何通过测试用例发现问题并改进规则 / Prompt，不代表原项目实际发生过的具体线上故障。
+      </p>
+    </div>
+  </section>
+
+  <!-- ======================= 六、项目复盘 ======================= -->
+  <section id="case-study" class="sdkai-section sdkai-section--alt">
+    <div class="container">
+      <div class="sdkai-section-head">
+        <span class="sdkai-section-num">06</span>
+        <h2>项目复盘</h2>
+      </div>
+
+      <h3 class="sdkai-h3">业务问题</h3>
+      <p class="sdkai-p">
+        多版本、多平台 SDK 文档带来的检索和回答上下文管理问题：信息分散、人工重复回答、版本 / 平台上下文不明确时容易检索到不相关文档。
+      </p>
+
+      <h3 class="sdkai-h3">产品方案</h3>
+      <p class="sdkai-p">
+        为什么做版本路由、平台澄清和平台约束，而不是让单一 Agent 直接回答所有问题：
+        单一 Agent 面对多版本、多平台时上下文极易混淆，错误成本高。
+        通过<strong>先路由（版本）→ 平台识别与澄清 → 约束检索 → 有依据回答</strong>的流程，把「范围」在入口就限定住，降低跨版本、跨平台回答错误的风险。
+      </p>
+
+      <h3 class="sdkai-h3">技术架构（概念设计）</h3>
+      <div class="sdkai-arch">
+        <div class="sdkai-arch-pipeline">
+          <div class="sdkai-arch-box">用户操作界面</div>
+          <div class="sdkai-arch-arrow">↓</div>
+          <div class="sdkai-arch-box">SDK 版本路由</div>
+          <div class="sdkai-arch-arrow">↓</div>
+          <div class="sdkai-arch-box">平台上下文识别与冲突判断</div>
+          <div class="sdkai-arch-arrow">↓</div>
+          <div class="sdkai-arch-box">检索条件构建</div>
+          <div class="sdkai-arch-arrow">↓</div>
+          <div class="sdkai-arch-box">知识库检索</div>
+          <div class="sdkai-arch-arrow">↓</div>
+          <div class="sdkai-arch-box">答案依据检查</div>
+          <div class="sdkai-arch-arrow">↓</div>
+          <div class="sdkai-arch-box">回答生成</div>
+          <div class="sdkai-arch-arrow">↓</div>
+          <div class="sdkai-arch-box">回答与参考资料展示</div>
+        </div>
+        <div class="sdkai-arch-kb">
+          <div class="sdkai-arch-kb-title">知识库</div>
+          <div class="sdkai-arch-box">SDK 技术文档</div>
+          <div class="sdkai-arch-box">常见问题库（FAQ）</div>
+          <div class="sdkai-arch-box">关联文档知识图谱</div>
+        </div>
+      </div>
+      <p class="sdkai-note sdkai-note--dim">
+        当前为作品集交互原型的概念架构，不代表原项目实际运行架构的完整复刻。未添加未经证实的模型名称、Embedding 方案、Chunk 参数或召回率数据。
+      </p>
+
+      <h3 class="sdkai-h3">个人贡献</h3>
+      <ul class="sdkai-list">
+        <li>参与 FAQ 清洗与知识整理（600+ 条 → 100+ 条）。</li>
+        <li>使用 Python 脚本构建 FAQ 与 SDK 文档之间的关联关系（文档关联知识图谱）。</li>
+        <li>参与测试用例设计、错误分析和 Prompt 约束优化。</li>
+        <li>参与 MCP SDK 自动集成 Demo 的 Prompt 调整与验证。</li>
+      </ul>
+      <p class="sdkai-note sdkai-note--dim">
+        上述为我在原项目中的参与性贡献，项目整体由团队共同推进，并非我独立主导系统架构或独立设计全部原始 Prompt。
+      </p>
+
+      <h3 class="sdkai-h3">项目结果与局限</h3>
+      <ul class="sdkai-list">
+        <li>当前作品集页面为前端模拟交互原型，不连接真实 Dify 或 RAGFlow。</li>
+        <li>本地测试结果仅反映模拟规则表现，不代表真实模型性能。</li>
+        <li>原项目处于内部测试阶段，未对外正式上线。</li>
+        <li>本页未编造业务指标、正式上线状态或官方技术文档。</li>
+      </ul>
+    </div>
+  </section>
+</BaseLayout>
+
+<script>
+  import { initSdkChat } from '../../scripts/sdk-support-app';
+  initSdkChat();
+</script>
+<script>
+  import { initSdkKnowledge, initSdkEvaluation } from '../../scripts/sdk-support-panels';
+  initSdkKnowledge();
+  initSdkEvaluation();
+</script>
+
+<style is:global>
+  /* ==================== 页头 ==================== */
+  .sdkai-hero {
+    padding: 72px 0 40px;
+    border-bottom: 1px solid var(--line);
+  }
+  .sdkai-title {
+    font-size: clamp(28px, 4vw, 44px);
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    line-height: 1.15;
+    margin: 4px 0 8px;
+  }
+  .sdkai-subtitle {
+    font-size: 15px;
+    color: var(--text-3);
+    margin-bottom: 18px;
+  }
+  .sdkai-hero-tags { margin-bottom: 16px; }
+  .sdkai-hero-desc {
+    font-size: 16px;
+    color: var(--text-2);
+    max-width: 720px;
+  }
+  .sdkai-status-note {
+    margin-top: 18px;
+    max-width: 720px;
+    padding: 12px 16px;
+    border: 1px solid var(--line);
+    border-left: 3px solid var(--accent);
+    background: var(--accent-soft);
+    font-size: 14px;
+    color: var(--text-2);
+  }
+
+  /* ==================== 模块导航 ==================== */
+  .sdkai-toc {
+    position: sticky;
+    top: var(--nav-h);
+    z-index: 90;
+    background: rgba(255, 255, 255, 0.92);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--line);
+  }
+  .sdkai-toc-inner {
+    display: flex;
+    gap: 4px;
+    overflow-x: auto;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    scrollbar-width: thin;
+  }
+  .sdkai-toc a {
+    flex: 0 0 auto;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-3);
+    padding: 6px 12px;
+    border: 1px solid transparent;
+    border-radius: 999px;
+    transition: all 0.18s;
+  }
+  .sdkai-toc a:hover {
+    color: var(--accent);
+    border-color: var(--line-strong);
+  }
+  .sdkai-toc a:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+
+  /* ==================== 通用章节 ==================== */
+  .sdkai-section {
+    padding: 72px 0;
+    scroll-margin-top: calc(var(--nav-h) + 52px);
+    border-bottom: 1px solid var(--line);
+  }
+  .sdkai-section--alt { background: #fafafa; }
+  .sdkai-section-head {
+    display: flex;
+    align-items: baseline;
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+  .sdkai-section-num {
+    font-family: var(--font-mono);
+    font-size: 22px;
+    font-weight: 300;
+    color: var(--accent);
+    min-width: 40px;
+  }
+  .sdkai-section-head h2 {
+    font-size: 24px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+  }
+  .sdkai-h3 {
+    font-size: 16px;
+    font-weight: 700;
+    margin: 28px 0 10px;
+  }
+  .sdkai-p {
+    color: var(--text-2);
+    max-width: 760px;
+  }
+  .sdkai-p--lead { font-size: 15.5px; }
+  .sdkai-p strong { color: var(--text); }
+  .sdkai-list {
+    margin: 6px 0 0;
+    padding-left: 20px;
+    color: var(--text-2);
+    max-width: 760px;
+  }
+  .sdkai-list li { margin: 6px 0; }
+  .sdkai-list strong { color: var(--text); }
+  .sdkai-note {
+    margin-top: 14px;
+    padding: 12px 16px;
+    border: 1px solid var(--line);
+    background: #fff;
+    font-size: 13.5px;
+    color: var(--text-3);
+    max-width: 760px;
+  }
+  .sdkai-note--dim {
+    border-left: 3px solid var(--line-strong);
+    background: #fafafa;
+  }
+
+  /* ==================== 在线体验 ==================== */
+  .sdkai-demo {
+    display: grid;
+    grid-template-columns: 300px 1fr;
+    gap: 24px;
+    align-items: start;
+    margin-top: 20px;
+  }
+  .sdkai-side {
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    background: #fff;
+    overflow: hidden;
+  }
+  .sdkai-side-block {
+    padding: 18px 20px;
+    border-bottom: 1px solid var(--line);
+  }
+  .sdkai-side-block:last-child { border-bottom: 0; }
+  .sdkai-side-block h4 {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text-3);
+    margin-bottom: 12px;
+    letter-spacing: 0.02em;
+  }
+  .sdkai-field {
+    display: block;
+    margin-bottom: 12px;
+  }
+  .sdkai-field:last-child { margin-bottom: 0; }
+  .sdkai-field > span {
+    display: block;
+    font-size: 12.5px;
+    color: var(--text-3);
+    margin-bottom: 6px;
+  }
+  .sdkai-field select,
+  .sdkai-field input {
+    width: 100%;
+    padding: 9px 12px;
+    font-size: 14px;
+    font-family: var(--font-sans);
+    color: var(--text);
+    background: #fff;
+    border: 1px solid var(--line-strong);
+    border-radius: 6px;
+    transition: border-color 0.18s, box-shadow 0.18s;
+  }
+  .sdkai-field select:focus,
+  .sdkai-field input:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+  }
+  .sdkai-quick {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .sdkai-quick-btn {
+    text-align: left;
+    padding: 8px 12px;
+    font-size: 13px;
+    color: var(--text-2);
+    background: #fafafa;
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.18s;
+  }
+  .sdkai-quick-btn:hover {
+    color: var(--accent);
+    border-color: var(--accent);
+    background: var(--accent-soft);
+  }
+  .sdkai-quick-btn:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+  .sdkai-actions {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+  .sdkai-actions .btn { flex: 1; justify-content: center; }
+
+  /* 聊天主区 */
+  .sdkai-chat {
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    background: #fff;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    min-height: 560px;
+  }
+  .sdkai-chat-status {
+    padding: 10px 16px;
+    font-size: 12px;
+    color: var(--text-3);
+    background: var(--accent-soft);
+    border-bottom: 1px solid var(--line);
+  }
+  .sdkai-chat-messages {
+    flex: 1;
+    overflow-y: auto;
+    padding: 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    min-height: 380px;
+    max-height: 520px;
+  }
+  .sdkai-msg { display: flex; flex-direction: column; max-width: 88%; }
+  .sdkai-msg--user { align-self: flex-end; align-items: flex-end; }
+  .sdkai-msg--assistant { align-self: flex-start; align-items: flex-start; }
+  .sdkai-msg--system {
+    align-self: center;
+    max-width: 96%;
+    font-size: 12.5px;
+    color: var(--text-3);
+    background: #f3f4f6;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    padding: 6px 14px;
+    text-align: center;
+  }
+  .sdkai-msg-label {
+    font-size: 11px;
+    color: var(--text-4);
+    margin-bottom: 4px;
+  }
+  .sdkai-bubble {
+    padding: 10px 14px;
+    border-radius: 10px;
+    font-size: 14px;
+    line-height: 1.7;
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+  .sdkai-msg--user .sdkai-bubble {
+    background: var(--accent);
+    color: #fff;
+    border-bottom-right-radius: 3px;
+  }
+  .sdkai-msg--assistant .sdkai-bubble {
+    background: #fafafa;
+    border: 1px solid var(--line);
+    border-bottom-left-radius: 3px;
+    color: var(--text);
+  }
+  .sdkai-msg--assistant .sdkai-bubble--warn {
+    background: #fffbeb;
+    border-color: #fcd34d;
+    color: #92400e;
+  }
+  .sdkai-step {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 3px 0;
+    font-size: 13px;
+    color: var(--text-2);
+  }
+  .sdkai-step-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--accent);
+    flex: 0 0 auto;
+    animation: sdkai-pulse 1.4s ease-in-out infinite;
+  }
+  @keyframes sdkai-pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.35; transform: scale(0.8); }
+  }
+  .sdkai-clarify-options {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-top: 8px;
+  }
+  .sdkai-btn--chip {
+    padding: 7px 14px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--accent);
+    background: var(--accent-soft);
+    border: 1px solid var(--accent);
+    border-radius: 999px;
+    cursor: pointer;
+    transition: all 0.18s;
+  }
+  .sdkai-btn--chip:hover {
+    background: var(--accent);
+    color: #fff;
+  }
+  .sdkai-btn--chip:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+  .sdkai-sources {
+    margin-top: 10px;
+    width: 100%;
+  }
+  .sdkai-sources-title {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--text-3);
+    margin-bottom: 8px;
+  }
+  .sdkai-source {
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    background: #fff;
+    margin-bottom: 8px;
+    overflow: hidden;
+  }
+  .sdkai-source summary {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    padding: 10px 12px;
+    cursor: pointer;
+    list-style: none;
+  }
+  .sdkai-source summary::-webkit-details-marker { display: none; }
+  .sdkai-source summary::before {
+    content: "▸";
+    color: var(--accent);
+    transition: transform 0.18s;
+  }
+  .sdkai-source[open] summary::before { transform: rotate(90deg); }
+  .sdkai-source-title {
+    font-size: 13.5px;
+    font-weight: 600;
+    color: var(--text);
+    flex: 1 1 auto;
+  }
+  .sdkai-source-meta {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--text-3);
+  }
+  .sdkai-demo-tag {
+    flex: 0 0 auto;
+    font-size: 11px;
+    font-weight: 600;
+    color: #92400e;
+    background: #fffbeb;
+    border: 1px solid #fcd34d;
+    border-radius: 999px;
+    padding: 1px 8px;
+  }
+  .sdkai-source-body {
+    padding: 10px 14px;
+    border-top: 1px solid var(--line);
+    font-size: 13px;
+    color: var(--text-2);
+  }
+  .sdkai-source-label {
+    margin-top: 6px;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--text-4);
+  }
+  .sdkai-feedback {
+    display: flex;
+    gap: 8px;
+    margin-top: 8px;
+  }
+  .sdkai-fb {
+    font-size: 12px;
+    color: var(--text-3);
+    background: #fff;
+    border: 1px solid var(--line-strong);
+    border-radius: 999px;
+    padding: 3px 12px;
+    cursor: pointer;
+    transition: all 0.18s;
+  }
+  .sdkai-fb:hover {
+    color: var(--accent);
+    border-color: var(--accent);
+  }
+  .sdkai-fb:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+  .sdkai-fb-note {
+    font-size: 12px;
+    color: var(--accent);
+  }
+
+  /* 输入区 */
+  .sdkai-composer {
+    border-top: 1px solid var(--line);
+    padding: 12px 14px;
+    background: #fff;
+  }
+  .sdkai-composer textarea {
+    width: 100%;
+    resize: none;
+    padding: 10px 12px;
+    font-size: 14px;
+    font-family: var(--font-sans);
+    color: var(--text);
+    border: 1px solid var(--line-strong);
+    border-radius: 8px;
+    line-height: 1.6;
+    transition: border-color 0.18s, box-shadow 0.18s;
+  }
+  .sdkai-composer textarea:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+  }
+  .sdkai-composer-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-top: 10px;
+  }
+  .sdkai-composer-hint {
+    font-size: 12px;
+    color: var(--text-4);
+  }
+  .sdkai-composer .btn:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+  }
+
+  /* ==================== 工作流设计 ==================== */
+  .sdkai-wf-grid {
+    display: grid;
+    grid-template-columns: 380px 1fr;
+    gap: 28px;
+    align-items: start;
+    margin-top: 20px;
+  }
+  .sdkai-wf-flow {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 22px 16px;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    background: #fff;
+  }
+  .sdkai-wf-node {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+    min-width: 176px;
+    padding: 10px 16px;
+    border: 1px solid var(--line-strong);
+    border-radius: 8px;
+    background: #fff;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text);
+    cursor: pointer;
+    user-select: none;
+    transition: all 0.18s;
+    text-align: center;
+  }
+  .sdkai-wf-node:hover {
+    border-color: var(--accent);
+    box-shadow: 0 1px 6px rgba(0, 0, 0, 0.06);
+  }
+  .sdkai-wf-node:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+  .sdkai-wf-node-id {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 400;
+    color: var(--text-4);
+    letter-spacing: 0.06em;
+  }
+  .sdkai-wf-node.is-done {
+    border-color: var(--accent);
+    background: var(--accent-soft);
+    color: var(--accent-strong);
+  }
+  .sdkai-wf-node.is-active {
+    border-color: var(--accent-strong);
+    background: var(--accent-strong);
+    color: #fff;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.18);
+  }
+  .sdkai-wf-node.is-active .sdkai-wf-node-id { color: rgba(255, 255, 255, 0.8); }
+  .sdkai-wf-node.is-branch {
+    border-color: #d97706;
+    background: #fffbeb;
+    color: #92400e;
+  }
+  .sdkai-wf-node.sdkai-wf-node--danger.is-branch {
+    border-color: #dc2626;
+    background: #fef2f2;
+    color: #b91c1c;
+  }
+  .sdkai-wf-conn {
+    position: relative;
+    width: 2px;
+    height: 22px;
+    background: var(--line-strong);
+    margin: 2px 0;
+  }
+  .sdkai-wf-conn--down::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    bottom: -1px;
+    transform: translateX(-50%);
+    border: 5px solid transparent;
+    border-top-color: var(--line-strong);
+  }
+  .sdkai-wf-conn--merge { height: 24px; }
+  .sdkai-wf-conn--merge .sdkai-wf-chip {
+    position: absolute;
+    left: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    white-space: nowrap;
+  }
+  .sdkai-wf-branch {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    padding-left: 12px;
+  }
+  .sdkai-wf-branch-line {
+    position: relative;
+    flex: 1;
+    min-width: 72px;
+    height: 2px;
+    background: var(--line-strong);
+  }
+  .sdkai-wf-branch-line::before {
+    content: "";
+    position: absolute;
+    left: 50%;
+    top: -5px;
+    transform: translateX(-50%);
+    border: 5px solid transparent;
+    border-bottom-color: var(--line-strong);
+  }
+  .sdkai-wf-branch-line .sdkai-wf-chip {
+    position: absolute;
+    top: -20px;
+    left: 50%;
+    transform: translateX(-50%);
+    white-space: nowrap;
+  }
+  .sdkai-wf-chip {
+    font-size: 10.5px;
+    font-weight: 600;
+    color: var(--text-3);
+    background: var(--bg);
+    padding: 1px 6px;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+  }
+
+  .sdkai-wf-side {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  .sdkai-wf-block {
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    background: #fff;
+    padding: 18px 20px;
+  }
+  .sdkai-wf-block-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+  }
+  .sdkai-wf-block h4 {
+    font-size: 14px;
+    font-weight: 700;
+  }
+  .sdkai-btn-sm {
+    padding: 6px 14px;
+    font-size: 13px;
+  }
+  .sdkai-wf-hint {
+    margin-top: 6px;
+    font-size: 12.5px;
+    color: var(--text-4);
+  }
+  .sdkai-wf-table-wrap {
+    margin-top: 12px;
+    overflow-x: auto;
+  }
+  .sdkai-wf-vars {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+  .sdkai-wf-vars td {
+    padding: 8px 10px;
+    border-bottom: 1px solid var(--line);
+    vertical-align: top;
+  }
+  .sdkai-wf-vars tr:last-child td { border-bottom: 0; }
+  .sdkai-var-key {
+    width: 46%;
+    font-weight: 600;
+    color: var(--text-2);
+    white-space: nowrap;
+  }
+  .sdkai-var-value {
+    font-family: var(--font-mono);
+    font-size: 12.5px;
+    color: var(--text);
+    word-break: break-all;
+  }
+  .sdkai-wf-detail {
+    margin-top: 12px;
+  }
+  .sdkai-wf-detail-empty {
+    font-size: 13px;
+    color: var(--text-3);
+    background: #fafafa;
+    border: 1px dashed var(--line-strong);
+    border-radius: 8px;
+    padding: 14px;
+  }
+  .sdkai-wf-detail-head {
+    font-size: 14px;
+    font-weight: 700;
+    margin-bottom: 10px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--line);
+  }
+  .sdkai-wf-detail-grid {
+    display: grid;
+    grid-template-columns: 96px 1fr;
+    gap: 8px 12px;
+    font-size: 13px;
+  }
+  .sdkai-wf-detail-grid dt {
+    color: var(--text-3);
+    font-weight: 600;
+  }
+  .sdkai-wf-detail-grid dd {
+    color: var(--text-2);
+    word-break: break-word;
+  }
+
+  /* ==================== 知识库 ==================== */
+  .sdkai-kb-filters {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin-top: 20px;
+  }
+  .sdkai-kb-count {
+    margin-top: 14px;
+    font-size: 13px;
+    color: var(--text-3);
+  }
+  .sdkai-kb-list {
+    margin-top: 12px;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+  }
+  .sdkai-kb-card {
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    background: #fff;
+    padding: 16px 18px;
+  }
+  .sdkai-kb-card-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+  }
+  .sdkai-kb-card-head h4 {
+    font-size: 14.5px;
+    font-weight: 700;
+    color: var(--text);
+  }
+  .sdkai-kb-meta {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-top: 8px;
+  }
+  .sdkai-kb-meta span {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--text-3);
+    background: #f3f4f6;
+    border-radius: 999px;
+    padding: 2px 10px;
+  }
+  .sdkai-kb-content {
+    margin-top: 10px;
+    font-size: 13px;
+    color: var(--text-2);
+    line-height: 1.7;
+  }
+  .sdkai-kb-tags {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    margin-top: 10px;
+  }
+  .sdkai-tag {
+    font-size: 11px;
+    color: var(--text-3);
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    padding: 1px 8px;
+  }
+  .sdkai-kb-source {
+    margin-top: 8px;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--text-4);
+  }
+  .sdkai-kb-related-box {
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px dashed var(--line);
+  }
+  .sdkai-kb-related-title {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--text-3);
+    display: block;
+    margin-bottom: 6px;
+  }
+  .sdkai-kb-related {
+    display: block;
+    width: 100%;
+    text-align: left;
+    font-size: 12.5px;
+    color: var(--accent);
+    background: var(--accent-soft);
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    padding: 6px 10px;
+    margin-bottom: 6px;
+    cursor: pointer;
+    transition: all 0.18s;
+  }
+  .sdkai-kb-related:hover {
+    border-color: var(--accent);
+    color: var(--accent-strong);
+  }
+  .sdkai-kb-related:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+  .sdkai-empty {
+    grid-column: 1 / -1;
+    padding: 32px;
+    text-align: center;
+    color: var(--text-3);
+    background: #fafafa;
+    border: 1px dashed var(--line-strong);
+    border-radius: 10px;
+    font-size: 14px;
+  }
+
+  /* ==================== 提示词与评测 ==================== */
+  .sdkai-prompt {
+    margin-top: 6px;
+    padding: 18px 20px;
+    background: #0b1220;
+    color: #dbeafe;
+    border-radius: 10px;
+    font-family: var(--font-mono);
+    font-size: 13px;
+    line-height: 1.8;
+    white-space: pre-wrap;
+    word-break: break-word;
+    overflow-x: auto;
+  }
+  .sdkai-eval-summary {
+    margin-top: 14px;
+    font-size: 13px;
+    color: var(--text-3);
+  }
+  .sdkai-table-wrap {
+    margin-top: 12px;
+    overflow-x: auto;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+  }
+  .sdkai-eval-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+    min-width: 980px;
+  }
+  .sdkai-eval-table th,
+  .sdkai-eval-table td {
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--line);
+    text-align: left;
+    vertical-align: top;
+  }
+  .sdkai-eval-table thead th {
+    background: #fafafa;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--text-3);
+    position: sticky;
+    top: 0;
+  }
+  .sdkai-eval-table tbody tr:last-child td { border-bottom: 0; }
+  .sdkai-eval-table tbody tr:hover td { background: #fafafa; }
+  .sdkai-eval-id {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--accent);
+    font-weight: 600;
+    white-space: nowrap;
+  }
+  .sdkai-eval-input {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--text-2);
+    min-width: 220px;
+  }
+  .sdkai-eval-note { min-width: 160px; }
+  .sdkai-status {
+    display: inline-block;
+    font-size: 12px;
+    font-weight: 600;
+    border-radius: 999px;
+    padding: 2px 10px;
+    white-space: nowrap;
+  }
+  .sdkai-status--pass { color: #166534; background: #f0fdf4; border: 1px solid #bbf7d0; }
+  .sdkai-status--fail { color: #b91c1c; background: #fef2f2; border: 1px solid #fecaca; }
+  .sdkai-status--pending { color: #92400e; background: #fffbeb; border: 1px solid #fde68a; }
+
+  .sdkai-metrics {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin-top: 14px;
+  }
+  .sdkai-metric {
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    background: #fff;
+    padding: 18px 16px;
+    text-align: center;
+  }
+  .sdkai-metric-value {
+    font-size: 30px;
+    font-weight: 700;
+    font-family: var(--font-mono);
+    color: var(--accent);
+    letter-spacing: -0.02em;
+  }
+  .sdkai-metric-label {
+    margin-top: 6px;
+    font-size: 13px;
+    color: var(--text-3);
+  }
+
+  .sdkai-fail-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+    margin-top: 10px;
+  }
+  .sdkai-fail-card {
+    border: 1px solid var(--line);
+    border-left: 3px solid #d97706;
+    border-radius: 8px;
+    background: #fff;
+    padding: 16px 18px;
+  }
+  .sdkai-fail-card h4 {
+    font-size: 14px;
+    font-weight: 700;
+    margin-bottom: 8px;
+  }
+  .sdkai-fail-card p {
+    font-size: 13px;
+    color: var(--text-2);
+    margin: 6px 0;
+  }
+  .sdkai-fail-card p strong { color: var(--text); }
+
+  /* ==================== 项目复盘 · 架构图 ==================== */
+  .sdkai-arch {
+    display: grid;
+    grid-template-columns: 1fr 260px;
+    gap: 24px;
+    align-items: start;
+    margin-top: 14px;
+  }
+  .sdkai-arch-pipeline {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+  }
+  .sdkai-arch-box {
+    width: 100%;
+    max-width: 400px;
+    padding: 12px 16px;
+    text-align: center;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text);
+    background: #fff;
+    border: 1px solid var(--line-strong);
+    border-radius: 8px;
+  }
+  .sdkai-arch-arrow {
+    color: var(--accent);
+    font-size: 16px;
+    line-height: 1;
+    text-align: center;
+  }
+  .sdkai-arch-kb {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    background: #fafafa;
+    padding: 16px;
+  }
+  .sdkai-arch-kb-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text-3);
+    margin-bottom: 4px;
+  }
+  .sdkai-arch-kb .sdkai-arch-box {
+    background: #fff;
+    max-width: none;
+    font-weight: 500;
+    font-size: 13px;
+  }
+
+  /* ==================== 响应式 ==================== */
+  @media (max-width: 900px) {
+    .sdkai-demo { grid-template-columns: 1fr; }
+    .sdkai-wf-grid { grid-template-columns: 1fr; }
+    .sdkai-kb-filters { grid-template-columns: repeat(2, 1fr); }
+    .sdkai-kb-list { grid-template-columns: 1fr; }
+    .sdkai-metrics { grid-template-columns: repeat(2, 1fr); }
+    .sdkai-fail-grid { grid-template-columns: 1fr; }
+    .sdkai-arch { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 600px) {
+    .sdkai-section { padding: 56px 0; }
+    .sdkai-kb-filters { grid-template-columns: 1fr; }
+    .sdkai-metrics { grid-template-columns: repeat(2, 1fr); }
+    .sdkai-chat { min-height: 480px; }
+    .sdkai-msg { max-width: 96%; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    .sdkai-step-dot { animation: none; }
+    .sdkai-wf-node, .sdkai-source summary::before { transition: none; }
+  }
+</style>

@@ -20,12 +20,23 @@ const cases = [
   },
 ];
 
-const light = [
+const demos = [
   {
     index: '03',
-    title: '钉钉多维表格 Workflow',
-    tags: ['Workflow Automation'],
-    desc: '每周一 9:00 自动检索待解决问题，按负责人生成 Todo List 并发送给对应同事，降低人工提醒成本。',
+    title: 'SDK 智能技术支持助手 · 交互原型',
+    tags: ['Interactive Demo', 'AI Product', 'Front-end Prototype', 'Astro'],
+    desc: '纯前端可交互的 SDK AI 客服原型：演示版本路由、平台冲突澄清、来源引用与自动评测。使用预设场景与演示知识库模拟，不接入真实 LLM / Dify。',
+    status: '交互原型 · 模拟工作流',
+    href: '/work/sdk-ai-support',
+  },
+];
+
+const light = [
+  {
+    index: '04',
+    title: 'SDK 包体大小自动化检测',
+    tags: ['Python', 'Automation', 'Android'],
+    desc: '用 Python 脚本将 SDK 包体大小检测从多步骤人工流程简化为单命令执行：环境检测、编译对比、APK 分析、结构化报告输出。',
   },
 ];
 ---
@@ -49,6 +60,32 @@ const light = [
       <div class="work-index" style="border-top: 1px solid var(--line);">
         {
           cases.map((c) => (
+            <a class="work-item" href={c.href}>
+              <span class="work-item-index">{c.index}</span>
+              <span>
+                <span class="work-item-title">{c.title}</span>
+                <br />
+                <span class="work-item-desc">{c.desc}</span>
+                <br />
+                <span style="display: inline-flex; gap: 6px; flex-wrap: wrap; margin-top: 10px;">
+                  {c.tags.map((t) => <span class="tag">{t}</span>)}
+                </span>
+              </span>
+              <span class="work-item-status">{c.status}</span>
+              <span class="work-item-arrow">→</span>
+            </a>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--tight">
+    <div class="container">
+      <h2 class="h-md" style="margin-bottom: 8px;">Interactive Demos · 交互原型</h2>
+      <div class="work-index" style="border-top: 1px solid var(--line);">
+        {
+          demos.map((c) => (
             <a class="work-item" href={c.href}>
               <span class="work-item-index">{c.index}</span>
               <span>
