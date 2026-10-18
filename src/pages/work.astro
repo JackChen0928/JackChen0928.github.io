@@ -1,42 +1,46 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 
-const cases = [
+interface WorkCase {
+  index: string;
+  title: string;
+  tags: string[];
+  desc: string;
+  status: string;
+  href?: string;
+  demoHref?: string;
+}
+
+const cases: WorkCase[] = [
   {
     index: '01',
-    title: 'SDK Developer AI Support Agent',
+    title: '小T｜SDK开发者AI智能客服与知识库系统',
     tags: ['Dify', 'RAGFlow', 'Multi-Agent', 'RAG', 'Prompt Engineering', 'Python'],
-    desc: '面向 SDK 开发者的 AI 技术支持助手。按 SDK 版本 / 开发平台两级路由限制检索范围，参与 FAQ 清洗（600+→100+）与文档关联知识图谱构建。',
-    status: 'Internal Testing',
+    desc: '面向 SDK 开发者的 AI 技术支持与知识库系统。按 SDK 版本 / 开发平台两级路由限制检索范围，参与 FAQ 清洗（600+→100+）与文档关联知识图谱构建，并提供可在线体验的前端交互原型。',
+    status: '内部测试阶段 · 交互原型',
     href: '/case/sdk-support-agent',
+    demoHref: '/work/sdk-ai-support',
   },
   {
     index: '02',
     title: 'MCP SDK Integration Agent',
     tags: ['MCP', 'Agent', 'Prompt Engineering', 'SDK Integration'],
     desc: '参与验证 IDE Agent + Remote MCP + Local CLI 的 SDK 自动化集成方案，负责 Agent Prompt 设计与迭代，将自然语言需求转化为可执行的 SDK 接入流程。',
-    status: '方案验证',
+    status: '方案验证 · 原型待补充',
     href: '/case/mcp-integration-agent',
+    demoHref: '/work/mcp-integration-prototype',
   },
 ];
 
-const demos = [
+const light: WorkCase[] = [
   {
     index: '03',
-    title: 'SDK 智能技术支持助手 · 交互原型',
-    tags: ['Interactive Demo', 'AI Product', 'Front-end Prototype', 'Astro'],
-    desc: '纯前端可交互的 SDK AI 客服原型：演示版本路由、平台冲突澄清、来源引用与自动评测。使用预设场景与演示知识库模拟，不接入真实 LLM / Dify。',
-    status: '交互原型 · 模拟工作流',
-    href: '/work/sdk-ai-support',
-  },
-];
-
-const light = [
-  {
-    index: '04',
     title: 'SDK 包体大小自动化检测',
     tags: ['Python', 'Automation', 'Android'],
     desc: '用 Python 脚本将 SDK 包体大小检测从多步骤人工流程简化为单命令执行：环境检测、编译对比、APK 分析、结构化报告输出。',
+    status: '自动化脚本 · 原型待补充',
+    href: '/case/sdk-size-detection',
+    demoHref: '/work/sdk-size-detection-prototype',
   },
 ];
 ---
@@ -60,46 +64,30 @@ const light = [
       <div class="work-index" style="border-top: 1px solid var(--line);">
         {
           cases.map((c) => (
-            <a class="work-item" href={c.href}>
+            <article class="work-item">
               <span class="work-item-index">{c.index}</span>
-              <span>
-                <span class="work-item-title">{c.title}</span>
-                <br />
-                <span class="work-item-desc">{c.desc}</span>
-                <br />
-                <span style="display: inline-flex; gap: 6px; flex-wrap: wrap; margin-top: 10px;">
+              <div class="work-item-main">
+                <a class="work-item-title" href={c.href}>{c.title}</a>
+                <p class="work-item-desc">{c.desc}</p>
+                <p class="work-item-tags">
                   {c.tags.map((t) => <span class="tag">{t}</span>)}
-                </span>
-              </span>
-              <span class="work-item-status">{c.status}</span>
-              <span class="work-item-arrow">→</span>
-            </a>
-          ))
-        }
-      </div>
-    </div>
-  </section>
-
-  <section class="section section--tight">
-    <div class="container">
-      <h2 class="h-md" style="margin-bottom: 8px;">Interactive Demos · 交互原型</h2>
-      <div class="work-index" style="border-top: 1px solid var(--line);">
-        {
-          demos.map((c) => (
-            <a class="work-item" href={c.href}>
-              <span class="work-item-index">{c.index}</span>
-              <span>
-                <span class="work-item-title">{c.title}</span>
-                <br />
-                <span class="work-item-desc">{c.desc}</span>
-                <br />
-                <span style="display: inline-flex; gap: 6px; flex-wrap: wrap; margin-top: 10px;">
-                  {c.tags.map((t) => <span class="tag">{t}</span>)}
-                </span>
-              </span>
-              <span class="work-item-status">{c.status}</span>
-              <span class="work-item-arrow">→</span>
-            </a>
+                </p>
+                {c.demoHref && (
+                  <p class="work-item-note">交互原型使用预设场景与演示知识库模拟，不接入真实 LLM / Dify。</p>
+                )}
+              </div>
+              <div class="work-item-side">
+                <span class="work-item-status">{c.status}</span>
+                <div class="work-item-actions">
+                  <a class="work-item-btn" href={c.href}>查看详情 →</a>
+                  {c.demoHref && (
+                    <a class="work-item-btn work-item-btn--accent" href={c.demoHref}>
+                      体验原型 →
+                    </a>
+                  )}
+                </div>
+              </div>
+            </article>
           ))
         }
       </div>
@@ -112,21 +100,105 @@ const light = [
       <div class="work-index" style="border-top: 1px solid var(--line);">
         {
           light.map((c) => (
-            <div class="work-item" style="cursor: default;">
+            <article class="work-item">
               <span class="work-item-index">{c.index}</span>
-              <span>
-                <span class="work-item-title">{c.title}</span>
-                <br />
-                <span class="work-item-desc">{c.desc}</span>
-                <br />
-                <span style="display: inline-flex; gap: 6px; flex-wrap: wrap; margin-top: 10px;">
+              <div class="work-item-main">
+                <a class="work-item-title" href={c.href}>{c.title}</a>
+                <p class="work-item-desc">{c.desc}</p>
+                <p class="work-item-tags">
                   {c.tags.map((t) => <span class="tag">{t}</span>)}
-                </span>
-              </span>
-            </div>
+                </p>
+              </div>
+              <div class="work-item-side">
+                <span class="work-item-status">{c.status}</span>
+                <div class="work-item-actions">
+                  <a class="work-item-btn" href={c.href}>查看详情 →</a>
+                  {c.demoHref && (
+                    <a class="work-item-btn work-item-btn--accent" href={c.demoHref}>
+                      体验原型 →
+                    </a>
+                  )}
+                </div>
+              </div>
+            </article>
           ))
         }
       </div>
     </div>
   </section>
 </BaseLayout>
+
+<style>
+  .work-item-main {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    min-width: 0;
+  }
+
+  .work-item-main p {
+    margin: 0;
+  }
+
+  .work-item-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 4px;
+  }
+
+  .work-item-note {
+    font-size: 12.5px;
+    color: var(--text-4);
+  }
+
+  .work-item-side {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 16px;
+  }
+
+  .work-item-actions {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 8px;
+  }
+
+  .work-item-btn {
+    display: inline-block;
+    padding: 6px 12px;
+    border: 1px solid var(--line-strong);
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text);
+    white-space: nowrap;
+    transition: background 0.2s, border-color 0.2s, color 0.2s;
+  }
+
+  .work-item-btn:hover {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #fff;
+  }
+
+  .work-item-btn--accent {
+    color: var(--accent);
+    border-color: var(--accent);
+  }
+
+  @media (max-width: 860px) {
+    .work-item-side {
+      width: 100%;
+      flex-direction: row;
+      align-items: center;
+    }
+
+    .work-item-actions {
+      flex-direction: row;
+    }
+  }
+</style>

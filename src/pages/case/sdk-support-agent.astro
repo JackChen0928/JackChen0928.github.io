@@ -3,8 +3,8 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 ---
 
 <BaseLayout
-  title="SDK Developer AI Support Agent | Jack Chen"
-  description="AI product case study of an SDK developer support assistant built with Multi-Agent, RAG, Dify and RAGFlow."
+  title="小T｜SDK开发者AI智能客服与知识库系统"
+  description="面向 SDK 开发者的 AI 智能客服与知识库系统 Case Study：版本路由、平台冲突澄清、FAQ 治理与评测迭代。"
   current="case"
 >
   <div class="cs">
@@ -12,8 +12,8 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
     <header class="cs-hero">
       <div class="container">
         <p class="kicker">AI Product Case Study</p>
-        <h1 class="cs-title">SDK Developer AI Support Agent</h1>
-        <p class="cs-subtitle">面向 SDK 开发者的 AI 技术支持助手</p>
+        <h1 class="cs-title">小T</h1>
+        <p class="cs-subtitle">SDK 开发者 AI 智能客服与知识库系统</p>
         <p class="cs-desc">
           将依赖人工回复的 SDK 技术支持流程，转化为基于 SDK 版本与开发平台路由的 AI 问答流程。
         </p>
@@ -42,12 +42,13 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
           </div>
         </dl>
 
-        <!-- Interactive Demo placeholder -->
+        <!-- Interactive Demo entry -->
         <div class="cs-demo">
           <div>
             <span class="cs-demo-label">Interactive Demo</span>
-            <p class="cs-demo-status">Coming Soon</p>
-            <p class="cs-demo-note">未来将在这里加入可运行的 Portfolio Demo。</p>
+            <p class="cs-demo-status">可在线体验</p>
+            <p class="cs-demo-note">前端交互原型，使用预设场景与演示知识库模拟工作流，不接入真实 LLM / Dify。</p>
+            <a class="cs-demo-link" href="/work/sdk-ai-support">打开交互原型 →</a>
           </div>
         </div>
       </div>
@@ -725,13 +726,13 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
       color: var(--text-2);
     }
 
-    /* ----- Interactive Demo placeholder ----- */
+    /* ----- Interactive Demo entry ----- */
     .cs-demo {
-      border: 1px dashed var(--line-strong);
+      border: 1px solid #c7d9fb;
       border-radius: 10px;
-      padding: 40px 24px;
+      padding: 32px 24px;
       text-align: center;
-      background: #fafafa;
+      background: var(--accent-soft);
       margin-bottom: 8px;
     }
     .cs-demo-label {
@@ -750,6 +751,12 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
     .cs-demo-note {
       font-size: 13.5px;
       color: var(--text-3);
+    }
+    .cs-demo-link {
+      display: inline-block;
+      margin-top: 14px;
+      font-size: 14px;
+      font-weight: 600;
     }
 
     /* ----- Sticky nav ----- */

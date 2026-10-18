@@ -1,45 +1,98 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 
-const pillars = [
+const strengths = [
   {
     num: '01',
     title: '技术理解力',
-    desc: '计算机科学本科，具备 Java / Python / SQL 开发基础，能够理解 AI 应用背后的工程实现与代码逻辑，并与开发团队协作。',
+    desc: '能读懂 SDK 编译链路、报错日志与工程约束，用 Python 写过包体检测脚本，和研发沟通不需要「翻译」。',
+    evidence: '证据 · Python 自动化检测 SDK 包体大小',
+    href: '/work',
   },
   {
     num: '02',
     title: 'AI 应用设计',
-    desc: '实践 Agent / RAG / MCP / Prompt Engineering / AI Evaluation，能够将 AI 技术能力转化为具体的产品方案。',
-  },
-  {
-    num: '03',
-    title: 'AI 应用落地',
-    desc: '参与企业内部 AI 场景从需求分析、方案设计到测试验证与迭代，关注产品可用性与实际效果。',
-  },
-];
-
-const works = [
-  {
-    index: '01',
-    title: 'SDK Developer AI Support Agent',
-    desc: '面向 SDK 开发者的 AI 技术支持助手 · Multi-Agent 分流 · FAQ 600+→100+ · 文档关联知识图谱',
-    status: 'Internal Testing',
+    desc: '把业务问题拆成可执行的 Agent 流程：版本路由、平台冲突澄清、RAG 知识边界、Prompt 约束与评测闭环。',
+    evidence: '证据 · SDK AI 客服项目',
     href: '/case/sdk-support-agent',
   },
   {
+    num: '03',
+    title: '落地与验证',
+    desc: '不满足于「感觉好用」。参与 FAQ 600+→100+ 清洗，用历史问题构造测试用例，分析失败并迭代 Prompt。',
+    evidence: '证据 · FAQ 治理与评测迭代',
+    href: '/case/sdk-support-agent',
+  },
+];
+
+interface Project {
+  index: string;
+  type: string;
+  title: string;
+  problem: string;
+  role: string;
+  highlights: string[];
+  status: string;
+  href: string;
+  demoHref?: string;
+  cta: string;
+  demoCta?: string;
+  featured: boolean;
+}
+
+const projects: Project[] = [
+  {
+    index: '01',
+    type: 'Case Study + Interactive Demo',
+    title: '小T｜SDK开发者AI智能客服与知识库系统',
+    problem: 'SDK 开发者反复咨询接入与报错问题，多版本、多平台文档容易混淆。',
+    role: '参与 FAQ 清洗、文档关联与测试迭代；独立实现交互原型',
+    highlights: ['版本 / 平台路由', 'RAG 知识治理', 'Prompt 约束', '可在线体验'],
+    status: '内部测试阶段 · 交互原型',
+    href: '/case/sdk-support-agent',
+    demoHref: '/work/sdk-ai-support',
+    cta: '查看详情',
+    demoCta: '体验原型',
+    featured: true,
+  },
+  {
     index: '02',
+    type: 'Case Study + Interactive Demo',
     title: 'MCP SDK Integration Agent',
-    desc: '自然语言需求 → Agent 工作流 → SDK 自动集成 · Remote MCP + Local CLI + IDE Agent',
-    status: '方案验证',
+    problem: '把自然语言接入需求转化为可执行的 SDK 集成流程。',
+    role: '参与方案验证，负责 Agent Prompt 设计与迭代',
+    highlights: ['MCP', 'Agent 工作流', 'IDE 集成'],
+    status: '方案验证 · 原型待补充',
     href: '/case/mcp-integration-agent',
+    demoHref: '/work/mcp-integration-prototype',
+    cta: '查看详情',
+    demoCta: '体验原型',
+    featured: false,
   },
   {
     index: '03',
-    title: 'SDK 智能技术支持助手 · 交互原型',
-    desc: '可交互 AI 客服前端原型：版本路由 · 平台冲突澄清 · 来源引用 · 自动评测',
-    status: '交互原型 · 模拟工作流',
-    href: '/work/sdk-ai-support',
+    type: 'Automation + Interactive Demo',
+    title: 'SDK 包体大小自动化检测',
+    problem: '把多步骤人工检测流程简化为单命令执行：环境检测、编译对比、APK 分析与结构化报告。',
+    role: '独立开发 Python 自动化脚本',
+    highlights: ['Python', 'Automation', 'Android'],
+    status: '自动化脚本 · 原型待补充',
+    href: '/case/sdk-size-detection',
+    demoHref: '/work/sdk-size-detection-prototype',
+    cta: '查看详情',
+    demoCta: '体验原型',
+    featured: false,
+  },
+];
+
+const capabilities = [
+  {
+    label: '产品能力',
+    items: ['AI Agent 设计', 'RAG 知识库治理', 'Prompt 设计与约束', 'AI 评测与迭代', '工作流设计', '需求分析'],
+  },
+  {
+    label: '技术栈',
+    items: ['Python', 'Java', 'SQL', 'Spring Boot', 'MySQL', 'Redis'],
   },
 ];
 ---
@@ -48,63 +101,400 @@ const works = [
   <!-- Hero -->
   <section class="hero">
     <div class="container">
-      <p class="kicker">AI Application Product Manager</p>
+      <p class="kicker">陈卓杰 · 求职方向：AI 应用产品经理</p>
       <h1 class="hero-title">
         用技术理解力，<br />做能<span class="accent-line">落地</span>的 AI 产品
       </h1>
       <p class="hero-sub">
-        计算机科学本科 · TopOn AI 应用实习 · AI Agent / RAG / MCP 产品实践
+        计算机科学与技术本科。参与企业级 SDK AI 客服项目，负责 FAQ 清洗、文档关联、测试与
+        Prompt 约束优化，并用 Astro 独立实现了可交互原型。
       </p>
+      <div class="hero-meta">
+        <span class="tag tag--accent">校招 · AI 应用产品经理</span>
+        <span class="tag">AI Agent 产品经理</span>
+        <span class="tag">懂研发</span>
+      </div>
       <div class="hero-actions">
-        <a class="btn btn--solid" href="/work">查看精选作品</a>
-        <a class="btn btn--outline" href="/about">关于我</a>
+        <a class="btn btn--solid" href="#projects">查看精选项目</a>
+        <a class="btn btn--outline" href="/work/sdk-ai-support">体验交互 Demo</a>
       </div>
     </div>
   </section>
 
-  <!-- 三大能力 -->
-  <section class="section">
+  <!-- 核心优势 -->
+  <section class="section" id="strengths">
     <div class="container">
       <p class="kicker">Why Me</p>
-      <h2 class="h-lg" style="margin-bottom: 48px;">我的优势，不是纯产品背景</h2>
-      <div class="pillars">
+      <h2 class="h-lg">我的优势，不是纯产品背景</h2>
+      <div class="strengths">
         {
-          pillars.map((p) => (
-            <div class="pillar">
-              <p class="kicker">{p.num}</p>
-              <h3>{p.title}</h3>
-              <p>{p.desc}</p>
+          strengths.map((s) => (
+            <article class="strength">
+              <span class="strength-num">{s.num}</span>
+              <h3>{s.title}</h3>
+              <p>{s.desc}</p>
+              <a class="strength-link" href={s.href}>{s.evidence} →</a>
+            </article>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- 精选项目 -->
+  <section class="section section--tight" id="projects">
+    <div class="container">
+      <div class="section-head">
+        <div>
+          <p class="kicker">Selected Work</p>
+          <h2 class="h-lg">精选项目</h2>
+        </div>
+        <a class="link-arrow" href="/work">查看全部项目</a>
+      </div>
+      <div class="project-list">
+        {
+          projects.map((p) => (
+            <article class={`project-card${p.featured ? ' project-card--demo' : ''}`}>
+              <span class="project-index">{p.index}</span>
+              <span class="project-body">
+                <span class="project-type">{p.type}</span>
+                <a class="project-title" href={p.href}>{p.title}</a>
+                <span class="project-problem">{p.problem}</span>
+                <span class="project-role">我的角色 · {p.role}</span>
+                <span class="project-tags">
+                  {p.highlights.map((h) => <span class="tag">{h}</span>)}
+                </span>
+              </span>
+              <span class="project-side">
+                <span class="project-status">{p.status}</span>
+                <span class="project-actions">
+                  <a class="project-cta" href={p.href}>{p.cta} →</a>
+                  {p.demoHref && (
+                    <a class="project-cta project-cta--accent" href={p.demoHref}>
+                      {p.demoCta} →
+                    </a>
+                  )}
+                </span>
+              </span>
+            </article>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- 能力与工具 -->
+  <section class="section section--tight" id="capability">
+    <div class="container">
+      <p class="kicker">Capability</p>
+      <h2 class="h-lg">能力与工具</h2>
+      <dl class="capability-list">
+        {
+          capabilities.map((c) => (
+            <div class="capability-row">
+              <dt>{c.label}</dt>
+              <dd>{c.items.map((i) => <span class="tag">{i}</span>)}</dd>
             </div>
           ))
         }
-      </div>
+      </dl>
     </div>
   </section>
 
-  <!-- 精选 AI 作品 -->
-  <section class="section section--tight" id="works">
-    <div class="container">
-      <p class="kicker">Selected AI Product Work</p>
-      <h2 class="h-lg" style="margin-bottom: 16px;">精选作品</h2>
-      <div class="work-index">
-        {
-          works.map((w) => (
-            <a class="work-item" href={w.href}>
-              <span class="work-item-index">{w.index}</span>
-              <span>
-                <span class="work-item-title">{w.title}</span>
-                <br />
-                <span class="work-item-desc">{w.desc}</span>
-              </span>
-              <span class="work-item-status">{w.status}</span>
-              <span class="work-item-arrow">→</span>
-            </a>
-          ))
-        }
-      </div>
-      <p style="margin-top: 28px;">
-        <a class="link-arrow" href="/work">查看全部精选作品与轻量项目</a>
+  <!-- 联系 -->
+  <section class="section contact-section" id="contact">
+    <div class="container contact-inner">
+      <p class="kicker">Contact</p>
+      <h2 class="h-lg" style="margin-bottom: 16px;">开放交流</h2>
+      <p class="lead">
+        如果你在找懂 AI 技术、能落地验证的 AI 产品经理，或想聊聊 AI 应用产品，欢迎联系我。
       </p>
+      <div class="contact-actions">
+        <a class="btn btn--solid" href="mailto:your-email@example.com">邮箱 · 待补充</a>
+        <a
+          class="btn btn--outline"
+          href="https://github.com/JackChen0928"
+          target="_blank"
+          rel="noopener"
+        >
+          GitHub
+        </a>
+      </div>
     </div>
   </section>
 </BaseLayout>
+
+<style>
+  /* ---------- 核心优势 ---------- */
+  .strengths {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 32px;
+    margin-top: 40px;
+  }
+
+  .strength {
+    border-top: 1px solid var(--line);
+    padding-top: 20px;
+  }
+
+  .strength-num {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    color: var(--accent);
+  }
+
+  .strength h3 {
+    font-size: 17px;
+    margin: 6px 0 10px;
+  }
+
+  .strength p {
+    font-size: 14.5px;
+    color: var(--text-3);
+  }
+
+  .strength-link {
+    display: inline-block;
+    margin-top: 12px;
+    font-size: 13px;
+    font-weight: 500;
+  }
+
+  /* ---------- 精选项目 ---------- */
+  .section-head {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 24px;
+    flex-wrap: wrap;
+    margin-bottom: 32px;
+  }
+
+  .section-head .h-lg {
+    margin-bottom: 0;
+  }
+
+  .project-list {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .project-card {
+    display: grid;
+    grid-template-columns: 56px 1fr 190px;
+    gap: 24px;
+    padding: 26px 28px;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    background: #fff;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+
+  .project-card:hover {
+    border-color: var(--accent);
+    box-shadow: 0 2px 12px rgba(37, 99, 235, 0.08);
+  }
+
+  .project-index {
+    font-family: var(--font-mono);
+    font-size: 13px;
+    color: var(--text-4);
+    padding-top: 2px;
+  }
+
+  .project-body {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    min-width: 0;
+  }
+
+  .project-type {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text-4);
+  }
+
+  .project-title {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--text);
+    transition: color 0.2s;
+  }
+
+  .project-title:hover {
+    color: var(--accent);
+  }
+
+  .project-problem {
+    font-size: 14px;
+    color: var(--text-2);
+  }
+
+  .project-role {
+    font-size: 13px;
+    color: var(--text-3);
+  }
+
+  .project-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 6px;
+  }
+
+  .project-side {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 16px;
+  }
+
+  .project-actions {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 8px;
+  }
+
+  .project-status {
+    font-family: var(--font-mono);
+    font-size: 11.5px;
+    letter-spacing: 0.04em;
+    color: var(--text-4);
+    text-align: right;
+  }
+
+  .project-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 7px 14px;
+    border: 1px solid var(--line-strong);
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text);
+    background: #fff;
+    white-space: nowrap;
+    transition: background 0.2s, border-color 0.2s, color 0.2s;
+  }
+
+  .project-card:hover .project-cta {
+    border-color: var(--accent);
+  }
+
+  .project-cta:hover {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #fff;
+  }
+
+  .project-cta--accent {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
+  .project-card--demo {
+    background: var(--accent-soft);
+    border-color: #c7d9fb;
+  }
+
+  .project-card--demo .project-type {
+    color: var(--accent);
+  }
+
+  .project-card--demo .project-cta {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
+  /* ---------- 能力与工具 ---------- */
+  .capability-list {
+    margin-top: 32px;
+    border-top: 1px solid var(--line);
+  }
+
+  .capability-row {
+    display: grid;
+    grid-template-columns: 140px 1fr;
+    gap: 20px;
+    align-items: baseline;
+    padding: 20px 0;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .capability-row dt {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    color: var(--text-4);
+  }
+
+  .capability-row dd {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  /* ---------- 联系 ---------- */
+  .contact-section {
+    border-top: 1px solid var(--line);
+  }
+
+  .contact-inner {
+    text-align: center;
+  }
+
+  .contact-inner .lead {
+    max-width: 520px;
+    margin: 0 auto 28px;
+    text-wrap: balance;
+  }
+
+  .contact-actions {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  /* ---------- 响应式 ---------- */
+  @media (max-width: 860px) {
+    .strengths {
+      grid-template-columns: 1fr;
+      gap: 24px;
+    }
+
+    .project-card {
+      grid-template-columns: 1fr;
+      gap: 14px;
+      padding: 22px;
+    }
+
+    .project-side {
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .project-actions {
+      flex-direction: row;
+    }
+
+    .project-status {
+      text-align: left;
+    }
+
+    .capability-row {
+      grid-template-columns: 1fr;
+      gap: 8px;
+    }
+  }
+</style>

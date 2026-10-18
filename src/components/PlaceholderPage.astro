@@ -1,0 +1,86 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+interface Props {
+  title: string;
+  kicker?: string;
+  status?: string;
+  description?: string;
+  note?: string;
+  backHref?: string;
+  backLabel?: string;
+}
+
+const {
+  title,
+  kicker = 'Interactive Prototype',
+  status = '交互原型 · 建设中',
+  description = '该交互原型正在制作中，当前为占位页面。',
+  note = '页面结构已预留，后续将补充可体验的交互内容；当前不包含真实功能、接口或数据。',
+  backHref = '/work',
+  backLabel = '返回项目列表',
+} = Astro.props;
+---
+
+<BaseLayout title={`${title} · 建设中`} description={description} current="work">
+  <section class="placeholder">
+    <div class="container placeholder-inner">
+      <p class="kicker">{kicker}</p>
+      <h1 class="h-xl placeholder-title">{title}</h1>
+      <div class="placeholder-status">
+        <span class="tag tag--accent">{status}</span>
+      </div>
+      <p class="lead placeholder-desc">{description}</p>
+      <p class="placeholder-note">{note}</p>
+      <div class="placeholder-actions">
+        <a class="btn btn--solid" href={backHref}>{backLabel}</a>
+        {backHref !== '/work' && <a class="btn btn--outline" href="/work">查看全部项目</a>}
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .placeholder {
+    padding: 120px 0 140px;
+  }
+
+  .placeholder-inner {
+    max-width: 720px;
+  }
+
+  .placeholder-title {
+    margin: 8px 0 20px;
+  }
+
+  .placeholder-status {
+    margin-bottom: 24px;
+  }
+
+  .placeholder-desc {
+    max-width: 620px;
+    margin-bottom: 14px;
+  }
+
+  .placeholder-note {
+    font-size: 14px;
+    color: var(--text-3);
+    padding: 16px 20px;
+    border: 1px solid var(--line);
+    border-left: 3px solid var(--accent);
+    background: #fafafa;
+    margin-bottom: 36px;
+  }
+
+  .placeholder-actions {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  @media (max-width: 560px) {
+    .placeholder {
+      padding: 80px 0 96px;
+    }
+  }
+</style>
