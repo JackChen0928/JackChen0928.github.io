@@ -1,218 +1,1144 @@
 ---
-import CaseStudyLayout, { type CaseSection } from '../../layouts/CaseStudyLayout.astro';
-
-const sections: CaseSection[] = [
-  {
-    id: 'overview',
-    num: '01',
-    title: '项目概览',
-    blocks: [
-      {
-        type: 'info',
-        rows: [
-          ['项目类型', 'SDK 开发者工具 · 包体检测自动化'],
-          ['项目状态', '已在小组内使用'],
-          ['我的角色', '独立开发 Python 检测工具、接入 Hermes 与钉钉'],
-          ['技术方向', 'Python · Hermes · Android APK · 钉钉通知'],
-        ],
-      },
-      {
-        type: 'p',
-        text: '这是一个面向 SDK 接入场景的包体增量检测工具：构建空包基线 APK 与引入 SDK 后的 APK，计算两者的体积差，输出检测结果；并通过 Hermes 提供自然语言检测入口，把结果同步到钉钉。',
-      },
-      {
-        type: 'p',
-        text: '工具解决的是「包体变化是否可接受」这一具体问题。相比人工多次构建、手工记录和口头同步，它把构建、对比和结果通知串成一条可重复的流程。',
-      },
-      {
-        type: 'note',
-        bold: '真实性标注',
-        text: '本页「真实项目记录」部分来自我实际开发与接入的工作：Python 检测脚本、Hermes 参数提取与调用、钉钉通知链路、小组内使用。页面不展示真实构建日志、内部配置或具体包体数值。',
-      },
-      {
-        type: 'tags',
-        accent: true,
-        items: ['真实项目记录', 'AI 工具落地', '小组内使用'],
-      },
-    ],
-  },
-  {
-    id: 'users',
-    num: '02',
-    title: '目标用户与问题',
-    blocks: [
-      {
-        type: 'p',
-        text: '目标用户是负责 SDK 接入、版本发布与回归验证的开发者和测试人员，以及需要了解包体变化结果的项目成员。',
-      },
-      { type: 'h', text: '用户面对的问题' },
-      {
-        type: 'list',
-        items: [
-          '确认 SDK 带来的包体变化，需要分别构建基线包和接入后的包，再手工对比。',
-          '构建结果分散在本地目录，体积数据靠手工记录，容易遗漏或混淆版本。',
-          '检测结果需要再次通过聊天工具同步给其他成员，信息传递链路长。',
-          '不熟悉脚本参数的成员难以直接使用检测能力，工具容易被少数人掌握。',
-        ],
-      },
-      { type: 'h', text: '产品切入点' },
-      {
-        type: 'p',
-        text: '把确定性的构建与计算交给 Python 脚本，把「怎么描述检测需求」交给自然语言入口，把「结果给谁看」交给钉钉通知。三层各做自己擅长的事，降低工具的使用门槛。',
-      },
-    ],
-  },
-  {
-    id: 'solution',
-    num: '03',
-    title: '产品方案与工作流',
-    blocks: [
-      {
-        type: 'flow',
-        lines: [
-          '自然语言描述检测需求',
-          '↓',
-          'Hermes 提取检测参数',
-          '↓',
-          '调用本地 Python 检测脚本',
-          '↓',
-          '构建空包基线 APK',
-          '↓',
-          '构建引入 SDK 后的 APK',
-          '↓',
-          '计算体积差并输出结果',
-          '↓',
-          '钉钉通知',
-        ],
-      },
-      { type: 'h', text: '各层职责' },
-      {
-        type: 'list',
-        items: [
-          'Python 脚本：执行构建、读取 APK、计算体积差，保证结果可重复。',
-          'Hermes：理解自然语言描述，提取检测所需参数，调用本地脚本。',
-          '钉钉：把检测结果推送到协作场景，减少人工转述。',
-        ],
-      },
-      {
-        type: 'p',
-        text: '脚本保持可独立运行，Hermes 只负责入口与参数传递。这样即使对话入口不可用，检测能力本身仍然可以使用，也便于单独排查是参数问题还是脚本问题。',
-      },
-      {
-        type: 'note',
-        bold: '说明',
-        text: '以上为真实工具链路的概括说明。本页不提供真实工程路径、构建产物、包体数值或钉钉配置。',
-      },
-    ],
-  },
-  {
-    id: 'decisions',
-    num: '04',
-    title: '关键设计决策',
-    blocks: [
-      {
-        type: 'decisions',
-        itemsDecisions: [
-          {
-            label: '决策 01',
-            title: '用空包基线做对照',
-            text: '先构建空包作为基线，再构建引入 SDK 后的 APK。以两者差值作为判断依据，减少业务代码差异对结果的干扰。',
-          },
-          {
-            label: '决策 02',
-            title: '检测逻辑与对话入口分离',
-            text: '核心构建与计算留在 Python 脚本中，Hermes 只做自然语言参数提取和调用。避免把确定性逻辑耦合进对话层，降低维护成本。',
-          },
-          {
-            label: '决策 03',
-            title: '结果进入协作流',
-            text: '检测完成后通过钉钉通知，让结果不滞留在个人终端，也方便其他成员直接看到结论。',
-          },
-          {
-            label: '决策 04',
-            title: '优先降低使用门槛',
-            text: '用自然语言描述替代记忆脚本参数，让不熟悉命令行的成员也能发起检测；同时保留脚本的独立运行方式，兼顾灵活性。',
-          },
-        ],
-      },
-    ],
-  },
-  {
-    id: 'contribution',
-    num: '05',
-    title: '真实贡献与验证证据',
-    blocks: [
-      { type: 'h', text: '我实际完成的工作' },
-      {
-        type: 'list',
-        items: [
-          '使用 Python 独立开发 Android APK 包体增量检测工具。',
-          '构建空包基线和引入 SDK 后的 APK，计算两者体积差。',
-          '将检测脚本接入 Hermes，支持用自然语言描述检测需求，由 Hermes 提取参数并调用本地脚本。',
-          '打通 Hermes 与钉钉通知链路，使检测结果可以通过钉钉反馈。',
-          '工具已在小组内实际使用。',
-        ],
-      },
-      { type: 'h', text: '验证方式' },
-      {
-        type: 'p',
-        text: '以真实 Android 工程构建空包与接入 SDK 的 APK，对比体积差并核对结果；接入 Hermes 后，用自然语言描述检测需求，确认参数提取与脚本调用能够完成一次完整检测；最后验证钉钉端能收到结果。',
-      },
-      {
-        type: 'note',
-        bold: '不展示的内容',
-        text: '本页不提供具体包体数值、真实构建日志、内部路径或钉钉配置，避免将演示说明包装成可复现的生产记录。',
-      },
-    ],
-  },
-  {
-    id: 'limitations',
-    num: '06',
-    title: '项目局限与后续优化',
-    blocks: [
-      { type: 'h', text: '当前局限' },
-      {
-        type: 'list',
-        items: [
-          '当前面向 Android APK，尚未覆盖 iOS 等其他产物。',
-          '检测依赖本地构建环境，环境差异可能影响构建与对比结果。',
-          '自然语言参数提取的效果依赖需求描述的清晰程度。',
-          '钉钉通知依赖已有的机器人与群配置，换环境需要重新接入。',
-        ],
-      },
-      { type: 'h', text: '优化设想' },
-      {
-        type: 'p',
-        text: '以下为尚未在原项目中实现的改进方向，仅作为产品思考展示：',
-      },
-      {
-        type: 'list',
-        items: [
-          '支持 iOS 与多产物对比，统一不同平台的包体检测口径。',
-          '将体积变化按模块或依赖归因，而不只给出总体差值。',
-          '记录历史检测结果，支持版本之间的趋势对比。',
-          '接入 CI 流程，在构建阶段自动执行检测并通知结果。',
-        ],
-      },
-      {
-        type: 'tags',
-        items: ['优化设想', '未在原项目实现'],
-      },
-    ],
-  },
-];
+import BaseLayout from '../../layouts/BaseLayout.astro';
 ---
 
-<CaseStudyLayout
-  caseNo="03"
-  title="SDK 包体增量检测工具"
-  subtitle="基于 Hermes 的自然语言检测入口：从描述需求、提取参数、调用 Python 脚本，到钉钉结果通知。"
-  description="SDK 包体增量检测工具 Case Study：Python 自动化、Hermes 自然语言参数提取、APK 体积差计算与钉钉通知。"
-  tags={['AI 工具落地', 'Python', 'Hermes', 'Android APK']}
+<BaseLayout
+  title="基于 Hermes 的 SDK 包体增量检测工具 | 小组内使用"
+  description="将 Android SDK 包体增量检测脚本接入 Hermes：自然语言需求输入、自动化构建对比与钉钉结果通知"
   current="work"
-  sections={sections}
-  neighbors={{
-    prev: { href: '/work/mcp-sdk-agent', label: '项目 B · MCP SDK 自动化集成助手' },
-    next: { href: '/work/sdk-ai-support', label: '项目 A · SDK 开发者智能问答与知识库系统' },
-  }}
-/>
+>
+  <!-- ======================= 页头 ======================= -->
+  <section class="szc-hero">
+    <div class="container">
+      <p class="kicker">Internal Tool · Work</p>
+      <h1 class="szc-title">基于 Hermes 的 SDK 包体增量检测工具</h1>
+      <p class="szc-subtitle">将 Android SDK 包体增量检测脚本接入 Hermes，支持自然语言需求输入、自动化执行与钉钉结果通知。</p>
+      <div class="szc-hero-meta">
+        <div class="szc-hero-meta-item">
+          <span class="szc-hero-meta-key">项目类型</span>
+          <span class="szc-hero-meta-val">SDK 开发者工具 · 包体检测自动化</span>
+        </div>
+        <div class="szc-hero-meta-item">
+          <span class="szc-hero-meta-key">项目状态</span>
+          <span class="szc-hero-meta-val">已在小组内使用</span>
+        </div>
+        <div class="szc-hero-meta-item">
+          <span class="szc-hero-meta-key">核心技术</span>
+          <span class="szc-hero-meta-val">Python · Hermes · Android APK · 钉钉通知</span>
+        </div>
+        <div class="szc-hero-meta-item">
+          <span class="szc-hero-meta-key">我的角色</span>
+          <span class="szc-hero-meta-val">Python 检测脚本 · Hermes 接入 · 钉钉通知集成</span>
+        </div>
+      </div>
+      <div class="szc-hero-tags">
+        <span class="tag tag--accent">真实项目记录</span>
+        <span class="tag">已在小组内使用</span>
+        <span class="tag">作品集交互演示</span>
+      </div>
+      <p class="szc-hero-desc">
+        用 Python 实现 Android APK 包体增量检测：通过不含目标 SDK 的基线 APK 与引入 SDK 后的 APK 计算体积差；
+        检测脚本接入 Hermes，由 Hermes 从自然语言需求中提取参数并调用本地脚本，最后通过钉钉通知任务结果。
+        本页重点展示检测方案、脚本实现、自动化链路与验证证据。
+      </p>
+      <div class="szc-status-note">
+        真实项目记录 + 作品集交互演示。演示台为前端模拟：不执行真实构建，不调用真实 Hermes 服务；
+        页面不编造 APK 体积、编译日志、执行次数或效率提升比例。
+      </div>
+    </div>
+  </section>
+
+  <!-- ======================= 模块导航栏（吸顶，含阅读进度线） ======================= -->
+  <nav class="szc-hero-anchors" aria-label="目录锚点">
+    <div class="container szc-toc-inner">
+      <span class="szc-progress" id="szc-progress" role="progressbar" aria-label="阅读进度"></span>
+      <a href="#overview">01 项目概览</a>
+      <a href="#problems">02 业务问题与需求分析</a>
+      <a href="#solution">03 检测方案与核心流程</a>
+      <a href="#script">04 Python 脚本实现</a>
+      <a href="#automation">05 Hermes 与钉钉自动化链路</a>
+      <a href="#demo">06 交互演示台</a>
+      <a href="#evidence">07 验证证据</a>
+      <a href="#limitations">08 结果与复盘</a>
+    </div>
+  </nav>
+
+  <!-- ======================= 01 项目概览 ======================= -->
+  <section id="overview" class="szc-section">
+    <div class="container">
+      <div class="szc-section-head">
+        <span class="szc-section-num">01</span>
+        <h2>项目概览</h2>
+      </div>
+      <p class="szc-p szc-p--lead">
+        SDK 包体变化是接入决策里的一个具体问题：接入一个 SDK，到底让 APK 大了多少，是否在可接受范围内。
+        传统做法需要分别构建「不含 SDK 的基线包」与「引入 SDK 后的包」，再手工对比体积，步骤多、结果散。
+        这个工具把整条检测过程封装成一条可重复的自动化链路，并用自然语言入口和钉钉通知降低使用门槛。
+      </p>
+      <p class="szc-p">
+        <strong>解决方式</strong>：Python 脚本负责环境检查、构建、体积读取与增量计算，保持可独立运行；
+        Hermes 负责从自然语言需求中提取检测参数并调用本地脚本；钉钉负责把检测结果推送到协作场景。
+      </p>
+      <h3 class="szc-h3">我的角色（真实参与）</h3>
+      <ul class="szc-list">
+        <li>开发 <strong>Python 检测脚本</strong>：环境检查、构建命令执行、APK 体积读取与增量计算、结果输出。</li>
+        <li>接入 <strong>Hermes 参数提取与本地脚本调用链路</strong>：让自然语言描述能发起一次检测。</li>
+        <li>集成 <strong>钉钉消息通知</strong>：检测任务完成后把结果同步到钉钉。</li>
+      </ul>
+      <p class="szc-note szc-note--dim">
+        真实性标注：工具由我参与开发并在小组内实际使用；页面只陈述已实现的能力，不展示未确认的
+        构建日志、包体数值、执行次数或效率提升比例；演示台为前端模拟，不代表真实运行记录。
+      </p>
+    </div>
+  </section>
+
+  <!-- ======================= 02 业务问题与需求分析 ======================= -->
+  <section id="problems" class="szc-section szc-section--alt">
+    <div class="container">
+      <div class="szc-section-head">
+        <span class="szc-section-num">02</span>
+        <h2>业务问题与需求分析</h2>
+      </div>
+      <p class="szc-p szc-p--lead">
+        一次包体检测任务原本涉及<strong>环境检查、基线 APK 构建、接入 SDK 后构建、体积差计算和结果通知</strong>
+        等多个步骤。工具要做的，是把重复的检测过程封装起来，降低直接操作终端与手动整理结果的需求。
+      </p>
+
+      <div class="szc-problem-grid">
+        <article class="szc-problem">
+          <span class="szc-problem-num">01</span>
+          <h4>检测要在接入前后各构建一次 APK，步骤多、顺序固定，容易漏做或做乱。</h4>
+          <p class="szc-problem-need"><strong>对应需求：</strong>把构建与对比组织成一条固定、可复用的脚本流程。</p>
+          <span class="szc-problem-tag szc-problem-tag--real">真实背景</span>
+        </article>
+        <article class="szc-problem">
+          <span class="szc-problem-num">02</span>
+          <h4>构建依赖 JAVA_HOME、ANDROID_HOME 等环境，环境不对会直接失败，且原因不直观。</h4>
+          <p class="szc-problem-need"><strong>对应需求：</strong>脚本启动时先检查必要构建环境，缺失时明确提示。</p>
+          <span class="szc-problem-tag szc-problem-tag--real">真实背景</span>
+        </article>
+        <article class="szc-problem">
+          <span class="szc-problem-num">03</span>
+          <h4>APK 体积要靠手工记录、再计算差值，容易漏记、算错或混用版本。</h4>
+          <p class="szc-problem-need"><strong>对应需求：</strong>由脚本读取体积并计算增量，结果口径一致。</p>
+          <span class="szc-problem-tag szc-problem-tag--real">真实背景</span>
+        </article>
+        <article class="szc-problem">
+          <span class="szc-problem-num">04</span>
+          <h4>检测结果要同步给其他成员，靠口头转述或复制粘贴，链路长、易失真。</h4>
+          <p class="szc-problem-need"><strong>对应需求：</strong>打通钉钉通知，结果直接进入协作场景。</p>
+          <span class="szc-problem-tag szc-problem-tag--real">真实背景</span>
+        </article>
+        <article class="szc-problem">
+          <span class="szc-problem-num">05</span>
+          <h4>不熟悉脚本参数的成员难以直接发起检测，能力容易被少数人掌握。</h4>
+          <p class="szc-problem-need"><strong>对应需求：</strong>用自然语言入口（Hermes）描述需求，降低使用门槛。</p>
+          <span class="szc-problem-tag szc-problem-tag--real">真实背景</span>
+        </article>
+      </div>
+      <p class="szc-note szc-note--dim">
+        以上问题与需求作为作品集产品分析展示，未声称量化影响（如节省的时间、使用人数或业务收益）。
+      </p>
+    </div>
+  </section>
+
+  <!-- ======================= 03 检测方案与核心流程 ======================= -->
+  <section id="solution" class="szc-section">
+    <div class="container">
+      <div class="szc-section-head">
+        <span class="szc-section-num">03</span>
+        <h2>检测方案与核心流程</h2>
+      </div>
+      <p class="szc-p szc-p--lead">
+        检测思路是「对照」：先构建不含 SDK 的基线 APK，再构建引入 SDK 后的 APK，两者体积之差即为 SDK 带来的包体增量。
+        整体流程如下：
+      </p>
+
+      <div class="szc-wf-flow">
+        <span class="szc-wf-step">环境检查与参数准备</span>
+        <span class="szc-wf-arrow">→</span>
+        <span class="szc-wf-step">构建不含 SDK 的基线 APK</span>
+        <span class="szc-wf-arrow">→</span>
+        <span class="szc-wf-step">构建引入 SDK 后的 APK</span>
+        <span class="szc-wf-arrow">→</span>
+        <span class="szc-wf-step">读取 APK 体积</span>
+        <span class="szc-wf-arrow">→</span>
+        <span class="szc-wf-step">计算体积差</span>
+        <span class="szc-wf-arrow">→</span>
+        <span class="szc-wf-step">输出检测结果</span>
+      </div>
+
+      <div class="szc-formula">
+        <span class="szc-formula-label">增量</span>
+        <code>= 接入 SDK 后的 APK 体积 − 基线 APK 体积</code>
+      </div>
+      <p class="szc-p szc-p--note">
+        说明：该差值表示<strong>当前构建条件下的 APK 体积差</strong>，不等同于 SDK 文件本身的大小。
+      </p>
+
+      <h3 class="szc-h3">环境要求与构建配置（真实脚本能力）</h3>
+      <div class="szc-arch-flow">
+        <div class="szc-arch-step">
+          <span class="szc-arch-num">ENV</span>
+          <strong>环境检查</strong>
+          <p>检查 JAVA_HOME、ANDROID_HOME 等必要构建环境；环境缺失时先明确提示，避免构建失败原因不直观。</p>
+        </div>
+        <div class="szc-arch-step">
+          <span class="szc-arch-num">BUILD</span>
+          <strong>构建执行</strong>
+          <p>必要时创建沙箱，使用实际脚本配置的 Gradle / Android Gradle Plugin 版本完成构建。</p>
+        </div>
+        <div class="szc-arch-step">
+          <span class="szc-arch-num">OUT</span>
+          <strong>结果处理</strong>
+          <p>读取构建产物 APK 的体积，计算增量，输出结构化检测结果供 Hermes 与钉钉消费。</p>
+        </div>
+      </div>
+      <p class="szc-note szc-note--dim">
+        以上为脚本真实能力的概括说明；具体源码与配置见 04 章节。未确认的构建参数与配置不在本页补充。
+      </p>
+    </div>
+  </section>
+
+  <!-- ======================= 04 Python 脚本实现 ======================= -->
+  <section id="script" class="szc-section szc-section--alt">
+    <div class="container">
+      <div class="szc-section-head">
+        <span class="szc-section-num">04</span>
+        <h2>Python 脚本实现</h2>
+      </div>
+      <p class="szc-p szc-p--lead">
+        脚本按「环境检查 → 构建 → 读取体积 → 计算增量 → 输出结果」组织，保证每次检测的口径一致，并保持可独立运行。
+        以下为脚本的能力结构与关键实现点说明。
+      </p>
+
+      <div class="szc-arch-flow">
+        <div class="szc-arch-step">
+          <span class="szc-arch-num">01</span>
+          <strong>环境检查</strong>
+          <p>校验 JAVA_HOME、ANDROID_HOME 等环境变量，缺失时输出明确的错误信息并终止执行。</p>
+        </div>
+        <div class="szc-arch-step">
+          <span class="szc-arch-num">02</span>
+          <strong>构建命令执行</strong>
+          <p>按脚本配置的 Gradle / Android Gradle Plugin 版本，调用构建命令生成基线 APK 与接入后 APK。</p>
+        </div>
+        <div class="szc-arch-step">
+          <span class="szc-arch-num">03</span>
+          <strong>APK 体积读取</strong>
+          <p>定位构建产物中的 APK 文件，读取文件体积作为包体大小。</p>
+        </div>
+        <div class="szc-arch-step">
+          <span class="szc-arch-num">04</span>
+          <strong>增量计算与输出</strong>
+          <p>增量 = 接入后体积 − 基线体积；按固定格式输出结果，便于 Hermes 与钉钉消费。</p>
+        </div>
+      </div>
+
+      <h3 class="szc-h3">待补充材料</h3>
+      <div class="szc-evidence-grid">
+        <div class="szc-evidence-card szc-evidence-card--pending">
+          <span class="szc-evidence-tag">待补充</span>
+          <strong>真实 Python 源码片段</strong>
+          <p>环境检查、构建调用与体积计算的真实关键代码（脱敏后展示）。</p>
+        </div>
+        <div class="szc-evidence-card szc-evidence-card--pending">
+          <span class="szc-evidence-tag">待补充</span>
+          <strong>真实运行输出</strong>
+          <p>脚本实际执行时的终端输出记录（脱敏）。</p>
+        </div>
+      </div>
+      <p class="szc-note szc-note--dim">
+        说明：当前页面没有可用的源码与运行截图，以上为脚本能力结构说明，不是代码原文；不伪造代码、日志与检测数值。
+      </p>
+    </div>
+  </section>
+
+  <!-- ======================= 05 Hermes 与钉钉自动化链路 ======================= -->
+  <section id="automation" class="szc-section">
+    <div class="container">
+      <div class="szc-section-head">
+        <span class="szc-section-num">05</span>
+        <h2>Hermes 与钉钉自动化链路</h2>
+      </div>
+      <p class="szc-p szc-p--lead">
+        检测脚本之上，是一条「自然语言 → 参数 → 执行 → 通知」的自动化链路：Hermes 负责理解需求，
+        脚本负责执行，钉钉负责把结果送到协作场景。
+      </p>
+
+      <div class="szc-arch-flow szc-arch-flow--chain">
+        <div class="szc-arch-step">
+          <span class="szc-arch-num">01</span>
+          <strong>自然语言需求</strong>
+          <p>成员用一句话描述检测需求，如「检测 XX SDK 接入后的包体增量」。</p>
+        </div>
+        <span class="szc-arch-arrow">→</span>
+        <div class="szc-arch-step">
+          <span class="szc-arch-num">02</span>
+          <strong>Hermes 参数提取</strong>
+          <p>Hermes 从需求中提取 SDK 名称、接入版本、基线分支等检测参数。</p>
+        </div>
+        <span class="szc-arch-arrow">→</span>
+        <div class="szc-arch-step">
+          <span class="szc-arch-num">03</span>
+          <strong>本地 Python 脚本调用</strong>
+          <p>Hermes 调用本地检测脚本，把解析后的参数传入并执行。</p>
+        </div>
+        <span class="szc-arch-arrow">→</span>
+        <div class="szc-arch-step">
+          <span class="szc-arch-num">04</span>
+          <strong>Android APK 构建与体积差计算</strong>
+          <p>脚本完成环境检查、两次构建、体积读取与增量计算。</p>
+        </div>
+        <span class="szc-arch-arrow">→</span>
+        <div class="szc-arch-step">
+          <span class="szc-arch-num">05</span>
+          <strong>钉钉结果通知</strong>
+          <p>任务结果发送到钉钉群，通知相关成员查看。</p>
+        </div>
+      </div>
+
+      <p class="szc-p">
+        <strong>各层职责：</strong>Hermes 只负责入口与参数传递，不承担构建计算；脚本保持可独立运行，
+        对话入口不可用时检测能力依然可用，也便于单独排查是参数问题还是脚本问题。
+      </p>
+
+      <h3 class="szc-h3">待补充材料</h3>
+      <div class="szc-evidence-grid">
+        <div class="szc-evidence-card szc-evidence-card--pending">
+          <span class="szc-evidence-tag">待补充</span>
+          <strong>Hermes 执行记录</strong>
+          <p>自然语言需求与参数提取结果的真实执行记录（脱敏）。</p>
+        </div>
+        <div class="szc-evidence-card szc-evidence-card--pending">
+          <span class="szc-evidence-tag">待补充</span>
+          <strong>钉钉通知截图</strong>
+          <p>检测结果在钉钉中的真实消息截图（脱敏）。</p>
+        </div>
+      </div>
+      <p class="szc-note szc-note--dim">
+        链路结构来自实际接入；真实执行记录与截图待补充，未提供前不在页面展示。
+      </p>
+    </div>
+  </section>
+
+  <!-- ======================= 06 交互演示台 ======================= -->
+  <section id="demo" class="szc-section szc-section--alt">
+    <div class="container">
+      <div class="szc-section-head">
+        <span class="szc-section-num">06</span>
+        <h2>交互演示台</h2>
+      </div>
+      <p class="szc-p szc-p--lead">
+        一个轻量的步骤演示器，辅助理解整条任务链路：从自然语言输入出发，依次经过
+        Hermes 参数提取、脚本调用、环境检查、两次构建、体积差计算与钉钉通知。
+        点击「下一步」逐步查看状态流转，可随时重置。
+      </p>
+
+      <div class="szc-demo" aria-label="包体增量检测流程演示台">
+        <div class="szc-demo-input-row">
+          <label class="szc-demo-field" for="szc-demo-input">
+            <span>任务输入（示例）</span>
+            <textarea id="szc-demo-input" rows="2" readonly></textarea>
+          </label>
+          <div class="szc-demo-actions">
+            <button type="button" id="szc-demo-next" class="btn btn--solid">下一步</button>
+            <button type="button" id="szc-demo-reset" class="btn btn--outline">重置</button>
+          </div>
+        </div>
+        <div class="szc-demo-status" id="szc-demo-status" data-tone="normal"></div>
+        <ol class="szc-demo-steps" id="szc-demo-steps"></ol>
+      </div>
+
+      <div class="szc-demo-rules">
+        <h4>演示规则</h4>
+        <ul>
+          <li>演示台用于展示任务步骤与状态流转，帮助理解工具链路。</li>
+          <li>模拟流程：不执行真实构建，不调用真实 Hermes 服务，不展示伪造的 APK 体积或编译日志。</li>
+          <li>步骤顺序与真实脚本链路一致，但每步均为预设的示例说明。</li>
+        </ul>
+      </div>
+      <p class="szc-note szc-prototype-note">
+        作品集交互演示 · 模拟流程，不执行真实构建，不调用真实 Hermes 服务。
+      </p>
+    </div>
+  </section>
+
+  <!-- ======================= 07 验证证据 ======================= -->
+  <section id="evidence" class="szc-section">
+    <div class="container">
+      <div class="szc-section-head">
+        <span class="szc-section-num">07</span>
+        <h2>验证证据</h2>
+      </div>
+      <p class="szc-p szc-p--lead">
+        以下为本项目「已实现、可用文字说明」的真实能力，以及需要补充的真实验证材料。
+      </p>
+
+      <h3 class="szc-h3">已完成（真实，文字说明）</h3>
+      <ul class="szc-list">
+        <li>Python APK 包体增量检测工具已开发，支持环境检查、基线构建、接入后构建、体积差计算与结果输出。</li>
+        <li>检测脚本已接入 Hermes，可通过自然语言描述发起检测。</li>
+        <li>Hermes 与钉钉的消息链路已打通，检测任务结果可通知到钉钉。</li>
+        <li>工具已在小组内实际使用。</li>
+      </ul>
+
+      <h3 class="szc-h3">待补充真实验证材料</h3>
+      <div class="szc-evidence-grid">
+        <div class="szc-evidence-card szc-evidence-card--pending">
+          <span class="szc-evidence-tag">待补充</span>
+          <strong>真实脚本输出 / 检测报告</strong>
+          <p>脚本运行输出与检测报告的真实记录（脱敏）。</p>
+        </div>
+        <div class="szc-evidence-card szc-evidence-card--pending">
+          <span class="szc-evidence-tag">待补充</span>
+          <strong>Hermes 调用记录</strong>
+          <p>自然语言需求与参数提取的真实执行记录（脱敏）。</p>
+        </div>
+        <div class="szc-evidence-card szc-evidence-card--pending">
+          <span class="szc-evidence-tag">待补充</span>
+          <strong>钉钉消息截图</strong>
+          <p>检测结果通知的真实钉钉截图（脱敏）。</p>
+        </div>
+      </div>
+      <p class="szc-note szc-note--dim">
+        未确认的构建日志、包体数值与截图一律不在页面展示，避免把说明包装成可复现的生产记录。
+      </p>
+    </div>
+  </section>
+
+  <!-- ======================= 08 结果与复盘 ======================= -->
+  <section id="limitations" class="szc-section szc-section--alt">
+    <div class="container">
+      <div class="szc-section-head">
+        <span class="szc-section-num">08</span>
+        <h2>结果与复盘</h2>
+      </div>
+
+      <h3 class="szc-h3">已实现能力（真实）</h3>
+      <ul class="szc-list">
+        <li>Python APK 包体增量检测：环境检查、两次构建、体积读取与增量计算。</li>
+        <li>Hermes 参数提取与本地脚本调用：自然语言描述即可发起检测。</li>
+        <li>钉钉任务结果通知：检测结果进入协作场景。</li>
+        <li>小组内实际使用。</li>
+      </ul>
+
+      <h3 class="szc-h3">当前局限</h3>
+      <ul class="szc-list">
+        <li>当前面向 Android APK，尚未覆盖 iOS 等其他产物。</li>
+        <li>检测依赖本地构建环境，环境差异可能影响构建与对比结果。</li>
+        <li>自然语言参数提取的效果依赖需求描述的清晰程度。</li>
+        <li>钉钉通知依赖已有的机器人与群配置，换环境需要重新接入。</li>
+      </ul>
+
+      <h3 class="szc-h3">后续优化设想（未实现）</h3>
+      <p class="szc-p">
+        以下为尚未在原项目中实现的改进方向，仅作为产品思考展示，不声称已经具备：
+      </p>
+      <ul class="szc-list">
+        <li>支持 iOS 与多产物对比，统一不同平台的包体检测口径。</li>
+        <li>将体积变化按模块或依赖归因，而不只给出总体差值。</li>
+        <li>记录历史检测结果，支持版本之间的趋势对比。</li>
+        <li>接入 CI 流程，在构建阶段自动执行检测并通知结果。</li>
+      </ul>
+      <p class="szc-note szc-note--dim">
+        工具未实现自动重试与多 Agent 编排，页面也不将其描述为已实现能力。
+      </p>
+    </div>
+  </section>
+
+  <!-- ======================= 项目切换 ======================= -->
+  <nav class="szc-project-switch" aria-label="切换项目">
+    <div class="container szc-project-switch-inner">
+      <span class="szc-project-switch-label">继续查看</span>
+      <a href="/work/mcp-sdk-agent">← 项目 B · MCP SDK 自动化集成助手</a>
+      <a href="/work/sdk-ai-support">项目 A · SDK 开发者智能问答与知识库系统 →</a>
+    </div>
+  </nav>
+</BaseLayout>
+
+<script>
+  import { initSizeDemo } from '../../scripts/sdk-size-app';
+  initSizeDemo();
+</script>
+<script>
+  // 模块导航 + 阅读进度线（进度线与导航标签精确对齐）：
+  // - 点击导航：精确滚动到对应区块开头（区块顶部对齐吸顶导航下缘）
+  // - 进度线右缘以「导航标签」为刻度：
+  //     进度 0%   = 01 标签起点
+  //     进度 x%   = 当前标签起点 + 当前区块内的阅读进度
+  //     100%      = 读到最后一个区块底部（进度线铺满导航栏）
+  const toc = document.querySelector('.szc-hero-anchors');
+  const tocInner = document.querySelector('.szc-toc-inner');
+  const progressEl = document.getElementById('szc-progress');
+  const headerEl = document.querySelector('.site-header') || { offsetHeight: 0 };
+  if (toc && tocInner && progressEl) {
+    const links = Array.from(toc.querySelectorAll('a'));
+    const sections = links.map((l) => document.getElementById(l.getAttribute('href').slice(1)));
+
+    // 吸顶导航总高度（site-header + 模块导航栏）
+    const tocHeight = () => (headerEl.offsetHeight || 0) + toc.offsetHeight;
+
+    // 跳转到指定区块：区块顶部对齐吸顶导航下缘
+    const jumpTo = (sec) => {
+      if (!sec) return;
+      const top = sec.getBoundingClientRect().top + window.scrollY - tocHeight();
+      window.scrollTo({ top: Math.max(top, 0), behavior: 'smooth' });
+      history.replaceState(null, '', '#' + sec.id);
+    };
+
+    links.forEach((link, i) => {
+      link.addEventListener('click', (e) => {
+        e.preventDefault();
+        jumpTo(sections[i]);
+      });
+    });
+
+    const update = () => {
+      const doc = document.documentElement;
+      const scrollTop = doc.scrollTop || document.body.scrollTop;
+      const viewportH = doc.clientHeight;
+      const offset = tocHeight();
+      const lastIndex = sections.length - 1;
+      if (!sections[0] || !sections[lastIndex]) return;
+
+      // 各区块在文档中的绝对位置（每次实时测量，避免布局 / 字体加载造成失准）
+      const pos = sections.map((s) => (s ? s.getBoundingClientRect().top + window.scrollY : 0));
+      const h = sections.map((s) => (s ? s.getBoundingClientRect().height : 0));
+
+      // 当前阅读区块：以「内容阅读头」（视口顶 + 导航高）命中最靠前的区块
+      const activeTop = scrollTop + offset;
+      let activeIndex = -1;
+      for (let i = 0; i <= lastIndex; i++) {
+        if (pos[i] <= activeTop) activeIndex = i;
+      }
+
+      // 已读到最后一区块底部时强制 100%
+      if (scrollTop >= pos[lastIndex] + h[lastIndex] - viewportH) {
+        activeIndex = lastIndex;
+      }
+      links.forEach((l, i) => l.classList.toggle('is-active', i === activeIndex));
+
+      // 进度线宽度：右缘 = 当前标签起点 + 当前标签宽度 × 区块内阅读分数
+      const barRect = tocInner.getBoundingClientRect();
+      if (activeIndex < 0) {
+        progressEl.style.width = '0px';
+        return;
+      }
+
+      let frac = 1;
+      const start = pos[activeIndex] - offset;
+      const end = pos[activeIndex] + h[activeIndex] - viewportH;
+      if (end > start) {
+        frac = (scrollTop - start) / (end - start);
+        frac = Math.min(1, Math.max(0, frac));
+      }
+      const cur = links[activeIndex].getBoundingClientRect();
+      let fill = (cur.left - barRect.left) + frac * cur.width;
+      if (activeIndex === lastIndex && frac >= 1) fill = barRect.width;
+      progressEl.style.width = fill + 'px';
+    };
+
+    update();
+    window.addEventListener('scroll', update, { passive: true });
+    window.addEventListener('resize', update);
+    window.addEventListener('load', update);
+    if (document.fonts && document.fonts.ready) {
+      document.fonts.ready.then(update);
+    }
+  }
+</script>
+
+<style is:global>
+  /* ==================== 阅读进度线（位于模块导航栏底部） ==================== */
+  .szc-progress {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    height: 2px;
+    width: 0;
+    background: var(--accent);
+    pointer-events: none;
+  }
+
+  /* ==================== 页头 ==================== */
+  .szc-hero {
+    padding: 72px 0 40px;
+    border-bottom: 1px solid var(--line);
+  }
+  .szc-title {
+    font-size: clamp(28px, 4vw, 44px);
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    line-height: 1.15;
+    margin: 4px 0 8px;
+  }
+  .szc-subtitle {
+    font-size: 15px;
+    color: var(--text-3);
+    margin-bottom: 18px;
+  }
+  .szc-hero-tags { margin-bottom: 16px; }
+  .szc-hero-desc {
+    font-size: 16px;
+    color: var(--text-2);
+    max-width: 720px;
+  }
+  .szc-status-note {
+    margin-top: 18px;
+    max-width: 720px;
+    padding: 12px 16px;
+    border: 1px solid var(--line);
+    border-left: 3px solid var(--accent);
+    background: var(--accent-soft);
+    font-size: 14px;
+    color: var(--text-2);
+  }
+  .szc-hero-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px 28px;
+    margin: 18px 0 14px;
+  }
+  .szc-hero-meta-item {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  .szc-hero-meta-key {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.06em;
+    color: var(--text-4);
+  }
+  .szc-hero-meta-val {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text);
+  }
+
+  /* ==================== 模块导航栏（吸顶，含阅读进度线） ==================== */
+  .szc-hero-anchors {
+    position: sticky;
+    top: var(--nav-h);
+    margin-top: -1px;
+    z-index: 90;
+    background: rgba(255, 255, 255, 0.92);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--line);
+  }
+  .szc-toc-inner {
+    position: relative;
+    display: flex;
+    gap: 4px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    scrollbar-width: thin;
+  }
+  .szc-hero-anchors a {
+    flex: 0 0 auto;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-3);
+    background: none;
+    border: none;
+    border-radius: 0;
+    padding: 4px 12px;
+    transition: color 0.18s;
+  }
+  .szc-hero-anchors a:hover { color: var(--accent); }
+  .szc-hero-anchors a:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+  .szc-hero-anchors a.is-active {
+    color: var(--accent);
+    font-weight: 600;
+  }
+
+  /* ==================== 通用章节 ==================== */
+  .szc-section {
+    padding: 72px 0;
+    scroll-margin-top: calc(var(--nav-h) + 52px);
+    border-bottom: 1px solid var(--line);
+  }
+  .szc-section--alt { background: #fafafa; }
+  .szc-section-head {
+    display: flex;
+    align-items: baseline;
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+  .szc-section-num {
+    font-family: var(--font-mono);
+    font-size: 22px;
+    font-weight: 300;
+    color: var(--accent);
+    min-width: 40px;
+  }
+  .szc-section-head h2 {
+    font-size: 24px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+  }
+  .szc-h3 {
+    font-size: 16px;
+    font-weight: 700;
+    margin: 28px 0 10px;
+  }
+  .szc-p {
+    color: var(--text-2);
+    max-width: 760px;
+  }
+  .szc-p--lead { font-size: 15.5px; }
+  .szc-p--note {
+    font-size: 14px;
+    color: var(--text-3);
+    margin-top: 10px;
+  }
+  .szc-p strong { color: var(--text); }
+  .szc-list {
+    margin: 6px 0 0;
+    padding-left: 20px;
+    color: var(--text-2);
+    max-width: 760px;
+  }
+  .szc-list li { margin: 6px 0; }
+  .szc-list strong { color: var(--text); }
+  .szc-note {
+    margin-top: 14px;
+    padding: 12px 16px;
+    border: 1px solid var(--line);
+    background: #fff;
+    font-size: 13.5px;
+    color: var(--text-3);
+    max-width: 760px;
+  }
+  .szc-note--dim {
+    border-left: 3px solid var(--line-strong);
+    background: #fafafa;
+  }
+
+  /* ==================== 问题分析 ==================== */
+  .szc-problem-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+    margin-top: 20px;
+  }
+  .szc-problem {
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    background: #fff;
+    padding: 18px 20px 16px;
+  }
+  .szc-problem-num {
+    font-family: var(--font-mono);
+    font-size: 13px;
+    font-weight: 300;
+    color: var(--accent);
+    letter-spacing: 0.04em;
+  }
+  .szc-problem h4 {
+    font-size: 14.5px;
+    font-weight: 600;
+    line-height: 1.6;
+    margin: 8px 0 10px;
+    color: var(--text);
+  }
+  .szc-problem-need {
+    font-size: 13px;
+    color: var(--text-2);
+    line-height: 1.7;
+    margin-bottom: 12px;
+  }
+  .szc-problem-need strong {
+    color: var(--accent);
+    font-weight: 600;
+  }
+  .szc-problem-tag {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 600;
+    border-radius: 999px;
+    padding: 2px 10px;
+  }
+  .szc-problem-tag--real { color: #166534; background: #f0fdf4; border: 1px solid #bbf7d0; }
+
+  /* ==================== 流程步骤（核心流程 / 自动化链路） ==================== */
+  .szc-wf-flow {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    margin: 16px 0 6px;
+  }
+  .szc-wf-step {
+    flex: 0 0 auto;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text);
+    background: #fff;
+    border: 1px solid var(--line-strong);
+    border-radius: 999px;
+    padding: 6px 14px;
+  }
+  .szc-wf-arrow {
+    color: var(--text-4);
+    font-size: 14px;
+  }
+
+  /* ==================== 公式 ==================== */
+  .szc-formula {
+    margin: 18px 0 6px;
+    max-width: 760px;
+    padding: 18px 24px;
+    border: 1px solid var(--line);
+    border-left: 4px solid var(--accent);
+    background: #fff;
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .szc-formula-label {
+    font-family: var(--font-mono);
+    font-size: 13px;
+    color: var(--text-4);
+    letter-spacing: 0.06em;
+  }
+  .szc-formula code {
+    font-family: var(--font-mono);
+    font-size: 17px;
+    font-weight: 600;
+    color: var(--text);
+    white-space: nowrap;
+  }
+
+  /* ==================== 能力 / 链路步骤卡片 ==================== */
+  .szc-arch-flow {
+    display: flex;
+    align-items: stretch;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin: 16px 0 14px;
+  }
+  .szc-arch-flow--chain { align-items: center; }
+  .szc-arch-step {
+    flex: 1 1 180px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    border: 1px solid var(--line);
+    border-top: 3px solid var(--accent);
+    border-radius: 10px;
+    background: #fff;
+    padding: 16px 18px;
+  }
+  .szc-arch-flow--chain .szc-arch-step { flex: 1 1 160px; }
+  .szc-arch-num {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    font-weight: 300;
+    color: var(--accent);
+    letter-spacing: 0.04em;
+  }
+  .szc-arch-step strong {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--text);
+  }
+  .szc-arch-step p {
+    font-size: 12.5px;
+    color: var(--text-3);
+    line-height: 1.6;
+    margin: 0;
+  }
+  .szc-arch-arrow {
+    align-self: center;
+    font-size: 16px;
+    color: var(--accent);
+    padding: 0 2px;
+  }
+
+  /* ==================== 待补充材料卡片 ==================== */
+  .szc-evidence-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+    gap: 16px;
+    margin-top: 14px;
+  }
+  .szc-evidence-card {
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    background: #fff;
+    padding: 16px 18px;
+  }
+  .szc-evidence-card--pending {
+    border-style: dashed;
+    border-color: var(--line-strong);
+  }
+  .szc-evidence-tag {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 600;
+    border-radius: 999px;
+    padding: 2px 10px;
+    color: #92400e;
+    background: #fffbeb;
+    border: 1px solid #fde68a;
+    margin-bottom: 10px;
+  }
+  .szc-evidence-card strong {
+    display: block;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 6px;
+  }
+  .szc-evidence-card p {
+    font-size: 12.5px;
+    color: var(--text-3);
+    line-height: 1.6;
+    margin: 0;
+  }
+
+  /* ==================== 交互演示台 ==================== */
+  .szc-demo {
+    margin-top: 18px;
+    max-width: 900px;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    background: #fff;
+    padding: 20px;
+  }
+  .szc-demo-input-row {
+    display: flex;
+    gap: 16px;
+    align-items: flex-end;
+    flex-wrap: wrap;
+  }
+  .szc-demo-field {
+    flex: 1 1 320px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .szc-demo-field > span {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-3);
+  }
+  .szc-demo-field textarea {
+    width: 100%;
+    box-sizing: border-box;
+    font-family: var(--font-mono);
+    font-size: 13px;
+    line-height: 1.6;
+    color: var(--text-2);
+    background: #fafafa;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 10px 12px;
+    resize: none;
+  }
+  .szc-demo-actions {
+    display: flex;
+    gap: 10px;
+    padding-bottom: 2px;
+  }
+  .szc-demo-status {
+    margin-top: 14px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-2);
+    padding: 10px 14px;
+    border-radius: 8px;
+    background: #fafafa;
+    border: 1px solid var(--line);
+  }
+  .szc-demo-status[data-tone='run'] {
+    color: var(--accent);
+    background: var(--accent-soft);
+    border-color: var(--accent);
+  }
+  .szc-demo-status[data-tone='ok'] {
+    color: #166534;
+    background: #f0fdf4;
+    border-color: #bbf7d0;
+  }
+  .szc-demo-steps {
+    list-style: none;
+    margin: 16px 0 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .szc-step {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    background: #fff;
+    padding: 12px 16px;
+    transition: border-color 0.18s, background 0.18s;
+  }
+  .szc-step--current {
+    border-color: var(--accent);
+    background: var(--accent-soft);
+  }
+  .szc-step--done {
+    background: #f8fafc;
+  }
+  .szc-step-num {
+    flex: 0 0 auto;
+    font-family: var(--font-mono);
+    font-size: 13px;
+    font-weight: 300;
+    color: var(--text-4);
+    width: 26px;
+  }
+  .szc-step--current .szc-step-num,
+  .szc-step--done .szc-step-num { color: var(--accent); }
+  .szc-step-main {
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  .szc-step-label {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text);
+  }
+  .szc-step-desc {
+    font-size: 12.5px;
+    color: var(--text-3);
+    line-height: 1.6;
+  }
+  .szc-step-status {
+    flex: 0 0 auto;
+    font-size: 12px;
+    font-weight: 600;
+    border-radius: 999px;
+    padding: 3px 10px;
+    color: var(--text-4);
+    background: #f3f4f6;
+  }
+  .szc-step--current .szc-step-status {
+    color: var(--accent);
+    background: #fff;
+    border: 1px solid var(--accent);
+  }
+  .szc-step--done .szc-step-status {
+    color: #166534;
+    background: #f0fdf4;
+    border: 1px solid #bbf7d0;
+  }
+
+  /* ==================== 演示规则 / 原型提示 ==================== */
+  .szc-demo-rules {
+    margin-top: 16px;
+    border: 1px solid var(--line);
+    border-left: 3px solid var(--accent);
+    border-radius: 8px;
+    background: var(--accent-soft);
+    padding: 14px 18px 6px;
+    max-width: 900px;
+  }
+  .szc-demo-rules h4 {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 8px;
+  }
+  .szc-demo-rules ul {
+    margin: 0;
+    padding-left: 18px;
+    font-size: 13px;
+    color: var(--text-2);
+  }
+  .szc-demo-rules li { margin: 6px 0; }
+  .szc-prototype-note {
+    margin-top: 16px;
+    border: 1px solid var(--accent);
+    border-left: 4px solid var(--accent);
+    background: var(--accent-soft);
+    color: var(--text-2);
+    font-weight: 600;
+  }
+
+  /* ==================== 项目切换 ==================== */
+  .szc-project-switch {
+    border-top: 1px solid var(--line);
+    background: #fff;
+  }
+  .szc-project-switch-inner {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    flex-wrap: wrap;
+    padding-top: 32px;
+    padding-bottom: 32px;
+  }
+  .szc-project-switch-label {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    color: var(--text-4);
+  }
+  .szc-project-switch a {
+    font-size: 14px;
+    font-weight: 600;
+  }
+
+  /* ==================== 响应式 ==================== */
+  @media (max-width: 900px) {
+    .szc-problem-grid {
+      grid-template-columns: 1fr;
+    }
+    .szc-arch-flow--chain {
+      flex-direction: column;
+      align-items: stretch;
+    }
+    .szc-arch-flow--chain .szc-arch-arrow {
+      align-self: flex-start;
+      transform: rotate(90deg);
+      padding: 4px 0 4px 18px;
+    }
+    .szc-demo-input-row {
+      flex-direction: column;
+      align-items: stretch;
+    }
+    .szc-demo-actions {
+      padding-bottom: 0;
+    }
+    .szc-formula code {
+      white-space: normal;
+      word-break: break-all;
+    }
+  }
+  @media (max-width: 600px) {
+    .szc-hero {
+      padding: 48px 0 32px;
+    }
+    .szc-section {
+      padding: 48px 0;
+    }
+    .szc-step {
+      align-items: flex-start;
+      flex-wrap: wrap;
+    }
+    .szc-step-status {
+      margin-left: 38px;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .szc-hero-anchors a { transition: none; }
+  }
+</style>
