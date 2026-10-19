@@ -1,0 +1,340 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+---
+
+<BaseLayout
+  title="包体增量检测 · 交互演示台 | 前端模拟"
+  description="基于 Hermes 的 SDK 包体增量检测工具交互演示台：自然语言输入、Hermes 参数提取、构建对比与钉钉通知链路步骤演示（前端模拟）"
+  current="work"
+>
+  <!-- ======================= 页头 ======================= -->
+  <section class="szc-hero">
+    <div class="container">
+      <p class="kicker">Interactive Demo · Frontend Simulation</p>
+      <h1 class="szc-title">包体增量检测 · 交互演示台</h1>
+      <p class="szc-subtitle">基于 Hermes 的 SDK 包体增量检测工具 · 任务链路步骤演示</p>
+      <div class="szc-hero-tags">
+        <span class="tag">作品集交互演示</span>
+        <span class="tag">前端模拟 · 不执行真实构建</span>
+      </div>
+      <p class="szc-hero-desc">
+        本页用可交互步骤演示器展示整条任务链路：从自然语言输入出发，依次经过
+        Hermes 参数提取、脚本调用、环境检查、两次构建、体积差计算与钉钉通知。
+        点击「开始演示」自动播放整条流程，每步停留约 1.5 秒，可随时重置。
+        查看检测方案与真实成果请回到
+        <a href="/work/sdk-size-checker">完整案例页 →</a>
+      </p>
+      <div class="szc-status-note">
+        作品集交互演示 · 模拟流程：不执行真实构建，不调用真实 Hermes 服务，不展示伪造的 APK 体积或编译日志。
+      </div>
+    </div>
+  </section>
+
+  <!-- ======================= 演示台 ======================= -->
+  <section class="szc-demo-page">
+    <div class="container">
+      <h2 class="szc-demo-title">演示台（前端模拟）</h2>
+      <p class="szc-p szc-p--lead">
+        从自然语言输入出发，依次经过 Hermes 参数提取、脚本调用、环境检查、两次构建、
+        体积差计算与钉钉通知。点击「开始演示」自动播放整条流程，每步停留约 1.5 秒，可随时重置。
+      </p>
+
+      <div class="szc-demo" aria-label="包体增量检测流程演示台">
+        <div class="szc-demo-input-row">
+          <label class="szc-demo-field" for="szc-demo-input">
+            <span>任务输入（示例）</span>
+            <textarea id="szc-demo-input" rows="2" readonly></textarea>
+          </label>
+          <div class="szc-demo-actions">
+            <button type="button" id="szc-demo-next" class="btn btn--solid">下一步</button>
+            <button type="button" id="szc-demo-reset" class="btn btn--outline">重置</button>
+          </div>
+        </div>
+        <div class="szc-demo-status" id="szc-demo-status" data-tone="normal"></div>
+        <ol class="szc-demo-steps" id="szc-demo-steps"></ol>
+      </div>
+
+      <div class="szc-demo-rules">
+        <h4>演示规则</h4>
+        <ul>
+          <li>演示台用于展示任务步骤与状态流转，帮助理解工具链路。</li>
+          <li>模拟流程：不执行真实构建，不调用真实 Hermes 服务，不展示伪造的 APK 体积或编译日志。</li>
+          <li>步骤顺序与真实脚本链路一致，但每步均为预设的示例说明。</li>
+        </ul>
+      </div>
+      <p class="szc-note szc-prototype-note">
+        作品集交互演示 · 模拟流程，不执行真实构建，不调用真实 Hermes 服务。
+      </p>
+
+      <p class="szc-demo-back">
+        <a class="btn btn--outline" href="/work/sdk-size-checker#demo">← 返回完整案例页</a>
+      </p>
+    </div>
+  </section>
+</BaseLayout>
+
+<script>
+  import { initSizeDemo } from '../../scripts/sdk-size-app';
+  initSizeDemo();
+</script>
+
+<style is:global>
+  /* ==================== 页头 ==================== */
+  .szc-hero {
+    padding: 72px 0 40px;
+    border-bottom: 1px solid var(--line);
+  }
+  .szc-title {
+    font-size: clamp(28px, 4vw, 44px);
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    line-height: 1.15;
+    margin: 4px 0 8px;
+  }
+  .szc-subtitle {
+    font-size: 15px;
+    color: var(--text-3);
+    margin-bottom: 18px;
+  }
+  .szc-hero-tags { margin-bottom: 16px; }
+  .szc-hero-desc {
+    font-size: 16px;
+    color: var(--text-2);
+    max-width: 720px;
+  }
+  .szc-hero-desc a {
+    color: var(--accent);
+    font-weight: 600;
+  }
+  .szc-status-note {
+    margin-top: 18px;
+    max-width: 720px;
+    padding: 12px 16px;
+    border: 1px solid var(--line);
+    border-left: 3px solid var(--accent);
+    background: var(--accent-soft);
+    font-size: 14px;
+    color: var(--text-2);
+  }
+
+  /* ==================== 演示台页 ==================== */
+  .szc-demo-page {
+    padding: 56px 0 72px;
+  }
+  .szc-demo-title {
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    margin: 0 0 8px;
+  }
+  .szc-p--lead {
+    font-size: 16px;
+    color: var(--text-2);
+    max-width: 760px;
+    margin: 0 0 4px;
+  }
+
+  .szc-demo {
+    margin-top: 18px;
+    max-width: 900px;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    background: #fff;
+    padding: 20px;
+  }
+  .szc-demo-input-row {
+    display: flex;
+    gap: 16px;
+    align-items: flex-end;
+    flex-wrap: wrap;
+  }
+  .szc-demo-field {
+    flex: 1 1 320px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .szc-demo-field > span {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-3);
+  }
+  .szc-demo-field textarea {
+    width: 100%;
+    box-sizing: border-box;
+    font-family: var(--font-mono);
+    font-size: 13px;
+    line-height: 1.6;
+    color: var(--text-2);
+    background: #fafafa;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 10px 12px;
+    resize: none;
+  }
+  .szc-demo-actions {
+    display: flex;
+    gap: 10px;
+    padding-bottom: 2px;
+  }
+  .szc-demo-status {
+    margin-top: 14px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-2);
+    padding: 10px 14px;
+    border-radius: 8px;
+    background: #fafafa;
+    border: 1px solid var(--line);
+  }
+  .szc-demo-status[data-tone='run'] {
+    color: var(--accent);
+    background: var(--accent-soft);
+    border-color: var(--accent);
+  }
+  .szc-demo-status[data-tone='ok'] {
+    color: #166534;
+    background: #f0fdf4;
+    border-color: #bbf7d0;
+  }
+  .szc-demo-steps {
+    list-style: none;
+    margin: 16px 0 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .szc-step {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    background: #fff;
+    padding: 12px 16px;
+    transition: border-color 0.18s, background 0.18s;
+  }
+  .szc-step--current {
+    border-color: var(--accent);
+    background: var(--accent-soft);
+  }
+  .szc-step--done {
+    background: #f8fafc;
+  }
+  .szc-step-num {
+    flex: 0 0 auto;
+    font-family: var(--font-mono);
+    font-size: 13px;
+    font-weight: 300;
+    color: var(--text-4);
+    width: 26px;
+  }
+  .szc-step--current .szc-step-num,
+  .szc-step--done .szc-step-num { color: var(--accent); }
+  .szc-step-main {
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  .szc-step-label {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text);
+  }
+  .szc-step-desc {
+    font-size: 12.5px;
+    color: var(--text-3);
+    line-height: 1.6;
+  }
+  .szc-step-status {
+    flex: 0 0 auto;
+    font-size: 12px;
+    font-weight: 600;
+    border-radius: 999px;
+    padding: 3px 10px;
+    color: var(--text-4);
+    background: #f3f4f6;
+  }
+  .szc-step--current .szc-step-status {
+    color: var(--accent);
+    background: #fff;
+    border: 1px solid var(--accent);
+  }
+  .szc-step--done .szc-step-status {
+    color: #166534;
+    background: #f0fdf4;
+    border: 1px solid #bbf7d0;
+  }
+
+  /* ==================== 演示规则 / 原型提示 ==================== */
+  .szc-demo-rules {
+    margin-top: 16px;
+    border: 1px solid var(--line);
+    border-left: 3px solid var(--accent);
+    border-radius: 8px;
+    background: var(--accent-soft);
+    padding: 14px 18px 6px;
+    max-width: 900px;
+  }
+  .szc-demo-rules h4 {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 8px;
+  }
+  .szc-demo-rules ul {
+    margin: 0;
+    padding-left: 18px;
+    font-size: 13px;
+    color: var(--text-2);
+  }
+  .szc-demo-rules li { margin: 6px 0; }
+  .szc-note {
+    margin-top: 14px;
+    padding: 12px 16px;
+    border: 1px solid var(--line);
+    background: #fff;
+    font-size: 13.5px;
+    color: var(--text-3);
+    max-width: 760px;
+  }
+  .szc-prototype-note {
+    margin-top: 16px;
+    border: 1px solid var(--accent);
+    border-left: 4px solid var(--accent);
+    background: var(--accent-soft);
+    color: var(--text-2);
+    font-weight: 600;
+  }
+  .szc-demo-back {
+    margin-top: 28px;
+  }
+
+  /* ==================== 响应式 ==================== */
+  @media (max-width: 900px) {
+    .szc-demo-input-row {
+      flex-direction: column;
+      align-items: stretch;
+    }
+    .szc-demo-actions {
+      padding-bottom: 0;
+    }
+  }
+  @media (max-width: 600px) {
+    .szc-hero {
+      padding: 48px 0 32px;
+    }
+    .szc-demo-page {
+      padding: 40px 0 48px;
+    }
+    .szc-step {
+      align-items: flex-start;
+      flex-wrap: wrap;
+    }
+    .szc-step-status {
+      margin-left: 38px;
+    }
+  }
+</style>

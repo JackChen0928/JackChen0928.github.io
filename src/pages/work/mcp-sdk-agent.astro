@@ -37,6 +37,9 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
         Agent 理解需求、生成接入计划、等待用户确认，再由本地工具完成工程分析、代码注入与编译验证。
         本页重点展示问题分析、系统架构、核心工作流、交互原型与测试迭代方法。
       </p>
+      <p class="mcp-hero-entry">
+        <a class="btn btn--solid" href="/work/mcp-sdk-agent-demo">View Demo →</a>
+      </p>
       <div class="mcp-status-note">
         真实项目记录 + 作品集交互原型。交互原型为前端模拟：不调用真实 MCP 服务，不修改真实项目文件；
         页面不编造运行日志、编译结果、成功次数或业务指标。
@@ -262,36 +265,13 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
         </ul>
       </div>
 
-      <div class="mcp-workbench" aria-label="SDK 接入工作台原型">
-        <div class="mcp-workbench-status" id="mcp-status" data-tone="normal"></div>
-
-        <div class="mcp-steps" id="mcp-steps" aria-label="流程步骤"></div>
-
-        <div class="mcp-workbench-input">
-          <label class="mcp-field" for="mcp-input">
-            <span>接入需求描述</span>
-            <textarea
-              id="mcp-input"
-              rows="3"
-              placeholder="例如：帮我把 TopOn SDK 接入我的 Android 项目，需要初始化并展示开屏广告。"
-            ></textarea>
-          </label>
-          <div class="mcp-scenario-row">
-            <span class="mcp-scenario-label">预设场景（点击载入）</span>
-            <button type="button" class="mcp-scenario-btn" data-scenario="a">正常接入 · 全部通过</button>
-            <button type="button" class="mcp-scenario-btn" data-scenario="b">异常 · 缺少必要参数</button>
-            <button type="button" class="mcp-scenario-btn" data-scenario="c">异常 · 配置错误（编译失败）</button>
-          </div>
-          <div class="mcp-workbench-actions">
-            <button type="button" id="mcp-start" class="btn btn--solid">生成方案</button>
-            <button type="button" id="mcp-cancel" class="btn btn--outline">取消流程</button>
-          </div>
-        </div>
-
-        <div class="mcp-panel" id="mcp-panel" aria-live="polite">
-          <div class="mcp-empty">输入接入需求或选择一个预设场景，然后点击「生成方案」。</div>
-        </div>
-      </div>
+      <p class="mcp-p">
+        完整可操作的工作台原型已放在<strong>独立演示页</strong>，可直接体验需求输入、方案生成与确认、
+        变更预览、校验与编译验证，以及「缺少必要参数、配置错误导致编译失败」两类异常场景。
+      </p>
+      <p class="mcp-p">
+        <a class="btn btn--solid" href="/work/mcp-sdk-agent-demo">打开交互演示台 →</a>
+      </p>
 
       <p class="mcp-note mcp-prototype-note">
         作品集交互原型 · 模拟执行，不调用真实 MCP 服务，不修改真实项目文件。
@@ -463,10 +443,6 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 </BaseLayout>
 
 <script>
-  import { initMcpWorkbench } from '../../scripts/mcp-sdk-app';
-  initMcpWorkbench();
-</script>
-<script>
   // 模块导航 + 阅读进度线（进度线与导航标签精确对齐）：
   // - 点击导航：精确滚动到对应区块开头（区块顶部对齐吸顶导航下缘）
   // - 进度线右缘以「导航标签」为刻度：
@@ -587,6 +563,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
     margin-bottom: 18px;
   }
   .mcp-hero-tags { margin-bottom: 16px; }
+  .mcp-hero-entry { margin: 20px 0 0; }
   .mcp-hero-desc {
     font-size: 16px;
     color: var(--text-2);

@@ -4,24 +4,24 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 const strengths = [
   {
     num: '01',
-    title: '技术理解力',
-    desc: '能读懂 SDK 编译链路、报错日志与工程约束，用 Python 写过包体检测脚本，和研发沟通不需要「翻译」。',
-    evidence: '证据 · Python 自动化检测 SDK 包体大小',
+    title: '懂技术',
+    desc: '理解 SDK 编译与工程逻辑，能写 Python 工具，和研发沟通无门槛，方案不脱节。',
+    evidence: '对应项目：基于 Hermes 的 SDK 包体增量检测工具',
     href: '/work/sdk-size-checker',
   },
   {
     num: '02',
-    title: 'AI 应用设计',
-    desc: '把业务问题拆成可执行的 Agent 流程：版本路由、平台冲突澄清、RAG 知识边界、Prompt 约束与评测闭环。',
-    evidence: '证据 · SDK 开发者智能问答项目',
+    title: '会设计',
+    desc: '能把业务问题拆成 Agent 工作流，懂 RAG、Prompt、多版本分流的完整设计逻辑。',
+    evidence: '对应项目：SDK开发者AI智能客服与知识库系统',
     href: '/work/sdk-ai-support',
   },
   {
     num: '03',
-    title: '落地与验证',
-    desc: '不满足于「感觉好用」。参与 FAQ 600+→100+ 清洗，用历史问题构造测试用例，分析失败并迭代 Prompt。',
-    evidence: '证据 · FAQ 治理与评测迭代',
-    href: '/work/sdk-ai-support',
+    title: '重落地',
+    desc: '用测试用例验证效果，用数据驱动迭代，拒绝凭感觉做 AI 产品。',
+    evidence: '对应项目：FAQ 治理与评测迭代',
+    href: '/work/sdk-ai-support#solution',
   },
 ];
 
@@ -59,6 +59,8 @@ const projects: Project[] = [
     truth: '真实项目经历 · 另附作品集交互原型',
     tags: ['Dify', 'RAG', '知识库治理', 'Prompt 迭代'],
     href: '/work/sdk-ai-support',
+    demoHref: '/work/sdk-ai-support-demo',
+    demoLabel: 'View Demo',
   },
   {
     index: '02',
@@ -77,6 +79,8 @@ const projects: Project[] = [
     truth: '真实项目经历 · 交互原型建设中',
     tags: ['MCP', 'Agent', 'Prompt 设计', 'Android Demo'],
     href: '/work/mcp-sdk-agent',
+    demoHref: '/work/mcp-sdk-agent-demo',
+    demoLabel: 'View Demo',
   },
   {
     index: '03',
@@ -94,6 +98,8 @@ const projects: Project[] = [
     truth: '真实项目经历 · 交互原型建设中',
     tags: ['Python', 'Hermes', 'APK 体积差', '钉钉通知'],
     href: '/work/sdk-size-checker',
+    demoHref: '/work/sdk-size-demo',
+    demoLabel: 'View Demo',
   },
 ];
 
@@ -185,11 +191,11 @@ const methodAbilities = [
   <!-- Hero -->
   <section class="hero">
     <div class="container">
-      <p class="kicker">陈卓杰 · 2027 届校招</p>
+      <p class="kicker">陈卓杰 · 2027 届</p>
       <h1 class="hero-title">
-        把 AI 能力，<br />变成<span class="accent-line">可验证</span>的产品方案。
+        从 AI 能力，<br />到<span class="accent-line">可验证</span>的产品方案。
       </h1>
-      <p class="hero-role">AI 应用产品经理｜RAG · Agent · MCP · Developer Tools</p>
+      <p class="hero-role">AI 应用产品经理｜聚焦 RAG、Agent 与开发者工具落地</p>
       <p class="hero-sub">
         关注 AI 应用的真实落地：从用户问题、工作流设计，到工具集成、测试验证与持续迭代。
       </p>
@@ -208,8 +214,8 @@ const methodAbilities = [
   <!-- 核心优势 -->
   <section class="section" id="strengths">
     <div class="container">
-      <p class="kicker">Why Me</p>
-      <h2 class="h-lg">我的优势，不是纯产品背景</h2>
+      <p class="kicker">WHY ME</p>
+      <h2 class="h-lg">为什么选我？</h2>
       <div class="strengths">
         {
           strengths.map((s) => (

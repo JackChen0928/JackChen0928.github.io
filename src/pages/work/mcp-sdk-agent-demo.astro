@@ -1,0 +1,643 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+---
+
+<BaseLayout
+  title="SDK 接入工作台 · 交互演示 | 前端模拟"
+  description="基于 MCP 的 SDK 自动化集成助手交互演示台：需求输入、方案生成与确认、变更预览、校验与编译验证、结果摘要（前端模拟）"
+  current="work"
+>
+  <!-- ======================= 页头 ======================= -->
+  <section class="mcp-hero">
+    <div class="container">
+      <p class="kicker">Interactive Demo · Frontend Simulation</p>
+      <h1 class="mcp-title">SDK 接入工作台 · 交互演示</h1>
+      <p class="mcp-subtitle">基于 MCP 的 SDK 自动化集成助手 · 核心流程交互原型</p>
+      <div class="mcp-hero-tags">
+        <span class="tag">作品集交互演示</span>
+        <span class="tag">前端模拟 · 不调用真实 MCP 服务</span>
+      </div>
+      <p class="mcp-hero-desc">
+        本页用可操作的原型演示核心产品路径：<strong>需求输入 → 方案生成 → 方案确认 →
+        变更预览 → 校验与编译验证 → 结果摘要</strong>，并覆盖「缺少必要参数、配置错误导致编译失败」
+        两类异常案例。查看需求分析与解决方案请回到
+        <a href="/work/mcp-sdk-agent">完整案例页 →</a>
+      </p>
+      <div class="mcp-status-note">
+        作品集交互演示 · 模拟流程：不调用真实 MCP 服务，不修改真实项目文件，
+        不展示伪造的运行日志、编译结果或业务指标。
+      </div>
+    </div>
+  </section>
+
+  <!-- ======================= 演示台 ======================= -->
+  <section class="mcp-demo-page">
+    <div class="container">
+      <h2 class="mcp-demo-title">演示台（前端模拟）</h2>
+      <p class="mcp-p mcp-p--lead">
+        需求输入或载入预设场景后，点击「生成方案」开始流程；方案生成后必须先「确认」才会进入下一步，
+        任何时候可「取消」，流程结束可「重新开始」。
+      </p>
+
+      <div class="mcp-demo-rules" aria-label="交互规则说明">
+        <h4>交互规则（本地模拟）</h4>
+        <ul>
+          <li>需求输入或载入预设场景后，点击「生成方案」开始流程。</li>
+          <li>方案生成后必须先「确认」，才会进入下一步；任何时候可「取消」。</li>
+          <li>缺少必要参数（如 appId）时流程暂停，请求补充后再继续，不猜测默认值。</li>
+          <li>配置错误（如 minSdkVersion 过低）会在校验环节失败，并展示定位到环节的说明。</li>
+          <li>流程结束可「重新开始」。所有日志与编译输出均为前端模拟，标注「模拟」。</li>
+        </ul>
+      </div>
+
+      <div class="mcp-workbench" aria-label="SDK 接入工作台原型">
+        <div class="mcp-workbench-status" id="mcp-status" data-tone="normal"></div>
+
+        <div class="mcp-steps" id="mcp-steps" aria-label="流程步骤"></div>
+
+        <div class="mcp-workbench-input">
+          <label class="mcp-field" for="mcp-input">
+            <span>接入需求描述</span>
+            <textarea
+              id="mcp-input"
+              rows="3"
+              placeholder="例如：帮我把 TopOn SDK 接入我的 Android 项目，需要初始化并展示开屏广告。"
+            ></textarea>
+          </label>
+          <div class="mcp-scenario-row">
+            <span class="mcp-scenario-label">预设场景（点击载入）</span>
+            <button type="button" class="mcp-scenario-btn" data-scenario="a">正常接入 · 全部通过</button>
+            <button type="button" class="mcp-scenario-btn" data-scenario="b">异常 · 缺少必要参数</button>
+            <button type="button" class="mcp-scenario-btn" data-scenario="c">异常 · 配置错误（编译失败）</button>
+          </div>
+          <div class="mcp-workbench-actions">
+            <button type="button" id="mcp-start" class="btn btn--solid">生成方案</button>
+            <button type="button" id="mcp-cancel" class="btn btn--outline">取消流程</button>
+          </div>
+        </div>
+
+        <div class="mcp-panel" id="mcp-panel" aria-live="polite">
+          <div class="mcp-empty">输入接入需求或选择一个预设场景，然后点击「生成方案」。</div>
+        </div>
+      </div>
+
+      <p class="mcp-note mcp-prototype-note">
+        作品集交互原型 · 模拟执行，不调用真实 MCP 服务，不修改真实项目文件。
+        方案、变更预览、校验与编译日志均为预设的示例内容，不代表真实工程变更记录。
+      </p>
+
+      <p class="mcp-demo-back">
+        <a class="btn btn--outline" href="/work/mcp-sdk-agent#demo">← 返回完整案例页</a>
+      </p>
+    </div>
+  </section>
+</BaseLayout>
+
+<script>
+  import { initMcpWorkbench } from '../../scripts/mcp-sdk-app';
+  initMcpWorkbench();
+</script>
+
+<style is:global>
+  /* ==================== 页头 ==================== */
+  .mcp-hero {
+    padding: 72px 0 40px;
+    border-bottom: 1px solid var(--line);
+  }
+  .mcp-title {
+    font-size: clamp(28px, 4vw, 44px);
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    line-height: 1.15;
+    margin: 4px 0 8px;
+  }
+  .mcp-subtitle {
+    font-size: 15px;
+    color: var(--text-3);
+    margin-bottom: 18px;
+  }
+  .mcp-hero-tags { margin-bottom: 16px; }
+  .mcp-hero-desc {
+    font-size: 16px;
+    color: var(--text-2);
+    max-width: 760px;
+  }
+  .mcp-hero-desc a {
+    color: var(--accent);
+    font-weight: 600;
+  }
+  .mcp-status-note {
+    margin-top: 18px;
+    max-width: 760px;
+    padding: 12px 16px;
+    border: 1px solid var(--line);
+    border-left: 3px solid var(--accent);
+    background: var(--accent-soft);
+    font-size: 14px;
+    color: var(--text-2);
+  }
+
+  /* ==================== 演示台页 ==================== */
+  .mcp-demo-page {
+    padding: 56px 0 72px;
+  }
+  .mcp-demo-title {
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    margin: 0 0 8px;
+  }
+  .mcp-p--lead {
+    font-size: 16px;
+    color: var(--text-2);
+    max-width: 760px;
+    margin: 0 0 4px;
+  }
+  .mcp-p { margin-bottom: 14px; }
+
+  /* ==================== 交互规则说明 ==================== */
+  .mcp-demo-rules {
+    margin-top: 16px;
+    border: 1px solid var(--line);
+    border-left: 3px solid var(--accent);
+    border-radius: 8px;
+    background: var(--accent-soft);
+    padding: 14px 18px 6px;
+    max-width: 900px;
+  }
+  .mcp-demo-rules h4 {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 8px;
+  }
+  .mcp-demo-rules ul {
+    margin: 0;
+    padding-left: 18px;
+    font-size: 13px;
+    color: var(--text-2);
+  }
+  .mcp-demo-rules li { margin: 6px 0; }
+
+  .mcp-note {
+    margin-top: 14px;
+    padding: 12px 16px;
+    border: 1px solid var(--line);
+    background: #fff;
+    font-size: 13.5px;
+    color: var(--text-3);
+    max-width: 760px;
+  }
+  .mcp-prototype-note {
+    margin-top: 16px;
+    border: 1px solid var(--accent);
+    border-left: 4px solid var(--accent);
+    background: var(--accent-soft);
+    color: var(--text-2);
+    font-weight: 600;
+  }
+  .mcp-demo-back {
+    margin-top: 28px;
+  }
+
+  /* ==================== 工作台 ==================== */
+  .mcp-workbench {
+    margin-top: 20px;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    background: #fff;
+    overflow: hidden;
+  }
+  .mcp-workbench-status {
+    padding: 10px 16px;
+    font-size: 12.5px;
+    color: var(--text-3);
+    background: var(--accent-soft);
+    border-bottom: 1px solid var(--line);
+  }
+  .mcp-workbench-status[data-tone="warn"] {
+    color: #92400e;
+    background: #fffbeb;
+    border-color: #fcd34d;
+  }
+  .mcp-workbench-status[data-tone="error"] {
+    color: #b91c1c;
+    background: #fef2f2;
+    border-color: #fecaca;
+  }
+  .mcp-workbench-status[data-tone="ok"] {
+    color: #166534;
+    background: #f0fdf4;
+    border-color: #bbf7d0;
+  }
+
+  /* 步骤条 */
+  .mcp-steps {
+    display: flex;
+    gap: 2px;
+    padding: 10px 16px;
+    border-bottom: 1px solid var(--line);
+    background: #fafafa;
+    overflow-x: auto;
+    scrollbar-width: thin;
+  }
+  .mcp-step {
+    flex: 0 0 auto;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 10px;
+    font-size: 12px;
+    color: var(--text-4);
+    border-radius: 999px;
+  }
+  .mcp-step-num {
+    font-family: var(--font-mono);
+    font-size: 11px;
+  }
+  .mcp-step-label { white-space: nowrap; }
+  .mcp-step--done { color: var(--text-2); }
+  .mcp-step--done .mcp-step-num { color: #166534; }
+  .mcp-step--current {
+    color: var(--accent);
+    background: var(--accent-soft);
+    font-weight: 600;
+  }
+
+  /* 输入区 */
+  .mcp-workbench-input {
+    padding: 18px 20px;
+    border-bottom: 1px solid var(--line);
+  }
+  .mcp-field {
+    display: block;
+    margin-bottom: 14px;
+  }
+  .mcp-field > span {
+    display: block;
+    font-size: 12.5px;
+    color: var(--text-3);
+    margin-bottom: 6px;
+  }
+  .mcp-field textarea {
+    width: 100%;
+    padding: 10px 12px;
+    font-size: 14px;
+    font-family: var(--font-sans);
+    color: var(--text);
+    background: #fff;
+    border: 1px solid var(--line-strong);
+    border-radius: 6px;
+    resize: vertical;
+    min-height: 72px;
+    transition: border-color 0.18s, box-shadow 0.18s;
+  }
+  .mcp-field textarea:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+  }
+  .mcp-field textarea:disabled {
+    background: #fafafa;
+    color: var(--text-4);
+  }
+  .mcp-scenario-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 14px;
+  }
+  .mcp-scenario-label {
+    font-size: 12.5px;
+    color: var(--text-3);
+  }
+  .mcp-scenario-btn {
+    padding: 6px 12px;
+    font-size: 12.5px;
+    font-weight: 600;
+    color: var(--text-2);
+    background: #fff;
+    border: 1px solid var(--line-strong);
+    border-radius: 999px;
+    cursor: pointer;
+    transition: all 0.18s;
+  }
+  .mcp-scenario-btn:hover {
+    color: var(--accent);
+    border-color: var(--accent);
+    background: var(--accent-soft);
+  }
+  .mcp-scenario-btn:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+  .mcp-scenario-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+  .mcp-workbench-actions {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+  .mcp-workbench-actions .btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  /* 面板 */
+  .mcp-panel {
+    padding: 18px 20px;
+    min-height: 120px;
+  }
+  .mcp-empty {
+    padding: 32px 16px;
+    text-align: center;
+    font-size: 13.5px;
+    color: var(--text-4);
+    border: 1px dashed var(--line-strong);
+    border-radius: 8px;
+    background: #fafafa;
+    line-height: 1.8;
+  }
+
+  /* 卡片 */
+  .mcp-card {
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    background: #fff;
+    padding: 18px 20px;
+  }
+  .mcp-card--error {
+    border-color: #fecaca;
+    border-left: 3px solid #dc2626;
+    background: #fffdfd;
+  }
+  .mcp-card-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: 12px;
+  }
+  .mcp-card-head h4 {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--text);
+  }
+  .mcp-badge {
+    flex: 0 0 auto;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text-3);
+    background: #f3f4f6;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    padding: 2px 10px;
+  }
+  .mcp-badge--warn {
+    color: #92400e;
+    background: #fffbeb;
+    border-color: #fde68a;
+  }
+  .mcp-card-text {
+    font-size: 13.5px;
+    color: var(--text-2);
+    line-height: 1.7;
+    margin: 8px 0;
+  }
+  .mcp-card-actions {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 16px;
+  }
+  .mcp-card-hint {
+    margin-top: 12px;
+    font-size: 12px;
+    color: var(--text-4);
+  }
+
+  /* 方案列表 */
+  .mcp-plan-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .mcp-plan-item {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    padding: 12px 14px;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    background: #fafafa;
+  }
+  .mcp-plan-num {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    font-weight: 300;
+    color: var(--accent);
+    flex: 0 0 auto;
+    padding-top: 2px;
+  }
+  .mcp-plan-item strong {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text);
+  }
+  .mcp-plan-item p {
+    font-size: 13px;
+    color: var(--text-2);
+    line-height: 1.6;
+    margin: 4px 0 0;
+  }
+
+  /* 变更预览（diff） */
+  .mcp-diff {
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    margin: 10px 0;
+    overflow: hidden;
+  }
+  .mcp-diff-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 8px 12px;
+    background: #fafafa;
+    border-bottom: 1px solid var(--line);
+  }
+  .mcp-diff-file {
+    font-family: var(--font-mono);
+    font-size: 12.5px;
+    font-weight: 600;
+    color: var(--text);
+  }
+  .mcp-diff-action {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--accent);
+    background: var(--accent-soft);
+    border-radius: 999px;
+    padding: 1px 8px;
+  }
+  .mcp-diff-cols {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+  }
+  .mcp-diff-col {
+    padding: 10px 12px;
+    min-width: 0;
+  }
+  .mcp-diff-col + .mcp-diff-col {
+    border-left: 1px solid var(--line);
+  }
+  .mcp-diff-col--after { background: #f0fdf4; }
+  .mcp-diff-col-label {
+    font-size: 11px;
+    color: var(--text-4);
+    margin-bottom: 6px;
+    font-weight: 600;
+  }
+  .mcp-diff-col pre {
+    margin: 0;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    line-height: 1.6;
+    color: var(--text-2);
+    white-space: pre;
+    overflow-x: auto;
+  }
+
+  /* 校验列表 */
+  .mcp-validate-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .mcp-validate-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    padding: 8px 12px;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    background: #fafafa;
+  }
+  .mcp-validate-status {
+    flex: 0 0 auto;
+    font-size: 11px;
+    font-weight: 600;
+    border-radius: 999px;
+    padding: 2px 10px;
+  }
+  .mcp-validate-status[data-vstatus="pending"] {
+    color: var(--text-4);
+    background: #f3f4f6;
+    border: 1px solid var(--line);
+  }
+  .mcp-validate-status[data-vstatus="running"] {
+    color: var(--accent);
+    background: var(--accent-soft);
+    border: 1px solid var(--accent);
+  }
+  .mcp-validate-status[data-vstatus="pass"] {
+    color: #166534;
+    background: #f0fdf4;
+    border: 1px solid #bbf7d0;
+  }
+  .mcp-validate-status[data-vstatus="fail"] {
+    color: #b91c1c;
+    background: #fef2f2;
+    border: 1px solid #fecaca;
+  }
+  .mcp-validate-label {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text);
+  }
+  .mcp-validate-detail {
+    flex: 1 1 260px;
+    font-size: 12.5px;
+    color: var(--text-3);
+  }
+
+  /* 控制台 / 日志 */
+  .mcp-console {
+    margin-top: 12px;
+    background: #0b1220;
+    border-radius: 8px;
+    padding: 14px 16px;
+    font-family: var(--font-mono);
+    font-size: 12.5px;
+    line-height: 1.7;
+    color: #cbd5e1;
+    overflow-x: auto;
+  }
+  .mcp-console--build { margin-top: 12px; }
+  .mcp-log-line--pending { color: #64748b; }
+  .mcp-log-line--ok { color: #e2e8f0; }
+
+  /* 结果摘要 */
+  .mcp-summary-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-top: 8px;
+  }
+  .mcp-summary-col {
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 14px 16px;
+    background: #fafafa;
+  }
+  .mcp-summary-col h5 {
+    font-size: 12.5px;
+    font-weight: 700;
+    color: var(--text-3);
+    margin-bottom: 8px;
+  }
+  .mcp-summary-list {
+    margin: 0;
+    padding-left: 18px;
+    font-size: 13px;
+    line-height: 1.7;
+  }
+  .mcp-summary-list--ok li { color: #166534; }
+  .mcp-summary-list--fail li { color: #b91c1c; }
+  .mcp-summary-empty {
+    font-size: 13px;
+    color: var(--text-4);
+    margin: 0;
+  }
+
+  /* ==================== 响应式 ==================== */
+  @media (max-width: 900px) {
+    .mcp-summary-grid { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 600px) {
+    .mcp-hero {
+      padding: 48px 0 32px;
+    }
+    .mcp-demo-page {
+      padding: 40px 0 48px;
+    }
+    .mcp-diff-cols { grid-template-columns: 1fr; }
+    .mcp-diff-col + .mcp-diff-col {
+      border-left: 0;
+      border-top: 1px solid var(--line);
+    }
+    .mcp-summary-grid { grid-template-columns: 1fr; }
+    .mcp-workbench-actions {
+      flex-direction: column;
+      align-items: stretch;
+    }
+    .mcp-workbench-actions .btn { justify-content: center; }
+  }
+</style>

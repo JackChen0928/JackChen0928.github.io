@@ -4,7 +4,6 @@ import {
   SDK_VERSIONS,
   PLATFORMS,
   DOC_TYPES,
-  QUICK_QUESTIONS,
 } from '../../data/sdk-support-demo';
 
 const promptSnippet = `【回答依据与范围】
@@ -106,6 +105,9 @@ const problems: Array<{ issue: string; need: string; tag: string }> = [
         面向 SDK 开发者的智能技术支持系统，目标是帮助开发者自助解决 SDK 使用问题、减少重复技术咨询。
         本页重点展示产品分析与验证过程：问题拆解、知识库治理、需求分析与解决方案、问答交互原型与结果复盘。
       </p>
+      <p class="sdkai-hero-entry">
+        <a class="btn btn--solid" href="/work/sdk-ai-support-demo">View Demo →</a>
+      </p>
       <div class="sdkai-status-note">
         真实项目经历 + 作品集交互原型。交互原型为前端模拟，不调用真实大模型，不连接真实 Dify / RAGFlow；
         页面不编造准确率、召回率、用户满意度或人工成本下降比例等业务指标。
@@ -193,6 +195,22 @@ const problems: Array<{ issue: string; need: string; tag: string }> = [
         <span class="sdkai-section-num">03</span>
         <h2>需求分析与解决方案</h2>
       </div>
+      <figure
+        style="margin:0 0 20px;padding:12px;border:1px solid #e5e7eb;border-radius:12px;background:#fff;"
+      >
+        <img
+          src="/images/智能客服架构图.png"
+          alt="基于 SDK 版本的三分支分流架构"
+          loading="lazy"
+          style="display:block;width:100%;height:auto;border-radius:8px;"
+        />
+        <figcaption
+          style="margin-top:10px;font-size:14px;line-height:1.7;color:#6b7280;text-align:center;"
+        >
+          基于 SDK 版本的分流架构，通过独立知识库隔离 + Prompt 边界约束，
+          从机制上解决跨版本、跨平台的知识混淆问题。
+        </figcaption>
+      </figure>
       <p class="sdkai-p sdkai-p--lead">
         <strong>核心问题：</strong>问答质量取决于「检索到什么」和「如何约束回答」。
         方案分三层：<strong>治理知识</strong>（FAQ 清洗、文档关联）→
@@ -385,80 +403,17 @@ const problems: Array<{ issue: string; need: string; tag: string }> = [
         </ul>
       </div>
 
-      <div class="sdkai-demo">
-        <!-- 会话设置区 -->
-        <aside class="sdkai-side" aria-label="会话设置">
-          <div class="sdkai-side-block">
-            <h4>会话设置</h4>
-            <label class="sdkai-field">
-              <span>SDK 版本</span>
-              <select id="sdkai-version">
-                {
-                  SDK_VERSIONS.map((v) => (
-                    <option value={v} selected={v === 'TopOn'}>{v}</option>
-                  ))
-                }
-              </select>
-            </label>
-            <label class="sdkai-field">
-              <span>开发平台</span>
-              <select id="sdkai-platform">
-                {
-                  PLATFORMS.map((p) => (
-                    <option value={p} selected={p === 'Flutter'}>{p}</option>
-                  ))
-                }
-              </select>
-            </label>
-          </div>
-
-          <div class="sdkai-side-block">
-            <h4>常用问题</h4>
-            <div class="sdkai-quick">
-              {
-                QUICK_QUESTIONS.map((q) => (
-                  <button type="button" class="sdkai-quick-btn" data-quick={q}>{q}</button>
-                ))
-              }
-            </div>
-          </div>
-
-          <div class="sdkai-side-block">
-            <h4>会话操作</h4>
-            <div class="sdkai-actions">
-              <button type="button" id="sdkai-chat-new" class="btn btn--solid">新建会话</button>
-              <button type="button" id="sdkai-chat-clear" class="btn btn--outline">清空对话</button>
-            </div>
-          </div>
-        </aside>
-
-        <!-- 聊天主区 -->
-        <div class="sdkai-chat">
-          <div class="sdkai-chat-status">作品集交互原型 · 模拟工作流，不调用真实模型。</div>
-          <div class="sdkai-chat-messages" id="sdkai-chat-messages" role="log" aria-live="polite"></div>
-          <div class="sdkai-composer">
-            <textarea
-              id="sdkai-chat-query"
-              rows="2"
-              placeholder="输入你的技术问题"
-              aria-label="输入你的技术问题"
-            >TopOn Android 如何接入开屏广告？</textarea>
-            <div class="sdkai-composer-bar">
-              <span class="sdkai-composer-hint">Enter 发送 · Shift + Enter 换行</span>
-              <button type="button" id="sdkai-chat-send" class="btn btn--solid">发送问题</button>
-            </div>
-          </div>
-        </div>
-      </div>
-
+      <p class="sdkai-p">
+        完整可操作的问答原型已放在<strong>独立演示页</strong>，可直接体验版本 + 平台路由、
+        平台冲突澄清与回答 + 资料依据展示。
+      </p>
+      <p class="sdkai-p">
+        <a class="btn btn--solid" href="/work/sdk-ai-support-demo">打开交互演示台 →</a>
+      </p>
       <p class="sdkai-note sdkai-prototype-note">
         作品集交互原型 · 模拟工作流，不调用真实模型，不连接真实 Dify / RAGFlow。
         预设回答为演示内容，不代表真实检索结果；未伪造真实文档引用。
       </p>
-      <div class="sdkai-note sdkai-note--dim">
-        提示：切换 SDK 版本后，检索与来源将只匹配对应版本的演示资料；若问题中提到的平台与所选平台冲突，
-        客服会先请求确认，而不会直接输出接入教程。
-      </div>
       <div class="sdkai-note">
         <strong>本原型的验证目的：</strong>检验「版本 + 平台路由、平台冲突澄清、回答 + 资料依据展示」三条关键交互是否清晰顺畅，
         以及异常场景下用户能否得到明确反馈。回答质量是否稳定，由下一节
@@ -581,10 +536,6 @@ const problems: Array<{ issue: string; need: string; tag: string }> = [
   </nav>
 </BaseLayout>
 
-<script>
-  import { initSdkChat } from '../../scripts/sdk-support-app';
-  initSdkChat();
-</script>
 <script>
   import { initSdkKnowledge } from '../../scripts/sdk-support-panels';
   initSdkKnowledge();
@@ -710,6 +661,7 @@ const problems: Array<{ issue: string; need: string; tag: string }> = [
     margin-bottom: 18px;
   }
   .sdkai-hero-tags { margin-bottom: 16px; }
+  .sdkai-hero-entry { margin: 20px 0 0; }
   .sdkai-hero-desc {
     font-size: 16px;
     color: var(--text-2);

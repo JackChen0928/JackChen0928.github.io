@@ -41,6 +41,9 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
         检测脚本接入 Hermes，由 Hermes 从自然语言需求中提取参数并调用本地脚本，最后通过钉钉通知任务结果。
         本页重点展示检测方案、脚本实现、自动化链路与验证证据。
       </p>
+      <p class="szc-hero-entry">
+        <a class="btn btn--solid" href="/work/sdk-size-demo">View Demo →</a>
+      </p>
       <div class="szc-status-note">
         真实项目记录 + 作品集交互演示。演示台为前端模拟：不执行真实构建，不调用真实 Hermes 服务；
         页面不编造 APK 体积、编译日志、执行次数或效率提升比例。
@@ -55,7 +58,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
       <a href="#background">01 项目背景与目标</a>
       <a href="#role">02 我的角色与核心工作</a>
       <a href="#solution">03 需求分析与解决方案</a>
-      <a href="#demo">04 真实成果与交互演示台</a>
+      <a href="#demo">04 真实成果展示</a>
       <a href="#review">05 项目结果与复盘</a>
     </div>
   </nav>
@@ -220,36 +223,15 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
         以上为已实现能力的文字说明；不展示未确认的构建日志、包体数值或截图。
       </p>
 
-      <h3 class="szc-h3">交互演示台（前端模拟）</h3>
+      <h3 class="szc-h3">交互演示台（前端模拟，独立页面）</h3>
       <p class="szc-p szc-p--lead">
         一个轻量的步骤演示器，辅助理解整条任务链路：从自然语言输入出发，依次经过
         Hermes 参数提取、脚本调用、环境检查、两次构建、体积差计算与钉钉通知。
-        点击「下一步」逐步查看状态流转，可随时重置。
+        点击「开始演示」自动播放整条流程，每步停留约 1.5 秒，可随时重置。
       </p>
-
-      <div class="szc-demo" aria-label="包体增量检测流程演示台">
-        <div class="szc-demo-input-row">
-          <label class="szc-demo-field" for="szc-demo-input">
-            <span>任务输入（示例）</span>
-            <textarea id="szc-demo-input" rows="2" readonly></textarea>
-          </label>
-          <div class="szc-demo-actions">
-            <button type="button" id="szc-demo-next" class="btn btn--solid">下一步</button>
-            <button type="button" id="szc-demo-reset" class="btn btn--outline">重置</button>
-          </div>
-        </div>
-        <div class="szc-demo-status" id="szc-demo-status" data-tone="normal"></div>
-        <ol class="szc-demo-steps" id="szc-demo-steps"></ol>
-      </div>
-
-      <div class="szc-demo-rules">
-        <h4>演示规则</h4>
-        <ul>
-          <li>演示台用于展示任务步骤与状态流转，帮助理解工具链路。</li>
-          <li>模拟流程：不执行真实构建，不调用真实 Hermes 服务，不展示伪造的 APK 体积或编译日志。</li>
-          <li>步骤顺序与真实脚本链路一致，但每步均为预设的示例说明。</li>
-        </ul>
-      </div>
+      <p class="szc-p">
+        <a class="btn btn--solid" href="/work/sdk-size-demo">打开交互演示台 →</a>
+      </p>
       <p class="szc-note szc-prototype-note">
         作品集交互演示 · 模拟流程，不执行真实构建，不调用真实 Hermes 服务。
       </p>
@@ -333,10 +315,6 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
   </nav>
 </BaseLayout>
 
-<script>
-  import { initSizeDemo } from '../../scripts/sdk-size-app';
-  initSizeDemo();
-</script>
 <script>
   // 模块导航 + 阅读进度线（进度线与导航标签精确对齐）：
   // - 点击导航：精确滚动到对应区块开头（区块顶部对齐吸顶导航下缘）
@@ -459,6 +437,9 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
     font-size: 16px;
     color: var(--text-2);
     max-width: 720px;
+  }
+  .szc-hero-entry {
+    margin: 20px 0 0;
   }
   .szc-status-note {
     margin-top: 18px;
