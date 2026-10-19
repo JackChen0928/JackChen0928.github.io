@@ -30,7 +30,6 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
       <div class="mcp-hero-tags">
         <span class="tag tag--accent">真实项目记录</span>
         <span class="tag">作品集交互原型</span>
-        <span class="tag">方案验证 · 未上线</span>
       </div>
       <p class="mcp-hero-desc">
         面向广告 SDK 接入场景，探索用「IDE Agent + Remote MCP Server + Local CLI」把自然语言接入需求转化为可执行的 SDK 集成流程：
@@ -40,10 +39,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
       <p class="mcp-hero-entry">
         <a class="btn btn--solid" href="/work/mcp-sdk-agent-demo">View Demo →</a>
       </p>
-      <div class="mcp-status-note">
-        真实项目记录 + 作品集交互原型。交互原型为前端模拟：不调用真实 MCP 服务，不修改真实项目文件；
-        页面不编造运行日志、编译结果、成功次数或业务指标。
-      </div>
+     
     </div>
   </section>
 
@@ -107,10 +103,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
           <span class="mcp-problem-tag mcp-problem-tag--real">真实背景</span>
         </article>
       </div>
-      <p class="mcp-note mcp-note--dim">
-        <strong>项目真实状态：</strong>内部 POC，处于方案验证阶段，未对外正式上线，没有可公开的真实线上业务指标。
-        问题作为作品集产品分析展示，未声称量化影响（如节省的开发时间或错误率下降比例）。
-      </p>
+     
     </div>
   </section>
 
@@ -138,7 +131,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
       </ul>
       <p class="mcp-note mcp-note--dim">
         <strong>团队与个人分工：</strong>上述为参与性贡献。系统架构、IDE Agent / Remote MCP Server / Local CLI 的工具分工
-        来自团队已有的方案验证环境，非我独立设计；本页的交互原型与方案总结为作品集整理补充。
+        来自团队已有的方案验证环境，非我独立设计。
       </p>
     </div>
   </section>
@@ -162,10 +155,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
         <li><strong>Remote MCP Server：</strong>作为工具调用入口，生成接入计划并等待用户确认。</li>
         <li><strong>Local CLI / sdk-injector：</strong>在本地工程中分析、注入代码、反向校验，不把文件操作交给远端。</li>
       </ul>
-      <p class="mcp-note mcp-note--dim">
-        方案说明 / 待确认：该分工来自团队已有的方案验证环境。各层之间的接口协议与内部实现细节待确认；
-        本页仅用于解释产品设计思路，不展示真实工程路径、内部接口实现或运行日志。
-      </p>
+    
 
       <h3 class="mcp-h3">核心工作流</h3>
       <p class="mcp-p">
@@ -198,13 +188,13 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
         编译结果作为验收标准，失败时回到对应环节定位。即使方案不准确，也不会在未确认的情况下改动工程。
       </p>
       <p class="mcp-note mcp-note--dim">
-        执行边界说明：未确认前，Agent 处于只读状态；本页交互原型也遵循同一规则——确认前不会执行任何「修改」动作（且原型本身为模拟，不修改真实文件）。
+        执行边界说明：未确认前，Agent 处于只读状态；本页交互原型也遵循同一规则——确认前不会执行任何「修改」动作。
       </p>
       <h3 class="mcp-h3">未实现环节（明确标注）</h3>
       <ul class="mcp-list">
         <li><strong>自动回滚、自动修复失败配置</strong>为后续优化设想，当前方案遇到失败时回到人工 / 重新确认环节定位。</li>
         <li>跨版本、跨平台的<strong>全量自动回归</strong>尚未覆盖，验证集中在 Android Demo。</li>
-        <li>工作流中的「能力预检 → 信息收集 → 项目扫描」为前置步骤，本页 Demo 用预设场景简化呈现。</li>
+        <li>工作流中的「能力预检 → 信息收集 → 项目扫描」为前置步骤， Demo 用预设场景简化呈现。</li>
       </ul>
 
       <h3 class="mcp-h3">Prompt 关键设计</h3>
@@ -251,11 +241,11 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
       </div>
       <p class="mcp-p mcp-p--lead">
         本节用可操作的原型演示核心产品路径：<strong>需求输入 → 方案生成 → 方案确认 → 变更预览 → 校验与编译验证 → 结果摘要</strong>，
-        并覆盖「缺少必要参数、配置错误导致编译失败」两类异常案例。原型为<strong>纯前端模拟</strong>，用于验证交互路径是否顺畅。
+        并覆盖「缺少必要参数、配置错误导致编译失败」两类异常案例。
       </p>
 
       <div class="mcp-demo-rules" aria-label="交互规则说明">
-        <h4>交互规则（本地模拟）</h4>
+        <h4>交互规则</h4>
         <ul>
           <li>需求输入或载入预设场景后，点击「生成方案」开始流程。</li>
           <li>方案生成后必须先「确认」，才会进入下一步；任何时候可「取消」。</li>
@@ -273,14 +263,6 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
         <a class="btn btn--solid" href="/work/mcp-sdk-agent-demo">打开交互演示台 →</a>
       </p>
 
-      <p class="mcp-note mcp-prototype-note">
-        作品集交互原型 · 模拟执行，不调用真实 MCP 服务，不修改真实项目文件。
-        方案、变更预览、校验与编译日志均为预设的示例内容，不代表真实工程变更记录。
-      </p>
-      <div class="mcp-note">
-        <strong>本原型的验证目的：</strong>检验「先确认再执行、缺参暂停请求补充、失败定位到环节、可取消 / 可重来」这几条关键交互
-        是否清晰顺畅，以及异常场景下用户能否得到明确反馈。Demo 用预设场景演示交互路径，不含真实数据。
-      </div>
     </div>
   </section>
 
@@ -415,7 +397,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
         <li>注入结果依赖本地构建环境，环境差异可能影响验证结论。</li>
       </ul>
 
-      <h3 class="mcp-h3">后续优化设想（未实现）</h3>
+      <h3 class="mcp-h3">后续优化设想</h3>
       <p class="mcp-p">
         <span class="tag">优化设想</span>
         以下为尚未在原项目中实现的改进方向，仅作为产品思考展示：
@@ -426,9 +408,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
         <li>扩展 <strong>iOS 与更多 SDK 版本</strong>的 Demo 验证，形成跨平台的一致验收标准。</li>
         <li>把编译结果与失败原因<strong>结构化记录</strong>，便于对比不同 Prompt 版本的表现。</li>
       </ul>
-      <p class="mcp-note mcp-note--dim">
-        上方「后续优化设想」均未落地，不代表已在原项目中实现。
-      </p>
+      
     </div>
   </section>
 

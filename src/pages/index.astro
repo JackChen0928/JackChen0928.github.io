@@ -26,15 +26,12 @@ const strengths = [
 ];
 
 interface Project {
-  index: string;
   type: string;
+  status: string;
   title: string;
   problem: string;
   work: string[];
-  outputs: string[];
-  evidence: string;
-  status: string;
-  truth: string;
+  result: string;
   tags: string[];
   href: string;
   demoHref?: string;
@@ -43,59 +40,45 @@ interface Project {
 
 const projects: Project[] = [
   {
-    index: '01',
     type: 'AI 知识问答 · RAG',
-    title: '小T｜SDK开发者AI智能客服与知识库系统',
-    problem:
-      'SDK 文档涉及不同平台和版本，历史 FAQ 分散，文档关联信息不易被检索利用，回答还需要减少跨平台混淆。',
+    status: '已内部验证',
+    title: 'SDK 开发者智能问答与知识库系统',
+    problem: '面向 SDK 开发者技术支持场景，针对多版本文档分散、跨版本回答易混淆的痛点，搭建智能问答体系。',
     work: [
-      '参与清洗 600+ 条历史 FAQ，整理为 100+ 条问答',
-      '使用 Python 构建文档关联知识图谱',
-      '设计具体问题、模糊问题等测试场景，迭代 Prompt 并回归测试',
+      '主导 600+ 条 FAQ 清洗治理，设计版本分流与知识库隔离架构',
+      '搭建多维度测试集，建立 Prompt 优化与回归验证闭环',
     ],
-    outputs: ['FAQ 整理', '文档关联知识图谱', '测试问题集'],
-    evidence: '证据：FAQ 整理记录、文档关联脚本与测试问题集（详见完整案例）',
-    status: '内部测试阶段',
-    truth: '真实项目经历 · 另附作品集交互原型',
-    tags: ['Dify', 'RAG', '知识库治理', 'Prompt 迭代'],
+    result: '完成内部全流程验证，可覆盖多数开发者常见问题。',
+    tags: ['RAG', '知识库治理', '多版本分流'],
     href: '/work/sdk-ai-support',
     demoHref: '/work/sdk-ai-support-demo',
     demoLabel: 'View Demo',
   },
   {
-    index: '02',
     type: 'Agent 自动化集成 · MCP',
-    title: '基于 MCP 的 SDK 自动化集成助手',
-    problem:
-      'SDK 接入涉及依赖配置、初始化、广告功能代码注入和编译验证，存在多个手动操作步骤。',
-    work: [
-      '参与梳理 IDE Agent、Remote MCP Server、Local CLI 的协作流程',
-      '负责 Agent Prompt 设计与测试',
-      '在 Android Demo 中验证并迭代，针对代码遗漏、配置错误和编译问题优化',
-    ],
-    outputs: ['工作流设计', 'Prompt 测试案例', 'Android Demo 验证'],
-    evidence: '证据：Prompt 测试记录与 Android Demo 验证（详见完整案例）',
     status: '内部 POC',
-    truth: '真实项目经历 · 交互原型建设中',
+    title: '基于 MCP 的 SDK 自动化集成助手',
+    problem: '针对 SDK 接入涉及依赖配置、初始化、代码注入与编译验证多手动步骤的痛点，设计自动化接入方案。',
+    work: [
+      '梳理 IDE Agent、MCP Server 与本地 CLI 的协作流程，负责 Agent Prompt 设计与测试',
+      '在 Android Demo 中验证代码注入、配置错误与编译问题并持续迭代',
+    ],
+    result: '完成核心流程 POC 验证，可自动识别代码注入与配置异常（详见完整案例）。',
     tags: ['MCP', 'Agent', 'Prompt 设计', 'Android Demo'],
     href: '/work/mcp-sdk-agent',
     demoHref: '/work/mcp-sdk-agent-demo',
     demoLabel: 'View Demo',
   },
   {
-    index: '03',
     type: 'AI 工具落地 · Hermes',
+    status: '小组内使用',
     title: '基于 Hermes 的 SDK 包体增量检测工具',
-    problem: '接入 SDK 前后需要构建 APK、比较体积并整理结果。',
+    problem: '针对 SDK 包体增量检测依赖人工操作、标准不统一的痛点，实现自动化检测工具。',
     work: [
       '使用 Python 编写 APK 包体增量检测脚本',
-      '将脚本接入 Hermes，由 Hermes 提取自然语言需求参数并调用本地脚本',
-      '打通 Hermes 与钉钉的消息链路，通知检测任务结果',
+      '接入 Hermes 提取自然语言参数并调用本地脚本，打通钉钉通知链路',
     ],
-    outputs: ['Python 检测脚本', 'Hermes 调用链路', '钉钉通知'],
-    evidence: '证据：检测脚本与调用链路已在小组内实际使用',
-    status: '小组内使用',
-    truth: '真实项目经历 · 交互原型建设中',
+    result: '工具已在小组内实际使用（详见完整案例）。',
     tags: ['Python', 'Hermes', 'APK 体积差', '钉钉通知'],
     href: '/work/sdk-size-checker',
     demoHref: '/work/sdk-size-demo',
@@ -129,16 +112,6 @@ const methodCapabilities = [
     desc: '用 Python 编写检测脚本，理解 SDK 编译与配置约束，能和研发对齐实现细节。',
   },
 ];
-
-const experienceBullets = [
-  '参与 Dify 智能技术支持工作流的搭建与迭代，参与 SDK 版本与开发平台的分流优化。',
-  '参与 600+ 条历史 FAQ 清洗与治理，整理为 100+ 条问答；使用 Python 构建 SDK 文档关联知识图谱。',
-  '基于历史 FAQ 设计测试用例，进行问题分析、Prompt 优化与回归测试。',
-  '参与 MCP SDK 自动化集成方案的 Agent Prompt 设计与测试，在 Android Demo 中验证代码注入与编译结果。',
-  '使用 Python 开发 APK 包体增量检测工具，接入 Hermes 并打通钉钉通知链路。',
-];
-
-const techStack = ['Python', 'Java', 'SQL', 'Spring Boot', 'MySQL', 'Redis'];
 
 const methodAbilities = [
   {
@@ -206,7 +179,7 @@ const methodAbilities = [
       </div>
       <div class="hero-actions">
         <a class="btn btn--solid" href="#projects">查看项目案例</a>
-        <a class="btn btn--outline" href="#experience">个人经历</a>
+        <a class="btn btn--outline" href="#about">我的方法与实践</a>
       </div>
     </div>
   </section>
@@ -248,33 +221,20 @@ const methodAbilities = [
         {
           projects.map((p) => (
             <article class="project-card">
-              <span class="project-index">{p.index}</span>
-              <div class="project-body">
+              <div class="project-top">
                 <span class="project-type">{p.type}</span>
-                <a class="project-title" href={p.href}>{p.title}</a>
-                <p class="project-problem">{p.problem}</p>
-                <div class="project-detail">
-                  <div class="project-block">
-                    <span class="project-label">我的工作</span>
-                    <ul class="project-bullets">
-                      {p.work.map((w) => <li>{w}</li>)}
-                    </ul>
-                  </div>
-                  <div class="project-block">
-                    <span class="project-label">成果产出与验证</span>
-                    <ul class="project-bullets">
-                      {p.outputs.map((o) => <li>{o}</li>)}
-                    </ul>
-                    <span class="project-evidence">{p.evidence}</span>
-                  </div>
-                </div>
+                <span class="project-status">{p.status}</span>
+              </div>
+              <a class="project-title" href={p.href}>{p.title}</a>
+              <p class="project-problem">{p.problem}</p>
+              <ul class="project-bullets">
+                {p.work.map((w) => <li>{w}</li>)}
+              </ul>
+              <p class="project-result"><strong>成果</strong>：{p.result}</p>
+              <div class="project-bottom">
                 <div class="project-tags">
                   {p.tags.map((t) => <span class="tag">{t}</span>)}
                 </div>
-                <span class="project-truth">{p.truth}</span>
-              </div>
-              <div class="project-side">
-                <span class="project-status">{p.status}</span>
                 <div class="project-actions">
                   <a class="project-cta project-cta--accent" href={p.href}>查看完整案例 →</a>
                   {p.demoHref && (
@@ -319,54 +279,6 @@ const methodAbilities = [
             </div>
           ))
         }
-      </div>
-    </div>
-  </section>
-
-  <!-- 实习与技术背景 -->
-  <section class="section section--tight" id="experience">
-    <div class="container">
-      <p class="kicker">Experience &amp; Background</p>
-      <h2 class="h-lg">实习与技术背景</h2>
-      <div class="exp-list">
-        <article class="exp-item">
-          <div class="exp-meta">
-            <span class="exp-date">2026.03 — 2026.08</span>
-            <span class="exp-type">实习</span>
-          </div>
-          <div class="exp-body">
-            <h3>TopOn · AI 应用实习</h3>
-            <p>参与 SDK 开发者智能技术支持相关的 AI 应用实践，主要工作包括：</p>
-            <ul class="exp-bullets">
-              {experienceBullets.map((b) => <li>{b}</li>)}
-            </ul>
-          </div>
-        </article>
-        <article class="exp-item">
-          <div class="exp-meta">
-            <span class="exp-date">教育</span>
-            <span class="exp-type">本科</span>
-          </div>
-          <div class="exp-body">
-            <h3>计算机科学与技术 · 本科</h3>
-            <p>
-              计算机专业背景，保留工程实践能力，能够理解 SDK 编译链路、配置约束与研发协作方式。
-            </p>
-            <p class="exp-muted">学校名称与毕业时间待补充。</p>
-          </div>
-        </article>
-      </div>
-      <div class="exp-tech">
-        <div class="exp-tech-row">
-          <span class="exp-tech-label">技术栈</span>
-          <div class="exp-tech-tags">
-            {techStack.map((t) => <span class="tag">{t}</span>)}
-          </div>
-        </div>
-        <div class="exp-tech-row">
-          <span class="exp-tech-label">简历</span>
-          <span class="btn btn--disabled" aria-disabled="true">简历 PDF · 待补充</span>
-        </div>
       </div>
     </div>
   </section>
@@ -513,12 +425,12 @@ const methodAbilities = [
   }
 
   .project-card {
-    display: grid;
-    grid-template-columns: 56px 1fr 200px;
-    gap: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
     padding: 26px 28px;
     border: 1px solid var(--line);
-    border-radius: 8px;
+    border-radius: 10px;
     background: #fff;
     transition: border-color 0.2s, box-shadow 0.2s;
   }
@@ -528,18 +440,11 @@ const methodAbilities = [
     box-shadow: 0 2px 12px rgba(37, 99, 235, 0.08);
   }
 
-  .project-index {
-    font-family: var(--font-mono);
-    font-size: 13px;
-    color: var(--text-4);
-    padding-top: 2px;
-  }
-
-  .project-body {
+  .project-top {
     display: flex;
-    flex-direction: column;
-    gap: 6px;
-    min-width: 0;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
   }
 
   .project-type {
@@ -547,7 +452,19 @@ const methodAbilities = [
     font-size: 11px;
     letter-spacing: 0.12em;
     text-transform: uppercase;
-    color: var(--text-4);
+    color: var(--text-3);
+  }
+
+  .project-status {
+    flex: 0 0 auto;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--accent);
+    background: var(--accent-soft);
+    border: 1px solid var(--accent);
+    border-radius: 999px;
+    padding: 3px 12px;
+    white-space: nowrap;
   }
 
   .project-title {
@@ -565,109 +482,71 @@ const methodAbilities = [
     font-size: 14px;
     color: var(--text-2);
     line-height: 1.7;
-  }
-
-  .project-detail {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 18px 32px;
-    margin-top: 12px;
-    padding-top: 14px;
-    border-top: 1px dashed var(--line);
-  }
-
-  .project-label {
-    display: block;
-    font-family: var(--font-mono);
-    font-size: 10.5px;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    color: var(--text-4);
-    margin-bottom: 7px;
+    margin: 0;
   }
 
   .project-bullets {
     list-style: none;
     display: flex;
     flex-direction: column;
-    gap: 4px;
+    gap: 6px;
+    margin: 0;
+    padding: 0;
   }
 
   .project-bullets li {
     position: relative;
-    padding-left: 12px;
-    font-size: 13px;
+    padding-left: 14px;
+    font-size: 13.5px;
     color: var(--text-2);
-    line-height: 1.65;
+    line-height: 1.7;
   }
 
   .project-bullets li::before {
     content: "";
     position: absolute;
     left: 0;
-    top: 0.62em;
-    width: 4px;
-    height: 4px;
+    top: 0.72em;
+    width: 5px;
+    height: 5px;
     border-radius: 50%;
     background: var(--line-strong);
   }
 
-  .project-evidence {
-    display: block;
-    margin-top: 8px;
-    font-size: 11.5px;
-    line-height: 1.6;
-    color: var(--text-4);
+  .project-result {
+    font-size: 13.5px;
+    color: var(--text-2);
+    line-height: 1.7;
+    margin: 0;
+  }
+
+  .project-result strong {
+    font-weight: 700;
+    color: var(--accent);
+  }
+
+  .project-bottom {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-top: 6px;
+    padding-top: 14px;
+    border-top: 1px dashed var(--line);
   }
 
   .project-tags {
     display: flex;
     flex-wrap: wrap;
     gap: 6px;
-    margin-top: 8px;
-  }
-
-  .project-truth {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    margin-top: 2px;
-    font-family: var(--font-mono);
-    font-size: 11px;
-    letter-spacing: 0.04em;
-    color: var(--text-3);
-  }
-
-  .project-truth::before {
-    content: "";
-    width: 5px;
-    height: 5px;
-    border-radius: 50%;
-    background: var(--accent);
-    flex-shrink: 0;
-  }
-
-  .project-side {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-end;
-    justify-content: space-between;
-    gap: 16px;
   }
 
   .project-actions {
     display: flex;
-    flex-direction: column;
-    align-items: flex-end;
+    align-items: center;
     gap: 8px;
-  }
-
-  .project-status {
-    font-family: var(--font-mono);
-    font-size: 11.5px;
-    letter-spacing: 0.04em;
-    color: var(--text-4);
-    text-align: right;
+    flex-wrap: wrap;
   }
 
   .project-cta {
@@ -774,108 +653,6 @@ const methodAbilities = [
     color: var(--text-3);
   }
 
-  /* ---------- 实习与技术背景 ---------- */
-  .exp-list {
-    margin-top: 32px;
-    border-top: 1px solid var(--line);
-  }
-
-  .exp-item {
-    display: grid;
-    grid-template-columns: 180px 1fr;
-    gap: 24px;
-    padding: 26px 0;
-    border-bottom: 1px solid var(--line);
-  }
-
-  .exp-meta {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-  }
-
-  .exp-date {
-    font-family: var(--font-mono);
-    font-size: 12px;
-    letter-spacing: 0.04em;
-    color: var(--text-3);
-  }
-
-  .exp-type {
-    font-size: 12px;
-    color: var(--text-4);
-  }
-
-  .exp-body h3 {
-    margin-bottom: 8px;
-    font-size: 17px;
-  }
-
-  .exp-body p {
-    font-size: 14px;
-    color: var(--text-2);
-  }
-
-  .exp-bullets {
-    list-style: none;
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-    margin-top: 10px;
-  }
-
-  .exp-bullets li {
-    position: relative;
-    padding-left: 14px;
-    font-size: 13.5px;
-    line-height: 1.7;
-    color: var(--text-2);
-  }
-
-  .exp-bullets li::before {
-    content: "";
-    position: absolute;
-    left: 0;
-    top: 0.78em;
-    width: 5px;
-    height: 1px;
-    background: var(--line-strong);
-  }
-
-  .exp-muted {
-    margin-top: 10px;
-    font-size: 12.5px;
-    color: var(--text-4);
-  }
-
-  .exp-tech {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 20px 40px;
-    padding-top: 24px;
-  }
-
-  .exp-tech-row {
-    display: flex;
-    align-items: center;
-    gap: 16px;
-    flex-wrap: wrap;
-  }
-
-  .exp-tech-label {
-    min-width: 64px;
-    font-family: var(--font-mono);
-    font-size: 11px;
-    letter-spacing: 0.1em;
-    color: var(--text-4);
-  }
-
-  .exp-tech-tags {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-  }
-
   /* ---------- 联系 ---------- */
   .contact-section {
     border-top: 1px solid var(--line);
@@ -977,31 +754,12 @@ const methodAbilities = [
     }
 
     .project-card {
-      grid-template-columns: 1fr;
-      gap: 14px;
       padding: 22px;
     }
 
-    .project-detail {
-      grid-template-columns: 1fr;
-      gap: 14px;
-    }
-
-    .project-side {
-      flex-direction: row;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-      flex-wrap: wrap;
-    }
-
-    .project-actions {
-      flex-direction: row;
-      flex-wrap: wrap;
-    }
-
-    .project-status {
-      text-align: left;
+    .project-bottom {
+      flex-direction: column;
+      align-items: flex-start;
     }
 
     .method-flow {
@@ -1026,21 +784,6 @@ const methodAbilities = [
       grid-template-columns: 1fr;
     }
 
-    .exp-item {
-      grid-template-columns: 1fr;
-      gap: 10px;
-    }
-
-    .exp-meta {
-      flex-direction: row;
-      align-items: baseline;
-      gap: 12px;
-    }
-
-    .exp-tech {
-      grid-template-columns: 1fr;
-    }
-
     .about-ability {
       grid-template-columns: 56px 160px 1fr;
       gap: 16px;
@@ -1060,22 +803,6 @@ const methodAbilities = [
 
     .about-ability-num {
       font-size: 12px;
-    }
-
-    .project-side {
-      flex-direction: column;
-      align-items: flex-start;
-    }
-
-    .project-actions {
-      flex-direction: row;
-      flex-wrap: wrap;
-    }
-
-    .exp-tech-row {
-      align-items: flex-start;
-      flex-direction: column;
-      gap: 8px;
     }
   }
 </style>

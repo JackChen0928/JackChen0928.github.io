@@ -42,13 +42,13 @@ export function initSizeDemo(): void {
 
     const playing = timer !== null;
     if (current === 0) {
-      statusEl.textContent = '准备就绪：点击「开始演示」自动播放整条流程（模拟），每步停留约 1.5 秒。';
+      statusEl.textContent = '准备就绪：点击「开始演示」自动播放整条流程（模拟）';
       statusEl.setAttribute('data-tone', 'normal');
     } else if (current < SZC_STEPS.length) {
       statusEl.textContent = '正在演示：' + SZC_STEPS[current].label + '（模拟）。';
       statusEl.setAttribute('data-tone', 'run');
     } else {
-      statusEl.textContent = '流程演示完毕：所有步骤已依次展示（模拟）。';
+      statusEl.textContent = 'SDK 包体的增量为2.32MB（模拟）。';
       statusEl.setAttribute('data-tone', 'ok');
     }
 

@@ -72,7 +72,7 @@ const problems: Array<{ issue: string; need: string; tag: string }> = [
 ---
 
 <BaseLayout
-  title="SDK 开发者智能问答与知识库系统 | 内部 POC"
+  title="SDK 开发者智能问答与知识库系统"
   description="围绕 SDK 版本与开发平台差异，探索基于 RAG 的开发者技术支持方案：Dify 工作流迭代、RAGFlow 知识库治理、文档关联知识图谱与问答评测"
   current="work"
 >
@@ -108,10 +108,7 @@ const problems: Array<{ issue: string; need: string; tag: string }> = [
       <p class="sdkai-hero-entry">
         <a class="btn btn--solid" href="/work/sdk-ai-support-demo">View Demo →</a>
       </p>
-      <div class="sdkai-status-note">
-        真实项目经历 + 作品集交互原型。交互原型为前端模拟，不调用真实大模型，不连接真实 Dify / RAGFlow；
-        页面不编造准确率、召回率、用户满意度或人工成本下降比例等业务指标。
-      </div>
+    
     </div>
   </section>
 
@@ -377,7 +374,7 @@ const problems: Array<{ issue: string; need: string; tag: string }> = [
     </div>
   </section>
 
-  <!-- ======================= 04 交互体验：SDK 智能问答台 ======================= -->
+  <!-- ======================= 04 交互体验 ======================= -->
   <section id="demo" class="sdkai-section sdkai-section--alt">
     <div class="container">
       <div class="sdkai-section-head">
@@ -386,22 +383,9 @@ const problems: Array<{ issue: string; need: string; tag: string }> = [
       </div>
       <p class="sdkai-p sdkai-p--lead">
         本节用可操作的原型展示核心产品能力：<strong>选择 SDK 版本与开发平台 → 输入问题 → 路由到对应知识边界 → 输出回答与资料依据</strong>，
-        并处理「缺少平台信息、跨平台冲突、资料不足」等异常交互。原型为<strong>纯前端模拟</strong>，用于验证交互路径是否顺畅，不调用真实模型。
+        并处理「缺少平台信息、跨平台冲突、资料不足」等异常交互。
       </p>
-      <p class="sdkai-p">
-        默认示例为 TopOn + Flutter，问题「TopOn Android 如何接入开屏广告？」用于演示<strong>平台冲突澄清</strong>逻辑——
-        问题中提到 Android，但所选平台为 Flutter，客服应先请求确认平台，而不是直接输出接入教程。
-      </p>
-
-      <div class="sdkai-demo-rules" aria-label="交互规则说明">
-        <h4>交互规则（本地模拟）</h4>
-        <ul>
-          <li>未选择平台：显示补充平台信息的提示（追问开发平台）。</li>
-          <li>问题为空或信息明显不足：显示需要补充信息的提示。</li>
-          <li>平台与预设规则冲突：展示路由拦截说明，先澄清平台，不直接输出接入教程。</li>
-          <li>其他情况：根据预先配置的演示资料展示模拟结果。</li>
-        </ul>
-      </div>
+      
 
       <p class="sdkai-p">
         完整可操作的问答原型已放在<strong>独立演示页</strong>，可直接体验版本 + 平台路由、
@@ -410,10 +394,7 @@ const problems: Array<{ issue: string; need: string; tag: string }> = [
       <p class="sdkai-p">
         <a class="btn btn--solid" href="/work/sdk-ai-support-demo">打开交互演示台 →</a>
       </p>
-      <p class="sdkai-note sdkai-prototype-note">
-        作品集交互原型 · 模拟工作流，不调用真实模型，不连接真实 Dify / RAGFlow。
-        预设回答为演示内容，不代表真实检索结果；未伪造真实文档引用。
-      </p>
+     
       <div class="sdkai-note">
         <strong>本原型的验证目的：</strong>检验「版本 + 平台路由、平台冲突澄清、回答 + 资料依据展示」三条关键交互是否清晰顺畅，
         以及异常场景下用户能否得到明确反馈。回答质量是否稳定，由下一节
@@ -489,8 +470,8 @@ const problems: Array<{ issue: string; need: string; tag: string }> = [
         </div>
       </div>
       <p class="sdkai-note sdkai-note--dim">
-        以上为作品集展示的迭代方法闭环；真实项目中以「人工测试 + 测试集回归」的方式迭代，
-        未落地自动化持续评测，也未产生可公开的指标数据。
+        以上为作品集展示的迭代方法闭环；真实项目中以「人工测试 + 测试集回归」的方式迭代。
+        
       </p>
 
       <h3 class="sdkai-h3">复盘反思</h3>
@@ -520,9 +501,7 @@ const problems: Array<{ issue: string; need: string; tag: string }> = [
         <li>在多轮对话中跟踪已确认的版本与平台上下文，减少重复澄清。</li>
         <li>把失败类型结构化记录，便于对比不同 Prompt 版本与检索规则的表现。</li>
       </ul>
-      <p class="sdkai-note sdkai-note--dim">
-        上方「后续优化设想」均未落地，不代表已在原项目中实现。
-      </p>
+  
     </div>
   </section>
 

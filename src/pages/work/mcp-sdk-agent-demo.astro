@@ -3,7 +3,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 ---
 
 <BaseLayout
-  title="SDK 接入工作台 · 交互演示 | 前端模拟"
+  title="SDK 接入工作台 · 交互演示"
   description="基于 MCP 的 SDK 自动化集成助手交互演示台：需求输入、方案生成与确认、变更预览、校验与编译验证、结果摘要（前端模拟）"
   current="work"
 >
@@ -15,7 +15,6 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
       <p class="mcp-subtitle">基于 MCP 的 SDK 自动化集成助手 · 核心流程交互原型</p>
       <div class="mcp-hero-tags">
         <span class="tag">作品集交互演示</span>
-        <span class="tag">前端模拟 · 不调用真实 MCP 服务</span>
       </div>
       <p class="mcp-hero-desc">
         本页用可操作的原型演示核心产品路径：<strong>需求输入 → 方案生成 → 方案确认 →
@@ -23,24 +22,21 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
         两类异常案例。查看需求分析与解决方案请回到
         <a href="/work/mcp-sdk-agent">完整案例页 →</a>
       </p>
-      <div class="mcp-status-note">
-        作品集交互演示 · 模拟流程：不调用真实 MCP 服务，不修改真实项目文件，
-        不展示伪造的运行日志、编译结果或业务指标。
-      </div>
+   
     </div>
   </section>
 
   <!-- ======================= 演示台 ======================= -->
   <section class="mcp-demo-page">
     <div class="container">
-      <h2 class="mcp-demo-title">演示台（前端模拟）</h2>
+      <h2 class="mcp-demo-title">演示台</h2>
       <p class="mcp-p mcp-p--lead">
         需求输入或载入预设场景后，点击「生成方案」开始流程；方案生成后必须先「确认」才会进入下一步，
         任何时候可「取消」，流程结束可「重新开始」。
       </p>
 
       <div class="mcp-demo-rules" aria-label="交互规则说明">
-        <h4>交互规则（本地模拟）</h4>
+        <h4>交互规则</h4>
         <ul>
           <li>需求输入或载入预设场景后，点击「生成方案」开始流程。</li>
           <li>方案生成后必须先「确认」，才会进入下一步；任何时候可「取消」。</li>

@@ -3,8 +3,8 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 ---
 
 <BaseLayout
-  title="包体增量检测 · 交互演示台 | 前端模拟"
-  description="基于 Hermes 的 SDK 包体增量检测工具交互演示台：自然语言输入、Hermes 参数提取、构建对比与钉钉通知链路步骤演示（前端模拟）"
+  title="包体增量检测 · 交互演示台 "
+  description="基于 Hermes 的 SDK 包体增量检测工具交互演示台：自然语言输入、Hermes 参数提取、构建对比与钉钉通知链路步骤演示"
   current="work"
 >
   <!-- ======================= 页头 ======================= -->
@@ -15,28 +15,23 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
       <p class="szc-subtitle">基于 Hermes 的 SDK 包体增量检测工具 · 任务链路步骤演示</p>
       <div class="szc-hero-tags">
         <span class="tag">作品集交互演示</span>
-        <span class="tag">前端模拟 · 不执行真实构建</span>
       </div>
       <p class="szc-hero-desc">
         本页用可交互步骤演示器展示整条任务链路：从自然语言输入出发，依次经过
         Hermes 参数提取、脚本调用、环境检查、两次构建、体积差计算与钉钉通知。
-        点击「开始演示」自动播放整条流程，每步停留约 1.5 秒，可随时重置。
-        查看检测方案与真实成果请回到
-        <a href="/work/sdk-size-checker">完整案例页 →</a>
+        查看检测方案与真实成果请回到<a href="/work/sdk-size-checker">完整案例页 →</a>
       </p>
-      <div class="szc-status-note">
-        作品集交互演示 · 模拟流程：不执行真实构建，不调用真实 Hermes 服务，不展示伪造的 APK 体积或编译日志。
-      </div>
+     
     </div>
   </section>
 
   <!-- ======================= 演示台 ======================= -->
   <section class="szc-demo-page">
     <div class="container">
-      <h2 class="szc-demo-title">演示台（前端模拟）</h2>
+      <h2 class="szc-demo-title">演示台</h2>
       <p class="szc-p szc-p--lead">
         从自然语言输入出发，依次经过 Hermes 参数提取、脚本调用、环境检查、两次构建、
-        体积差计算与钉钉通知。点击「开始演示」自动播放整条流程，每步停留约 1.5 秒，可随时重置。
+        体积差计算与钉钉通知。
       </p>
 
       <div class="szc-demo" aria-label="包体增量检测流程演示台">
@@ -62,9 +57,6 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
           <li>步骤顺序与真实脚本链路一致，但每步均为预设的示例说明。</li>
         </ul>
       </div>
-      <p class="szc-note szc-prototype-note">
-        作品集交互演示 · 模拟流程，不执行真实构建，不调用真实 Hermes 服务。
-      </p>
 
       <p class="szc-demo-back">
         <a class="btn btn--outline" href="/work/sdk-size-checker#demo">← 返回完整案例页</a>

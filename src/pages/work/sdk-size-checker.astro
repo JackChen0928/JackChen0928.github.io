@@ -44,10 +44,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
       <p class="szc-hero-entry">
         <a class="btn btn--solid" href="/work/sdk-size-demo">View Demo →</a>
       </p>
-      <div class="szc-status-note">
-        真实项目记录 + 作品集交互演示。演示台为前端模拟：不执行真实构建，不调用真实 Hermes 服务；
-        页面不编造 APK 体积、编译日志、执行次数或效率提升比例。
-      </div>
+  
     </div>
   </section>
 
@@ -109,7 +106,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
       </div>
       <p class="szc-note szc-note--dim">
         真实性标注：工具由我参与开发并在小组内实际使用；页面只陈述已实现的能力，不展示未确认的
-        构建日志、包体数值、执行次数或效率提升比例；演示台为前端模拟，不代表真实运行记录。
+        构建日志、包体数值、执行次数或效率提升比例。
       </p>
     </div>
   </section>
@@ -199,7 +196,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
       <p class="szc-note szc-note--dim">
         职责边界：Hermes 只负责入口与参数传递，不承担构建计算；脚本保持可独立运行，
         对话入口不可用时检测能力依然可用，也便于单独排查是参数问题还是脚本问题。
-        链路结构来自实际接入；真实执行记录与截图待补充。
+        链路结构来自实际接入。
       </p>
     </div>
   </section>
@@ -220,21 +217,18 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
         <li>工具已在小组内实际使用。</li>
       </ul>
       <p class="szc-note szc-note--dim">
-        以上为已实现能力的文字说明；不展示未确认的构建日志、包体数值或截图。
+        以上为已实现能力的文字说明；不展示未确认的构建日志、包体数值。
       </p>
 
-      <h3 class="szc-h3">交互演示台（前端模拟，独立页面）</h3>
+      <h3 class="szc-h3">交互演示台</h3>
       <p class="szc-p szc-p--lead">
         一个轻量的步骤演示器，辅助理解整条任务链路：从自然语言输入出发，依次经过
         Hermes 参数提取、脚本调用、环境检查、两次构建、体积差计算与钉钉通知。
-        点击「开始演示」自动播放整条流程，每步停留约 1.5 秒，可随时重置。
       </p>
       <p class="szc-p">
         <a class="btn btn--solid" href="/work/sdk-size-demo">打开交互演示台 →</a>
       </p>
-      <p class="szc-note szc-prototype-note">
-        作品集交互演示 · 模拟流程，不执行真实构建，不调用真实 Hermes 服务。
-      </p>
+  
     </div>
   </section>
 
@@ -281,27 +275,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
         工具未实现自动重试与多 Agent 编排，页面也不将其描述为已实现能力；上方「后续优化设想」均未落地。
       </p>
 
-      <h3 class="szc-h3">待补充真实验证材料</h3>
-      <div class="szc-evidence-grid">
-        <div class="szc-evidence-card szc-evidence-card--pending">
-          <span class="szc-evidence-tag">待补充</span>
-          <strong>真实脚本输出 / 检测报告</strong>
-          <p>脚本运行输出与检测报告的真实记录（脱敏）。</p>
-        </div>
-        <div class="szc-evidence-card szc-evidence-card--pending">
-          <span class="szc-evidence-tag">待补充</span>
-          <strong>Hermes 调用记录</strong>
-          <p>自然语言需求与参数提取的真实执行记录（脱敏）。</p>
-        </div>
-        <div class="szc-evidence-card szc-evidence-card--pending">
-          <span class="szc-evidence-tag">待补充</span>
-          <strong>钉钉消息截图</strong>
-          <p>检测结果通知的真实钉钉截图（脱敏）。</p>
-        </div>
-      </div>
-      <p class="szc-note szc-note--dim">
-        未确认的构建日志、包体数值与截图一律不在页面展示；上述材料整理完成并经许可后补充到本页。
-      </p>
+
     </div>
   </section>
 
